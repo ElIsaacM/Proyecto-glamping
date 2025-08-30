@@ -1,0 +1,114 @@
+/*--------------- General ----------------*/
+body{
+    display: flex;
+    padding: 0;
+    margin: 0;
+    color: rgb(59, 59, 59);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/*--------------- Nav ----------------*/
+
+nav{
+    width: 100px;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #43523A;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: width 0.3s;
+}
+nav:hover {
+  width: 200px; 
+}
+
+/*---- icons ----*/
+.icons{
+    display: grid;
+    gap: 25px;
+}
+.icons a, .exit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.icons a, .logo i, .exit{
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+.icons a.active{
+    color: #00FF51;
+}
+.icons i, .logo i, .exit{
+    font-size: 25px;
+}
+
+/*---- h4 ----*/
+nav h4, .h4{
+    display: none;
+    margin: 0;
+}
+nav:hover h4, nav:hover .h4{
+    display: inline;
+}
+
+nav button{
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+/*-------------------------------*/
+/*--------------- Contenido / Header ----------------*/
+
+.Right{
+    width: calc(100% - 100px);     
+    display: flex; 
+    flex-direction: column;
+}
+
+/*---- header ----*/
+.Right header{
+    height: 60px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.h_right{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+#notification{
+    font-size: 20px;
+}
+#user{
+    font-size: 30px;
+}
+
+/*---- main ----*/
+.Right main{
+    background-color: rgb(216, 215, 215);
+    height: calc(100vh - 60px);
+    overflow: auto;
+}
+
+/*--------------- Media query ----------------*/
+@media screen and (max-height: 700px) {
+
+    .icons i, .logo i, .exit{
+        font-size: 20px;
+    }
+
+    .icons{
+        gap: 20px;
+    }
+    
+}
