@@ -1,3 +1,5 @@
+🧏‍♂️❗ Pendiente el archivo .env
+
 Estructura Típica de Archivos y Funciones
 
 src: Contiene todo el código fuente principal.
