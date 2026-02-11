@@ -27,7 +27,7 @@ function PagosCard() {
       bgColor: 'verde',
       colorTitulo: '',
       texto: '',
-      titulo: 'Agregar usuario',
+      titulo: 'Ver reembolsos',
       icon: 'bi bi-person-plus-fill',
     },
   ];

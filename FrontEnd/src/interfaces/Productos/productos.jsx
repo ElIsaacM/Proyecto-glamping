@@ -8,6 +8,7 @@ import Buscador from "../../components/buscador";
 import BotonAgregar from "../../components/buttons/botonAgregar";
 import ProductoTable from "./info/productoTable";
 import ModalPlantilla from "../../Modales/modalPlantilla";
+import ProductoForm from "./productoForm";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -55,7 +56,14 @@ function Productos() {
                 modulo={'Agregar producto'}
                 color={1}
                 onClick={() => abrirModal(
-                  <ModalPlantilla modulo={modulo.toLowerCase()} onClose={cerrarModal}>
+                  <ModalPlantilla modulo="Nuevo producto" onClose={cerrarModal}>
+
+                    <ProductoForm
+                      onSubmit={(data) => {
+                        console.log("Producto recibido:", data);
+                        cerrarModal();
+                      }}
+                    />
 
                   </ModalPlantilla>
                 )}
