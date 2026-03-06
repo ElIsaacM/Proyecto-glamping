@@ -1,27 +1,17 @@
 import styled from "styled-components";
-<<<<<<< HEAD
-=======
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
 
 import Plantilla from "../plantilla";
 import LinearGraph from "../../components/graphs/linearGraph";
 import CabanaCard from "./info/cabanaCard";
 import Buscador from "../../components/buscador";
 import BotonAgregar from "../../components/buttons/botonAgregar";
-<<<<<<< HEAD
-import TablaCabanas from "./info/tablaCabanas";
-import ModalPlantilla from "../../Modales/modalPlantilla";
-
-import PlantillaFormulario from "../../components/plantillaform";
-=======
 import TablaGeneral from "../../components/tabla";
 import ModalPlantilla from "../../Modales/modalPlantilla";
 import CabanaModal from "../../Modales/Cabanas/cabanaModal";
 
 import PlantillaFormulario from "../../Modales/modalFormulario";
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -45,8 +35,6 @@ const Botones = styled.div`
 `;
 
 function Cabanas() {
-<<<<<<< HEAD
-=======
   const [modalVisible, setModalVisible] = useState(false);
 
   const abrirModal = () => setModalVisible(true);
@@ -59,7 +47,6 @@ function Cabanas() {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
   
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
   return (
     <Plantilla modulo={"Cabanas"}>
       {({ abrirModal, cerrarModal, modulo }) => (
@@ -69,7 +56,6 @@ function Cabanas() {
             <CabanaCard />
           </CardsCont>
           <Botones>
-<<<<<<< HEAD
             <Buscador placeholder={'Buscar cabana'}></Buscador>
 
             <BotonAgregar
@@ -94,7 +80,6 @@ function Cabanas() {
             />
           </Botones>
           <TablaCabanas />
-=======
             <Buscador placeholder={"Buscar cabana"}></Buscador>
 
             <BotonAgregar
@@ -111,9 +96,7 @@ function Cabanas() {
                 )
               }
             />
-          </Botones>
           <TablaGeneral data={data} />
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
         </>
       )}
     </Plantilla>
