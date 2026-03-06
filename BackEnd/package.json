@@ -22,11 +22,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
-<<<<<<< HEAD
-    "mssql": "^12.2.0"
-=======
     "mssql": "^12.2.0",
     "pg": "^8.19.0"
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
   }
 }

@@ -13,46 +13,75 @@ export const getProductById = async (req, res) => {
   res.json(product)
 }
 
-export const createProduct = (req, res) => {
-  const data = req.body;
+export const createProduct = async (req, res) => {
+  try {
+    const data = req.body;
+    const newProduct = await productService.createProduct(data);
 
-  res.status(201).json({
-    message: "producto creado",
-    data
-  });
+    res.status(201).json({
+      message: "producto creado exitosamente",
+      data: newProduct
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al crear producto",
+      error: error.message
+    });
+  }
 }
 
-export const updateProduct = (req, res) => {
-  const { id } = req.params
-  const data = req.body
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params
+    const data = req.body
+    const updatedProduct = await productService.updateProduct(id, data);
 
-  res.json({
-    message: "Producto actualizado",
-    productId: id,
-    data
-  });
+    res.status(200).json({
+      message: "Producto actualizado",
+      productId: id,
+      data: updatedProduct
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al actualizar producto",
+      error: error.message
+    });
+  }
 }
 
-export const sellProduct = (req, res) => {
-  const { id } = req.params;
-  const { quantity } = req.body;
+export const sellProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body;
 
-  // Simulacion (eliminar)
-  const stockActual = 20;
-  const nuevoStock = stockActual - quantity;
+    const soldProduct = await productService.sellProduct(id, quantity);
 
-  res.json({
-    message: "producto vendido", 
-    productoId: id,
-    stock: nuevoStock
-  });
+    res.status(200).json({
+      message: "producto vendido",
+      productoId: id,
+      stock: soldProduct.stock
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al vender producto",
+      error: error.message
+    });
+  }
 }
 
-export const deleteProduct = (req, res) => {
-  const id = req.params;
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await productService.deleteProduct(id);
 
-  res.json({
-    message: "Producto desactivado",
-    productoId: id
-  });
+    res.status(200).json({
+      message: "Producto eliminado",
+      productoId: id
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al eliminar producto",
+      error: error.message
+    });
+  }
 }

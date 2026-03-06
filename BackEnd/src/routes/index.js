@@ -1,17 +1,23 @@
-import { Router } from "express";
-const router = Router();
+import { Router } from 'express';
 
 import productRouter from './product.routes.js';
-<<<<<<< HEAD
-import { testDB } from "./testDB.controller.js";
-
-router.use('/products', productRouter);
-router.get('/test-db', testDB);
-=======
 import cabinRouter from './cabin.routes.js';
+import clientRouter from './client.routes.js';
+import reservationRouter from './reservation.routes.js';
+import paymentRouter from './payment.routes.js';
+import packageRouter from './package.routes.js';
+import serviceRouter from './service.routes.js';
+import userRouter from './user.routes.js';
+
+const router = Router();
 
 router.use('/products', productRouter);
 router.use('/cabins', cabinRouter);
->>>>>>> 7ccb4e3 (commit 2: conexion fetch en el front y conexion a postgres en el back)
+router.use('/clients', clientRouter);
+router.use('/reservations', reservationRouter);
+router.use('/payments', paymentRouter);
+router.use('/packages', packageRouter);
+router.use('/services', serviceRouter);
+router.use('/users', userRouter);
 
-export default router
+export default router;
