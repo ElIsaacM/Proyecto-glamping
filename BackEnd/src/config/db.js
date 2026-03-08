@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import sql from 'mssql';
+import pg from 'pg';
+
+const { Pool } = pg;
 
 const config = {
   user: process.env.DB_USER,
@@ -9,23 +11,24 @@ const config = {
   server: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
   port: Number(process.env.DB_PORT),
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-  },
 }
 
-console.log('Config DB:', config);
+console.log('Config DB:', { ...config, password: '****' }); // Tip: ocultar password en logs
+
+// Creamos una instancia del Pool (maneja múltiples conexiones de forma eficiente)
+const pool = new Pool(config);
 
 export const connectDB = async () => {
   try {
-    await sql.connect(config);
-    console.log('SQL Server Conectado!')
-  } catch(error) {
-    console.error("Error Conectandose A Sql Server!");
+    // Intentamos obtener un cliente para verificar la conexión
+    const client = await pool.connect();
+    console.log('PostgreSQL Conectado!');
+    client.release(); // Importante liberar el cliente de prueba
+  } catch (error) {
+    console.error("Error Conectandose a PostgreSQL!");
     console.error(error.message);
     process.exit(1);
   }
-}
+};
 
-export default sql 
+export default pool;

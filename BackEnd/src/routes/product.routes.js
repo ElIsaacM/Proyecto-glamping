@@ -7,15 +7,15 @@ import {
   updateProduct,
   sellProduct,
   deleteProduct
-} from '../controllers/productController.js';
+} from '../controllers/product.controller.js';
 
 const router = Router();
 
 router.get('/', getProducts);
 router.get('/:id', getProductById);
 router.post('/', createProduct);
-router.put('/', updateProduct);
-router.patch('/', sellProduct);
-router.delete('/', deleteProduct);
+router.put('/:id', updateProduct);
+router.patch('/:id', sellProduct);
+router.delete('/:id', deleteProduct);
 
 export default router;

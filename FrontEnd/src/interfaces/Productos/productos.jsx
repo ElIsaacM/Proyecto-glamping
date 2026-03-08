@@ -1,13 +1,14 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useFetch } from "../../hooks/fetchConnect";
 
 import Plantilla from "../plantilla";
 import ProductoCards from "./info/productoCard";
 import ProductoGraph from "./info/productoGraph";
 import Buscador from "../../components/buscador";
 import BotonAgregar from "../../components/buttons/botonAgregar";
-import ProductoTable from "./info/productoTable";
 import ModalPlantilla from "../../Modales/modalPlantilla";
+import TablaGeneral from "../../components/tabla";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -39,8 +40,15 @@ function Productos() {
   const abrirModal = () => setModalVisible(true);
   const cerrarModal = () => setModalVisible(false);
 
+  const { data, loading, error, fetchData } = useFetch();
+  useEffect(() => {
+    fetchData("http://localhost:3000/api/products");
+  }, [fetchData]);
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <Plantilla modulo={'Productos'}>
+    <Plantilla modulo={"Productos"}>
       {({ abrirModal, cerrarModal, modulo }) => (
         <>
           <CardsCont>
@@ -63,6 +71,21 @@ function Productos() {
 
             </Botones>
             <ProductoTable />
+              <Buscador placeholder={"Buscar producto"} />
+
+              <BotonAgregar
+                modulo={"Agregar producto"}
+                color={1}
+                onClick={() =>
+                  abrirModal(
+                    <ModalPlantilla
+                      modulo={modulo.toLowerCase()}
+                      onClose={cerrarModal}
+                    />,
+                  )
+                }
+              />
+            <TablaGeneral data={data} />
           </div>
         </>
       )}

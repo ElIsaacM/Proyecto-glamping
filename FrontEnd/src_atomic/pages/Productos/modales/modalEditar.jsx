@@ -1,0 +1,75 @@
+import ModalPlantilla from "../../../components/organisms/Modales/modalPlantilla";
+import { useForm } from "../../../hooks/useForm";
+import styled from "styled-components";
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  button {
+    padding: 10px;
+    background-color: #4A90E2; /* Color distintivo para editar, ej: azul */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    &:hover {
+      background-color: #357ABD;
+    }
+  }
+`;
+
+export default function ModalEditar({ setModalAbierto, fetchData, productoAEditar }) {
+  // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
+  // como estado inicial. 
+  // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
+  const urlParams = `http://localhost:3000/api/products/${productoAEditar.productoid}`;
+
+  const { formData, handleChange, handleSubmit, submitting } = useForm(
+    {
+      nombre: productoAEditar.nombre || productoAEditar.Nombre || '',
+      tipo: productoAEditar.tipo || productoAEditar.Tipo || '',
+      stock: productoAEditar.stock || productoAEditar.Stock || '',
+      precioventa: productoAEditar.precioventa || productoAEditar['Precio Venta'] || '',
+      descripcion: productoAEditar.descripcion || productoAEditar.Descripción || ''
+    },
+    urlParams,
+    () => {
+      // Callback OnSuccess
+      fetchData('http://localhost:3000/api/products');
+      setModalAbierto(false); // Cerramos el modal al tener éxito
+    },
+    'PUT' // <--- Le decimos a nuestro custom hook que esto es una actualizacion
+  );
+
+  return (
+    <ModalPlantilla modulo="editar producto" onClose={() => setModalAbierto(false)}>
+      <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
+        <input type="text" name="nombre" placeholder="Nombre del producto" value={formData.nombre} onChange={handleChange} required />
+        <input type="text" name="tipo" placeholder="Tipo (ej: Limpieza, Bebidas...)" value={formData.tipo} onChange={handleChange} required />
+        <input type="number" name="stock" placeholder="Cantidad en stock" value={formData.stock} onChange={handleChange} required />
+        <input type="number" step="0.01" name="precioventa" placeholder="Precio de venta" value={formData.precioventa} onChange={handleChange} required />
+        <textarea name="descripcion" placeholder="Descripción del producto" value={formData.descripcion} onChange={handleChange} required />
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Actualizando...' : 'Actualizar Producto'}
+        </button>
+      </Form>
+    </ModalPlantilla>
+  );
+}
