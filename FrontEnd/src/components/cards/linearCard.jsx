@@ -1,70 +1,46 @@
+import React from 'react';
 import styled from 'styled-components';
 
-const CardsContainer = styled.div`
-margin: 50px 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-`;
-
-const Card = styled.button`
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  height: 100px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 15px;
-
-  background: ${(props) => props.bgColor == 'verde' ? '#43523A' : '#ffffff'};
-  color: ${(props) => props.bgColor === 'verde' ? '#ffffff' : '#1a1a1a'};
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const CardTitle = styled.div`
+const CardContainer = styled.div`
   display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
+// Estilos para el botón/tarjeta
+const CardButton = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-
-  color: ${(props) => props.color || '#ffffff'};
-
-  i {
-    font-size: 20px;
-    margin: 0;
-  }
-
-  h4 {
-    font-size: 16px;
-    margin: 0;
+  
+  &.verde {
+    background-color: #43523a;
+    color: white;
   }
 `;
 
-const CardText = styled.p`
-  font-size: 0.9rem;
-  margin: 0;
-`;
-
-function LinearCard({ data }) {
+const LinearCard = ({ data }) => {
   return (
-    <CardsContainer>
-      {data.map((item, i) => (
-        <Card key={i} bgColor={item.bgColor}>
-          <CardText>{item.texto}</CardText>
-          <CardTitle color={item.colorTitulo}>
-            <h4>{item.titulo}</h4>
-            <i className={item.icon}></i>
-          </CardTitle>
-        </Card>
+    <CardContainer>
+      {data.map((item, index) => (
+        <CardButton 
+          key={index} 
+          className={item.bgColor} 
+          onClick={item.onClick} // ¡ESTA LÍNEA ES LA QUE ACTIVA EL MODAL!
+        >
+          <i className={item.icon} style={{ fontSize: '24px' }}></i>
+          <h3>{item.titulo}</h3>
+          <p>{item.texto}</p>
+        </CardButton>
       ))}
-    </CardsContainer>
+    </CardContainer>
   );
-}
+};
 
 export default LinearCard;

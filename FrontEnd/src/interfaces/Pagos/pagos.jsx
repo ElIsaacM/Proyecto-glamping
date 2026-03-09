@@ -1,5 +1,5 @@
+import React from "react";
 import styled from "styled-components";
-
 import Plantilla from "../plantilla";
 import Buscador from "../../components/buscador";
 import PagosCard from "./info/pagosCard";
@@ -9,27 +9,22 @@ import Factura from "../../components/factura";
 const Botones = styled.div`
   display: flex;
   justify-content: space-between;
-
-  @media (max-width: 750px) {
-    flex-direction: column;
-    gap: 10px;
-  }
+  margin-bottom: 20px;
+  @media (max-width: 750px) { flex-direction: column; gap: 10px; }
 `;
 
 const TablaFactura = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 40px;
-  height: 100vh;
 `;
 
 function Pagos() {
-
   return (
     <Plantilla modulo={'Pagos'}>
-      {({ abrirModal, cerrarModal, modulo }) => (
+      {({ abrirModal, cerrarModal }) => (
         <>
-          <PagosCard />
+          <PagosCard abrirModal={abrirModal} cerrarModal={cerrarModal} />
           <Botones>
             <Buscador placeholder={'Buscar fecha'} />
           </Botones>
