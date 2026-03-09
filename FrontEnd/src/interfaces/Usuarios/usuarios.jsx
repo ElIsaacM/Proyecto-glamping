@@ -1,8 +1,19 @@
 import React from "react";
-import Plantilla from "../plantilla";
-import Buscador from "../../components/buscador";
+import styled from "styled-components";
+import Plantilla from "../plantilla"; 
 import UsuariosCard from "./info/usuariosCard";
+import BotonRecargar from "../../components/buttons/botonRecargar";
 import TablaUsuarios from "./info/usuariosTable";
+import Buscador from "../../components/buscador";
+
+const Botones = styled.div`
+  display: flex;
+  justify-content: space-between;
+  @media (max-width: 750px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+`;
 
 function Usuarios() {
   return (
@@ -10,9 +21,10 @@ function Usuarios() {
       {({ abrirModal, cerrarModal }) => (
         <>
           <UsuariosCard abrirModal={abrirModal} cerrarModal={cerrarModal} />
-          <div style={{ marginTop: '20px' }}>
-            <Buscador placeholder={'Buscar usuario...'} />
-          </div>
+          <Botones>
+            <Buscador placeholder={'Buscar usuario'} />
+            <BotonRecargar />
+          </Botones>
           <TablaUsuarios />
         </>
       )}
@@ -20,4 +32,4 @@ function Usuarios() {
   );
 }
 
-export default Usuarios;
+export default Usuarios; 
