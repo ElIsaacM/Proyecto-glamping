@@ -33,7 +33,7 @@ export const getProductById = async (id) => {
       descripcion, 
       fechaactualizacion 
     FROM Productos 
-    WHERE ProductoID = $1`,
+    WHERE productoid = $1`,
     [id]
   );
 

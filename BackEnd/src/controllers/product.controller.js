@@ -1,87 +1,136 @@
-import * as productService from '../services/product.service.js'
+import pool from "../config/db.js";
+import { product } from "../models/product.model.js";
 
 export const getProducts = async (req, res) => {
-  const products = await productService.getProducts();
+  try {
+    const result = await pool.query(product.getProducts);
 
-  res.json(products);
-}
+    if (result.rows.length === 0) {
+      throw new Error("Product not found!");
+    }
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener productos",
+      error: error.message,
+    });
+  }
+};
 
 export const getProductById = async (req, res) => {
-  const { id } = req.params;
-  const product = await productService.getProductById(id);
+  try {
+    const { id } = req.params;
 
-  res.json(product)
-}
+    const result = await pool.query(
+      product.getProductById,
+      [id]
+    );
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    res.status(400).json({
+      message: "Usuario no encontrado",
+      error: error.message
+    })
+  }
+};
 
 export const createProduct = async (req, res) => {
   try {
-    const data = req.body;
-    const newProduct = await productService.createProduct(data);
+    const { 
+      nombre, 
+      tipo, 
+      stock, 
+      precioventa, 
+      descripcion 
+    } = req.body;
 
-    res.status(201).json({
-      message: "producto creado exitosamente",
-      data: newProduct
-    });
+    const result = await pool.query(
+      product.createProduct,
+      [nombre, tipo, stock, precioventa, descripcion]
+    )
+
+    res.status(200).json(result.rows[0]);
   } catch (error) {
     res.status(500).json({
       message: "Error al crear producto",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};
 
 export const updateProduct = async (req, res) => {
   try {
-    const { id } = req.params
-    const data = req.body
-    const updatedProduct = await productService.updateProduct(id, data);
+    const { id } = req.params;
+
+    const { 
+      nombre, 
+      tipo, 
+      stock, 
+      precioventa, 
+      descripcion 
+    } = req.body;
+
+    const result = await pool.query(
+      product.updateProduct,
+      [nombre, tipo, stock, precioventa, descripcion, id]
+    )
 
     res.status(200).json({
       message: "Producto actualizado",
       productId: id,
-      data: updatedProduct
+      data: result.rows[0],
     });
   } catch (error) {
     res.status(500).json({
       message: "Error al actualizar producto",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};
 
 export const sellProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { quantity } = req.body;
 
-    const soldProduct = await productService.sellProduct(id, quantity);
+    const result = await pool.query(
+      product.sellProduct,
+      [quantity, id]
+    );
 
     res.status(200).json({
       message: "producto vendido",
       productoId: id,
-      stock: soldProduct.stock
+      stock: result.rows[0].stock,
     });
   } catch (error) {
     res.status(500).json({
       message: "Error al vender producto",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};
 
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    await productService.deleteProduct(id);
+
+    const result = await pool.query(
+      product.deleteProduct,
+      [id]
+    )
 
     res.status(200).json({
       message: "Producto eliminado",
-      productoId: id
+      productoId: id,
+      data: result.rows[0],
     });
   } catch (error) {
     res.status(500).json({
       message: "Error al eliminar producto",
-      error: error.message
+      error: error.message,
     });
   }
-}
+};

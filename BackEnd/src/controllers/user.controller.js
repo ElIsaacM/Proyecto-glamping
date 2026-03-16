@@ -1,20 +1,95 @@
-import * as userService from '../services/user.service.js';
+import pool from "../config/db.js";
+import { user } from "../models/user.model.js";
 
 export const getusers = async (req, res) => {
   try {
-    const data = await userService.getusers();
-    res.json(data);
+    const result = await pool.query(user.getUsers);
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found!");
+    }
+
+    res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      message: "Error al obtener usuarios",
+      error: error.message });
   }
 };
 
 export const getuserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = await userService.getuserById(id);
-    if (!data) return res.status(404).json({ message: 'Not found' });
-    res.json(data);
+
+    const result = await pool.query(user.getUserById, [id]);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createUser = async (req, res) => {
+  try {
+    const {
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    } = req.body;
+
+    const result = await pool.query(user.createUser, [
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    ]);
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    } = req.body;
+
+    const result = await pool.query(user.updateUser, [
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+      id,
+    ]);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(user.deleteUser, [id]);
+
+    res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
