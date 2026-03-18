@@ -1,6 +1,5 @@
 import { Router } from "express";
-
-import {
+import { 
     getusers,
     getuserById,
     createUser,

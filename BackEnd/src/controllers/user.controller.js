@@ -28,3 +28,69 @@ export const getuserById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const createUser = async (req, res) => {
+  try {
+    const {
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    } = req.body;
+
+    const result = await pool.query(user.createUser, [
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    ]);
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+    } = req.body;
+
+    const result = await pool.query(user.updateUser, [
+      rolid,
+      identificacionid,
+      nombre,
+      contacto,
+      sueldo,
+      numeroidentificacion,
+      id,
+    ]);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(user.deleteUser, [id]);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
