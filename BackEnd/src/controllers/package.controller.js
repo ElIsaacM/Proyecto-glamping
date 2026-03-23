@@ -1,9 +1,9 @@
 import pool from '../config/db.js'
 import { packages } from '../models/packages.model.js'
 
-export const getpackages = async (req, res) => {
+export const getPackages = async (req, res) => {
   try {
-    const result = await pool.query(packages.getpackages);
+    const result = await pool.query(packages.getPackages);
 
     if (result.rows.length === 0) {
       throw new Error("Package not found");
@@ -15,10 +15,10 @@ export const getpackages = async (req, res) => {
   }
 };
 
-export const getpackageById = async (req, res) => {
+export const getPackageById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query(packages.getpackageById, [id]);
+    const result = await pool.query(packages.getPackageById, [id]);
 
     if (result.rows.length === 0) {
       throw new Error("Package not found");
@@ -32,9 +32,9 @@ export const getpackageById = async (req, res) => {
 
 export const createPackage = async (req, res) => {
   try {
-    const { tipoid, registradoporid, nombre, diasestadia, descripcion, estado } = req.body;
+    const { tipoid, registradoporid, nombre, diasestadia, descripcion } = req.body;
     const result = await pool.query(packages.createPackage,
-      [tipoid, registradoporid, nombre, diasestadia, descripcion, estado]);
+      [tipoid, registradoporid, nombre, diasestadia, descripcion]);
     
     res.status(200).json({
       message: 'Paquete creado',
@@ -51,12 +51,13 @@ export const createPackage = async (req, res) => {
 export const updatePackage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tipoid, registradoporid, nombre, diasestadia, descripcion, estado } = req.body;
+    const { tipoid, registradoporid, nombre, diasestadia, descripcion } = req.body;
     const result = await pool.query(packages.updatePackage,
-      [tipoid, registradoporid, nombre, diasestadia, descripcion, estado, id]);
+      [tipoid, registradoporid, nombre, diasestadia, descripcion, id]);
 
     res.status(200).json({
       message: 'Paquete actualizado',
+      paqueteId: id,
       data: result.rows[0]
     })
   } catch (error) {
@@ -74,6 +75,7 @@ export const deletePackage = async (req, res) => {
 
     res.status(200).json({
       message: 'Paquete eliminado',
+      paqueteId: id,
       data: result.rows[0]
     })
   } catch (error) {
@@ -82,4 +84,4 @@ export const deletePackage = async (req, res) => {
       error: error.message
     });
   }
-}
+};

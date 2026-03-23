@@ -1,30 +1,37 @@
 export const packages = {
-    getpackages: `
-        SELECT * FROM Paquetes
+    getPackages: `
+        SELECT
+            paqueteid, tipoid, registradoporid, nombre, diasestadia, fecharegistro, descripcion
+        FROM paquetes
+        WHERE estado = 'Activo'
+        ORDER BY paqueteid DESC
     `,
-    getpackageById: `
-        SELECT * FROM Paquetes WHERE PaqueteID = $1
+    getPackageById: `
+        SELECT
+            tipoid, registradoporid, nombre, diasestadia, fecharegistro, descripcion
+        FROM paquetes
+        WHERE paqueteid = $1
     `,
     createPackage: `
-        INSERT INTO Paquetes (tipoid, registradoporid, nombre, diasestadia, descripcion, estado)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO paquetes (tipoid, registradoporid, nombre, diasestadia, descripcion)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *
     `,
     updatePackage: `
-        UPDATE Paquetes SET
+        UPDATE paquetes SET
             tipoid = COALESCE(NULLIF($1::text, '')::integer, tipoid),
             registradoporid = COALESCE(NULLIF($2::text, '')::integer, registradoporid),
             nombre = COALESCE(NULLIF($3, ''), nombre),
             diasestadia = COALESCE(NULLIF($4::text, '')::integer, diasestadia),
             descripcion = COALESCE(NULLIF($5, ''), descripcion),
-            estado = COALESCE(NULLIF($6, ''), estado)
-        WHERE paqueteid = $7
+            fecharegistro = CURRENT_DATE
+        WHERE paqueteid = $6
         RETURNING *
     `,
     deletePackage: `
-        UPDATE Paquetes SET
+        UPDATE paquetes SET
             estado = 'Inactivo'
         WHERE paqueteid = $1
-        RETURNING *
+        RETURNING nombre
     `
 }
