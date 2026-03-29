@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getservices, getserviceById } from '../controllers/service.controller.js';
+import { getservices, getserviceByName } from '../controllers/service.controller.js';
 
 const router = Router();
 
 router.get('/', getservices);
-router.get('/:id', getserviceById);
+router.post('/search', getserviceByName);
 
 export default router;

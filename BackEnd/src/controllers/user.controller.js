@@ -17,13 +17,13 @@ export const getusers = async (req, res) => {
   }
 };
 
-export const getuserById = async (req, res) => {
+export const getuserByName = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { name } = req.body;
 
-    const result = await pool.query(user.getUserById, [id]);
+    const result = await pool.query(user.getUserByName, [name.trim()]);
 
-    res.json(result.rows[0]);
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

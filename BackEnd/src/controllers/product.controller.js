@@ -18,19 +18,19 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductById = async (req, res) => {
+export const getProductByName = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { name } = req.body;
 
     const result = await pool.query(
-      product.getProductById,
-      [id]
+      product.getProductByName,
+      [name.trim()]
     );
 
-    res.status(200).json(result.rows[0]);
+    res.status(200).json(result.rows);
   } catch (error) {
     res.status(400).json({
-      message: "Usuario no encontrado",
+      message: "Producto no encontrado",
       error: error.message
     })
   }
@@ -43,7 +43,7 @@ export const createProduct = async (req, res) => {
       tipo, 
       stock, 
       precioventa, 
-      descripcion 
+      descripcion
     } = req.body;
 
     const result = await pool.query(

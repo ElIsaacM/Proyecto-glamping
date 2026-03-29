@@ -6,16 +6,11 @@ export const user = {
     WHERE estado = 'Activo' 
     ORDER BY usuarioid DESC
   `,
-  getUserById: `
+  getUserByName: `
     SELECT 
       *
     FROM usuarios
-    WHERE usuarioid = $1
-  `,
-  createUser: `
-    INSERT INTO usuarios (rolid, identificacionid, nombre, contacto, sueldo, numeroidentificacion)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING nombre, rolid
+    WHERE nombre ILIKE '%' || $1 || '%'
   `,
   updateUser: `
     UPDATE Usuarios SET

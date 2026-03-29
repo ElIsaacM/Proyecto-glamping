@@ -12,7 +12,7 @@ export const product = {
     WHERE estado = 'Activo' 
     ORDER BY productoid DESC
     `,
-  getProductById: `
+  getProductByName: `
     SELECT 
       productoid,
       nombre, 
@@ -22,11 +22,11 @@ export const product = {
       descripcion, 
       fechaactualizacion 
     FROM Productos 
-    WHERE productoid = $1
+    WHERE nombre ILIKE '%' || $1 || '%'
     `,
   createProduct: `
-    INSERT INTO Productos (nombre, tipo, stock, precioventa, descripcion) 
-    VALUES ($1, $2, $3, $4, $5) 
+    INSERT INTO Productos (nombre, tipo, stock, precioventa, descripcion, fechaactualizacion) 
+    VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) 
     RETURNING nombre, stock
     `,
   updateProduct: `

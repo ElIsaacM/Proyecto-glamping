@@ -1,20 +1,23 @@
-import * as serviceService from '../services/service.service.js';
+import pool from "../config/db.js";
+import { service } from "../models/service.model.js";
 
 export const getservices = async (req, res) => {
   try {
-    const data = await serviceService.getservices();
+    const data = await pool.query(service.getServices);
     res.json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const getserviceById = async (req, res) => {
+export const getserviceByName = async (req, res) => {
   try {
-    const { id } = req.params;
-    const data = await serviceService.getserviceById(id);
+    const { name } = req.body;
+
+    const data = await pool.query(service.getServiceByName, [name.trim()]);
+
     if (!data) return res.status(404).json({ message: 'Not found' });
-    res.json(data);
+    res.json(data.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
