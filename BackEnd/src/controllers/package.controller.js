@@ -1,5 +1,5 @@
 import pool from '../config/db.js'
-import { packages } from '../models/packages.model.js'
+import { packages } from '../models/package.model.js'
 
 export const getPackages = async (req, res) => {
   try {
@@ -15,10 +15,10 @@ export const getPackages = async (req, res) => {
   }
 };
 
-export const getPackageById = async (req, res) => {
+export const getPackageByName = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await pool.query(packages.getPackageById, [id]);
+    const { name } = req.body;
+    const result = await pool.query(packages.getPackageByName, [name.trim()]);
 
     if (result.rows.length === 0) {
       throw new Error("Package not found");
@@ -51,9 +51,9 @@ export const createPackage = async (req, res) => {
 export const updatePackage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tipoid, registradoporid, nombre, diasestadia, descripcion } = req.body;
+    const { tipoid, nombre, diasestadia, descripcion } = req.body;
     const result = await pool.query(packages.updatePackage,
-      [tipoid, registradoporid, nombre, diasestadia, descripcion, id]);
+      [tipoid, nombre, diasestadia, descripcion, id]);
 
     res.status(200).json({
       message: 'Paquete actualizado',
