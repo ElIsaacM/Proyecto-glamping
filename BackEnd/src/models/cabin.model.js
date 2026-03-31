@@ -26,7 +26,7 @@ export const cabin = {
   `,
   createCabin: `
     INSERT INTO Cabanas (nombre, precionoche, fecharegistro, descripcion, fechamantenimiento, estado)
-    VALUES ($1, $2, $3, $4, $5, 'Activo')
+    VALUES ($1, $2, CURRENT_DATE, $3, 'null', 'Activo')
     RETURNING nombre, precionoche
   `,
   updateCabin: `

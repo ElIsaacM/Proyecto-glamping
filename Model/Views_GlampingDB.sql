@@ -5,13 +5,23 @@ CREATE INDEX idx_facturas_reserva ON facturas(reservaid);
 CREATE INDEX idx_pagos_factura ON pagos(facturaid);
 CREATE INDEX idx_clientes_nombre ON clientes(nombre)
 
-CREATE VIEW vista_facturas_cliente AS
+CREATE OR REPLACE VIEW vista_facturas_cliente AS
 SELECT 
 	f.*,
-	c.nombre
+	c.nombre AS cliente,
+	(f.total - COALESCE(SUM(p.totalpagado), 0)) AS totalrestante,
+
+	-- Deteccion de estado
+	CASE 
+    	WHEN COALESCE(SUM(p.totalpagado), 0) = 0 THEN 'Pendiente'
+        WHEN COALESCE(SUM(p.totalpagado), 0) < f.total THEN 'Abonada'
+        ELSE 'Pagada'
+    END AS estado_pago
 FROM facturas f
 JOIN reservas r ON r.reservaid = f.reservaid
-JOIN clientes c ON c.clienteid = r.clienteid;
+JOIN clientes c ON c.clienteid = r.clienteid
+LEFT JOIN pagos p ON p.facturaid = f.facturaid AND p.estado = 'Aceptado'
+GROUP BY f.facturaid, c.nombre;
 
 CREATE VIEW vista_pagos_cliente AS
 SELECT 
@@ -22,7 +32,7 @@ SELECT
 	p.estado,
 	f.total,
 	p.totalpagado,
-	c.nombre
+	c.nombre AS cliente
 FROM pagos p
 JOIN metodospago mp ON mp.metodoid = p.metodoid
 JOIN facturas f ON f.facturaid = p.facturaid
@@ -37,12 +47,9 @@ SELECT
 	rm.estado,
 	f.total,
 	rm.monto AS reembolsado,
-	c.nombre
+	c.nombre AS cliente
 FROM reembolsos rm
 JOIN pagos p ON p.pagoid = rm.pagoid
 JOIN facturas f ON f.facturaid = p.facturaid
 JOIN reservas r ON r.reservaid = f.reservaid
 JOIN clientes c ON c.clienteid = r.clienteid;
-
-SELECT * FROM vista_facturas_cliente
-

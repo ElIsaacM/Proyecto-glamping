@@ -2,8 +2,8 @@ export const pagosCardData = [
     {
       bgColor: '',
       colorTitulo: '#28a745',
-      texto: 'Ultimos pagos',
-      titulo: '13',
+      texto: 'Ganancia total',
+      titulo: '$1.300.000',
       icon: 'bi bi-rocket-takeoff-fill',
     },
     {
@@ -16,8 +16,8 @@ export const pagosCardData = [
     {
       bgColor: '',
       colorTitulo: '#dc3545',
-      texto: 'Pagos incompletos',
-      titulo: '149',
+      texto: 'Reembolsos pendientes',
+      titulo: '2',
       icon: 'bi bi-rocket-takeoff-fill',
     },
     {

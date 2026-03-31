@@ -1,21 +1,32 @@
-import * as paymentService from '../services/payment.service.js';
+import { payment } from "../models/payments.model.js";
+import pool from "../config/db.js";
 
-export const getpayments = async (req, res) => {
+export const getPayments = async (req, res) => {
   try {
-    const data = await paymentService.getpayments();
-    res.json(data);
+    const result = await pool.query(payment.getPayments);
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
-export const getpaymentById = async (req, res) => {
+export const createPaymentManually = async (req, res) => {
   try {
-    const { id } = req.params;
-    const data = await paymentService.getpaymentById(id);
-    if (!data) return res.status(404).json({ message: 'Not found' });
-    res.json(data);
+    const { facturaid, email, metodoid, totalpagado } = req.body;
+
+    const estado = 'Aceptado';
+
+    const result = await pool.query(
+      payment.createPaymentManually,
+      [facturaid, metodoid, estado, totalpagado, email]
+    )
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Factura o correo del cliente no encontrado, o no coinciden." });
+    }
+    
+    res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}

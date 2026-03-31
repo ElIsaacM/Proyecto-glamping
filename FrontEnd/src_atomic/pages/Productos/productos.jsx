@@ -2,13 +2,15 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { deleteUtils } from "../../utils/deleteutils";
+
 import Plantilla from "../plantilla";
 import ProductoGraph from "../../components/organisms/graphs/productoGraph";
 import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tables/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
-import { productosCardData, productosTableData } from "./componentsData/productosData";
+import { productosCardData } from "./componentsData/productosData";
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
@@ -35,8 +37,6 @@ const Botones = styled.div`
   }
 `;
 
-
-
 function Productos() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
@@ -45,25 +45,17 @@ function Productos() {
   const { data, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/products');
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
   }, [fetchData]);
 
-  const eliminarProducto = async (producto) => {
-    if (window.confirm(`¿Estás seguro de desactivar/eliminar "${producto.nombre}"?`)) {
-      try {
-        const res = await fetch(`http://localhost:3000/api/products/${producto.productoid}`, {
-          method: 'DELETE'
-        });
-        if (res.ok) {
-          fetchData('http://localhost:3000/api/products');
-        } else {
-          alert('Error al eliminar producto');
-        }
-      } catch (err) {
-        console.error("Error al eliminar:", err);
-      }
-    }
-  };
+  const eliminarProducto = (producto) => {
+    deleteUtils.eliminarRegistro(
+      'products',
+      producto.productoid,
+      producto.nombre,
+      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)
+    );
+  }
 
   const editarProducto = (producto) => {
     setProductoAEditar(producto);
@@ -82,7 +74,6 @@ function Productos() {
           <BotonAgregar
             modulo={'Agregar producto'}
             color={1}
-            // 3. El botón solo cambia el estado a true
             onClick={() => setModalAbierto(true)}
           />
         </Botones>

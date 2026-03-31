@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import { useFetch } from "../../hooks/fetchConnect";
+
+import { deleteUtils } from "../../utils/deleteutils";
 
 import Plantilla from "../plantilla";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
@@ -7,11 +11,9 @@ import { cabanaCardData } from "./componentsData/cabanaData";
 import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tables/tabla";
-import { useFetch } from "../../hooks/fetchConnect";
-import { useEffect } from "react";
-import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
 
-import PlantillaFormulario from "../../templates/plantillaform";
+import ModalAgregar from "./modales/modalAgregar";
+import ModalEditar from "./modales/modalEditar";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -35,50 +37,64 @@ const Botones = styled.div`
 `;
 
 function Cabanas() {
-  const { data, loading, error, fetchData } = useFetch();
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [cabanaAEditar, setCabanaAEditar] = useState(null);
 
+  const { data, loading, error, fetchData } = useFetch();
+  
   useEffect(() => {
-    fetchData('http://localhost:3000/api/cabins');
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
   }, [fetchData]);
+
+  const eliminarCabana = async (cabana) => {
+    deleteUtils.eliminarRegistro(
+      'cabins',
+      cabana.cabanaid,
+      cabana.nombre,
+      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`)
+    );
+  }
+
+  const editarCabana = (cabana) => {
+    setCabanaAEditar(cabana);
+    setModalEditarAbierto(true);
+  }
 
   return (
     <Plantilla modulo={"Cabanas"}>
-      {({ abrirModal, cerrarModal, modulo }) => (
-        <>
           <CardsCont>
             <LinearGraph />
             <SquareCard squareData={cabanaCardData} />
           </CardsCont>
-          <Botones>
-            <Buscador placeholder={'Buscar cabana'}></Buscador>
 
+          <Botones>
+            <Buscador placeholder={'Buscar cabana'} />
             <BotonAgregar
               modulo={'Agregar cabana'}
               color={1}
-              onClick={() => abrirModal(
-                <ModalPlantilla modulo={modulo.slice(0, -1).toLowerCase()} onClose={cerrarModal}>
-                  <PlantillaFormulario>
-                    <input type="text" placeholder="Nombre" required />
-                    <textarea type="text" placeholder="Descripcion" />
-                    <div className="doble">
-                      <input type="text" placeholder="Precio" required />
-                      <select name="" id="">
-                        <option value="" hidden selected>Estado</option>
-                        <option value="">Opcion</option>
-                        <option value="">Opcion</option>
-                      </select>
-                    </div>
-                  </PlantillaFormulario>
-                </ModalPlantilla>
-              )}
+              onClick={() => setModalAbierto(true)}
             />
           </Botones>
 
           {loading && <p style={{ marginTop: '20px' }}>Cargando cabañas...</p>}
           {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
-          {data && <TablaGeneral data={data} />}
-        </>
-      )}
+          {data && <TablaGeneral data={data} onEdit={editarCabana} onDelete={eliminarCabana}/>}
+
+          {modalAbierto && (
+            <ModalAgregar 
+              setModalAbierto={setModalAbierto}
+              fetchData={fetchData}
+            />
+          )}
+
+          {modalEditarAbierto && (
+            <ModalEditar
+              setModalEditarAbierto={setModalEditarAbierto}
+              fetchData={fetchData}
+              cabanaAEditar={cabanaAEditar}
+            />
+          )}
     </Plantilla>
   );
 }

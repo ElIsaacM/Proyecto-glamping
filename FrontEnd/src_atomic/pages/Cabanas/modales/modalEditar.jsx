@@ -35,24 +35,22 @@ const Form = styled.form`
   }
 `;
 
-export default function ModalEditar({ setModalAbierto, fetchData, productoAEditar }) {
+export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar }) {
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.productoid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.cabanaid}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: productoAEditar.nombre || productoAEditar.Nombre || '',
-      tipo: productoAEditar.tipo || productoAEditar.Tipo || '',
-      stock: productoAEditar.stock || productoAEditar.Stock || '',
-      precioventa: productoAEditar.precioventa || productoAEditar['Precio Venta'] || '',
-      descripcion: productoAEditar.descripcion || productoAEditar.Descripción || ''
+      nombre: cabanaAEditar.nombre || cabanaAEditar.Nombre || '',
+      precionoche: cabanaAEditar.precionoche || cabanaAEditar.precionoche || '',
+      descripcion: cabanaAEditar.descripcion || cabanaAEditar.descripcion || ''
     },
     urlParams,
     () => {
       // Callback OnSuccess
-      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
+      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
       setModalAbierto(false); // Cerramos el modal al tener éxito
     },
     'PUT' // <--- Le decimos a nuestro custom hook que esto es una actualizacion
@@ -61,13 +59,11 @@ export default function ModalEditar({ setModalAbierto, fetchData, productoAEdita
   return (
     <ModalPlantilla modulo="editar producto" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="nombre" placeholder="Nombre del producto" value={formData.nombre} onChange={handleChange} required />
-        <input type="text" name="tipo" placeholder="Tipo (ej: Limpieza, Bebidas...)" value={formData.tipo} onChange={handleChange} required />
-        <input type="number" name="stock" placeholder="Cantidad en stock" value={formData.stock} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precioventa" placeholder="Precio de venta" value={formData.precioventa} onChange={handleChange} required />
-        <textarea name="descripcion" placeholder="Descripción del producto" value={formData.descripcion} onChange={handleChange} required />
+        <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
+        <input type="number" step="0.01" name="precionoche" placeholder="Precio por noche" value={formData.precionoche} onChange={handleChange} required />
+        <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Actualizando...' : 'Actualizar Producto'}
+          {submitting ? 'Actualizando...' : 'Actualizar Cabaña'}
         </button>
       </Form>
     </ModalPlantilla>

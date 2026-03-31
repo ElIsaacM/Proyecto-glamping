@@ -1,32 +1,16 @@
 export const reservation = {
   getReservations: `
     SELECT
-      p.nombre AS paquete,
-      c.nombre AS cliente,
-      r.llegada,
-      r.salida,
-      r.estado,
-      f.total
-    FROM reservas r
-    JOIN paquetes p ON r.paqueteid = p.paqueteid
-    JOIN clientes c ON r.clienteid = c.clienteid
-    JOIN facturas f ON r.reservaid = f.reservaid
-    ORDER BY r.llegada DESC
+      *
+    FROM vista_facturas_cliente
+    ORDER BY fechafactura DESC
   `,
   getReservationByClient: `
-      SELECT
-      p.nombre AS paquete,
-      c.nombre AS cliente,
-      r.llegada,
-      r.salida,
-      r.estado,
-      f.total
-    FROM reservas r
-    JOIN paquetes p ON r.paqueteid = p.paqueteid
-    JOIN clientes c ON r.clienteid = c.clienteid
-    JOIN facturas f ON r.reservaid = f.reservaid
-    WHERE c.nombre ILIKE '%' || $1 || '%'
-    ORDER BY r.llegada DESC
+    SELECT
+      *
+    FROM vista_facturas_cliente
+    WHERE cliente ILIKE '%' || $1 || '%'
+    ORDER BY fechafactura DESC
   `,
   createReservation: `
     -- Por resolver
