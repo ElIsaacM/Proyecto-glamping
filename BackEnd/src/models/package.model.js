@@ -32,9 +32,9 @@ export const packages = {
   `,
   updatePackage: `
     UPDATE paquetes SET
-      tipoid = COALESCE(NULLIF($1::integer, ''), tipoid),
+      tipoid = COALESCE(NULLIF($1::text, '')::integer, tipoid),
       nombre = COALESCE(NULLIF($2, ''), nombre),
-      diasestadia = COALESCE(NULLIF($3::integer, ''), diasestadia),
+      diasestadia = COALESCE(NULLIF($3::text, '')::integer, diasestadia),
       descripcion = COALESCE(NULLIF($4, ''), descripcion),
       fecharegistro = CURRENT_DATE
     WHERE paqueteid = $5

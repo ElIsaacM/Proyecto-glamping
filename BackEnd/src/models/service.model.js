@@ -9,7 +9,7 @@ export const service = {
       fechaactualizacion
     FROM servicios
     WHERE estado = 'Activo'
-    ORDER BY serviciosid DESC
+    ORDER BY servicioid DESC
     `,
   getServiceByName: `
     SELECT
