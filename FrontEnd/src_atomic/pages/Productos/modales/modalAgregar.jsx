@@ -49,11 +49,46 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   return (
     <ModalPlantilla modulo="productos" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="nombre" placeholder="Nombre del producto" value={formData.nombre} onChange={handleChange} required />
-        <input type="text" name="tipo" placeholder="Tipo (ej: Limpieza, Bebidas...)" value={formData.tipo} onChange={handleChange} required />
-        <input type="number" name="stock" placeholder="Cantidad en stock" value={formData.stock} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precioventa" placeholder="Precio de venta" value={formData.precioventa} onChange={handleChange} required />
-        <textarea name="descripcion" placeholder="Descripción del producto" value={formData.descripcion} onChange={handleChange} required />
+        <input 
+          type="text" 
+          name="nombre" 
+          placeholder="Nombre del producto" 
+          value={formData.nombre} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="text" 
+          name="tipo" 
+          placeholder="Tipo (ej: Limpieza, Bebidas...)" 
+          value={formData.tipo} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          name="stock" 
+          placeholder="Cantidad en stock" 
+          value={formData.stock} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          step="0.01" 
+          name="precioventa" 
+          placeholder="Precio de venta" 
+          value={formData.precioventa} 
+          onChange={handleChange} 
+          required 
+        />
+        <textarea 
+          name="descripcion" 
+          placeholder="Descripción del producto" 
+          value={formData.descripcion} 
+          onChange={handleChange} 
+          required 
+        />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Producto'}
         </button>

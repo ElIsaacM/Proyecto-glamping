@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { deleteUtils } from "../../utils/deleteUtils";
+
 import Plantilla from "../plantilla";
 import ServicioGraph from "../../components/organisms/graphs/servicioGraph";
 import Buscador from "../../components/molecules/buscador";
@@ -10,6 +12,9 @@ import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
 import TablaGeneral from "../../components/organisms/tables/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { serviciosCardData, serviciosTableData } from "./componentsData/serviciosData";
+
+import ModalAgregar from "./modales/modalAgregar";
+import ModalEditar from "./modales/modalEditar";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -35,38 +40,65 @@ const Botones = styled.div`
 `;
 
 function Servicios() {
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [servicioAEditar, setServicioAEditar] = useState(null)
+
   const { data, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/services');
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`);
   }, [fetchData]);
+
+  const eliminarServicio = (servicio) => {
+    deleteUtils.eliminarRegistro(
+      'services',
+      servicio.servicioid,
+      servicio.nombre,
+      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`)
+    );
+  }
+
+  const editarServicio = (servicio) => {
+    setServicioAEditar(servicio);
+    setModalEditarAbierto(true);
+  }
 
   return (
     <Plantilla modulo={'Servicios'}>
-      {({ abrirModal, cerrarModal, modulo }) => (
-        <>
           <CardsCont>
             <RectangleCard rectangleData={serviciosCardData} />
             <ServicioGraph />
           </CardsCont>
+
           <div>
             <Botones>
               <Buscador placeholder={'Buscar servicio'} />
               <BotonAgregar 
                 modulo={'Agregar servicio'} 
                 color={1} 
-                onClick={() => abrirModal(
-                  <ModalPlantilla modulo={modulo.toLowerCase()} onClose={cerrarModal}>
-                  </ModalPlantilla>
-                )} 
+                onClick={() => setModalAbierto(true)} 
               />
             </Botones>
             {loading && <p style={{marginTop: '20px'}}>Cargando servicios...</p>}
             {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
-            <TablaGeneral data={data || serviciosTableData} />
+            {data && <TablaGeneral data={data} onEdit={editarServicio} onDelete={eliminarServicio} />}
           </div>
-        </>
-      )}
+
+          {modalAbierto && (
+            <ModalAgregar 
+              setModalAbierto={setModalAbierto} 
+              fetchData={fetchData} 
+            />
+          )}
+
+          {modalEditarAbierto && (
+            <ModalEditar 
+              setModalAbierto={setModalEditarAbierto} 
+              fetchData={fetchData} 
+              servicioAEditar={servicioAEditar} 
+            />
+          )}
     </Plantilla>
   );
 }

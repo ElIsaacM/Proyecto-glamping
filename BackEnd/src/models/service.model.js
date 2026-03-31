@@ -1,6 +1,7 @@
 export const service = {
   getServices: `
     SELECT 
+      servicioid,
       nombre,
       encargado,
       duracionminutos,
@@ -13,6 +14,7 @@ export const service = {
     `,
   getServiceByName: `
     SELECT
+      servicioid,
       nombre,
       encargado,
       duracionminutos,

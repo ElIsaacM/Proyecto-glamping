@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
-import { deleteUtils } from "../../utils/deleteutils";
+import { deleteUtils } from "../../utils/deleteUtils";
 
 import Plantilla from "../plantilla";
 import ProductoGraph from "../../components/organisms/graphs/productoGraph";
@@ -11,6 +11,7 @@ import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tables/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { productosCardData } from "./componentsData/productosData";
+
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
@@ -68,6 +69,7 @@ function Productos() {
         <RectangleCard rectangleData={productosCardData} />
         <ProductoGraph />
       </CardsCont>
+
       <div>
         <Botones>
           <Buscador placeholder={'Buscar producto'} />

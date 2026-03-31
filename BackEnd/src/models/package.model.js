@@ -2,6 +2,7 @@
 export const packages = {
   getPackages: `
     SELECT
+      paqueteid,
       tipoid,
       registradoporid,
       nombre,
@@ -14,6 +15,7 @@ export const packages = {
   `,
   getPackageByName: `
     SELECT
+      p.paqueteid,
       tp.nombre AS tipo,
       u.nombre AS registradoPor,
       p.nombre,
@@ -25,6 +27,7 @@ export const packages = {
     JOIN usuarios u ON p.registradoporid = u.usuarioid
     WHERE p.nombre ILIKE '%' || $1 || '%'
   `,
+  // Un paquete debe incluir (servicios, productos, cabañas)
   createPackage: `
     INSERT INTO paquetes (tipoid, registradoporid, nombre, diasestadia, fecharegistro, descripcion, estado)
     VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, 'Activo')

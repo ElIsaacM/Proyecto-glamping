@@ -39,22 +39,58 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   // Agregar capacidad personas
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { nombre: '', precionoche: '', descripcion: ''},
-    `${import.meta.env.VITE_API_BASE_URL}/api/cabins`,
+    { tipoid: '', registradoporid: '', nombre: '', diasestadia: '', descripcion: ''},
+    `${import.meta.env.VITE_API_BASE_URL}/api/packages`,
     () => {
-      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
+      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
       setModalAbierto(false); // Cerramos el modal al tener éxito
     }
   );
 
   return (
-    <ModalPlantilla modulo="productos" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="paquetes" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precionoche" placeholder="Precio por noche" value={formData.precioventa} onChange={handleChange} required />
-        <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
+        <input 
+          type="number" 
+          name="tipoid" 
+          placeholder="Tipo de paquete" 
+          value={formData.tipoid} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          name="registradoporid" 
+          placeholder="Registrado por" 
+          value={formData.registradoporid} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="text" 
+          name="nombre" 
+          placeholder="Nombre del paquete" 
+          value={formData.nombre} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          name="diasestadia" 
+          placeholder="Días de estadía" 
+          value={formData.diasestadia} 
+          onChange={handleChange} 
+          required 
+        />
+        <textarea 
+          name="descripcion" 
+          placeholder="Descripción del paquete" 
+          value={formData.descripcion} 
+          onChange={handleChange} 
+          required 
+        />
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Guardando...' : 'Guardar Cabaña'}
+          {submitting ? 'Guardando...' : 'Guardar Paquete'}
         </button>
       </Form>
     </ModalPlantilla>

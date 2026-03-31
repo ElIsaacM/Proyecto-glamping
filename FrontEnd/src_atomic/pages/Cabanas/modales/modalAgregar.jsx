@@ -48,7 +48,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   );
 
   return (
-    <ModalPlantilla modulo="productos" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="cabañas" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
         <input type="number" step="0.01" name="precionoche" placeholder="Precio por noche" value={formData.precioventa} onChange={handleChange} required />

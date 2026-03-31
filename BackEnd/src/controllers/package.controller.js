@@ -18,7 +18,10 @@ export const getPackages = async (req, res) => {
 export const getPackageByName = async (req, res) => {
   try {
     const { name } = req.body;
-    const result = await pool.query(packages.getPackageByName, [name.trim()]);
+    const result = await pool.query(
+      packages.getPackageByName, 
+      [name.trim()]
+    );
 
     if (result.rows.length === 0) {
       throw new Error("Package not found");
@@ -34,7 +37,8 @@ export const createPackage = async (req, res) => {
   try {
     const { tipoid, registradoporid, nombre, diasestadia, descripcion } = req.body;
     const result = await pool.query(packages.createPackage,
-      [tipoid, registradoporid, nombre, diasestadia, descripcion]);
+      [tipoid, registradoporid, nombre, diasestadia, descripcion]
+    );
     
     res.status(200).json({
       message: 'Paquete creado',
@@ -51,9 +55,18 @@ export const createPackage = async (req, res) => {
 export const updatePackage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tipoid, nombre, diasestadia, descripcion } = req.body;
-    const result = await pool.query(packages.updatePackage,
-      [tipoid, nombre, diasestadia, descripcion, id]);
+
+    const { 
+      tipoid, 
+      nombre, 
+      diasestadia, 
+      descripcion 
+    } = req.body;
+    
+    const result = await pool.query(
+      packages.updatePackage,
+      [tipoid, nombre, diasestadia, descripcion, id]
+    );
 
     res.status(200).json({
       message: 'Paquete actualizado',
@@ -71,7 +84,10 @@ export const updatePackage = async (req, res) => {
 export const deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query(packages.deletePackage, [id])
+    const result = await pool.query(
+      packages.deletePackage, 
+      [id]
+    );
 
     res.status(200).json({
       message: 'Paquete eliminado',

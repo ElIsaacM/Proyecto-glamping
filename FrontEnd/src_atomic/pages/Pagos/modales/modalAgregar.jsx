@@ -52,7 +52,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   );
 
   return (
-    <ModalPlantilla modulo="productos" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="pagos" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input type="text" name="facturaid" placeholder="ID de la factura" value={formData.facturaid} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Correo del cliente" value={formData.email} onChange={handleChange} required />

@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { deleteUtils } from "../../utils/deleteUtils";
+
 import Plantilla from "../plantilla";
 import PaqueteGraph from "../../components/organisms/graphs/paqueteGraph";
 import Buscador from "../../components/molecules/buscador";
@@ -10,6 +12,9 @@ import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
 import TablaGeneral from "../../components/organisms/tables/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { paquetesCardData, paquetesTableData } from "./componentsData/paquetesData";
+
+import ModalAgregar from "./modales/modalAgregar";
+import ModalEditar from "./modales/modalEditar";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -35,16 +40,33 @@ const Botones = styled.div`
 `;
 
 function Paquetes() {
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [paqueteAEditar, setPaqueteAEditar] = useState(null);
+
   const { data, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/packages');
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
   }, [fetchData]);
+
+
+  const eliminarPaquete = (paquete) => {
+    deleteUtils.eliminarRegistro(
+      'packages',
+      paquete.paqueteid,
+      paquete.nombre,
+      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`)
+    );
+  }
+
+  const editarPaquete = (paquete) => {
+    setPaqueteAEditar(paquete);
+    setModalEditarAbierto(true);
+  }
 
   return (
     <Plantilla modulo="Paquetes">
-      {({ abrirModal, cerrarModal, modulo }) => (
-        <>
           <CardsCont>
             <RectangleCard rectangleData={paquetesCardData} />
             <PaqueteGraph />
@@ -56,19 +78,29 @@ function Paquetes() {
               <BotonAgregar
                 modulo="Agregar paquete"
                 color={1}
-                onClick={() => abrirModal(
-                  <ModalPlantilla modulo={modulo.toLowerCase()} onClose={cerrarModal}>
-                    <input type="text" placeholder="Nombre" />
-                  </ModalPlantilla>
-                )}
+                onClick={() => setModalAbierto(true)}
               />
             </Botones>
+
             {loading && <p style={{marginTop: '20px'}}>Cargando paquetes...</p>}
             {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
-            <TablaGeneral data={data || paquetesTableData} />
+            {data && <TablaGeneral data={data} onEdit={editarPaquete} onDelete={eliminarPaquete} />}
           </div>
-        </>
-      )}
+
+          {modalAbierto && (
+            <ModalAgregar
+              setModalAbierto={setModalAbierto}
+              fetchData={fetchData}
+            />
+          )}
+
+          {modalEditarAbierto && paqueteAEditar && (
+            <ModalEditar
+              setModalAbierto={setModalEditarAbierto}
+              fetchData={fetchData}
+              paqueteAEditar={paqueteAEditar}
+            />
+          )}
     </Plantilla>
   );
 }

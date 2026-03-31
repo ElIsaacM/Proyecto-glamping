@@ -35,35 +35,64 @@ const Form = styled.form`
   }
 `;
 
-export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar }) {
+export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar }) {
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.cabanaid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/packages/${paqueteAEditar.paqueteid}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: cabanaAEditar.nombre || cabanaAEditar.Nombre || '',
-      precionoche: cabanaAEditar.precionoche || cabanaAEditar.precionoche || '',
-      descripcion: cabanaAEditar.descripcion || cabanaAEditar.descripcion || ''
+      tipoid: paqueteAEditar.tipoid || paqueteAEditar.tipoid || '',
+      nombre: paqueteAEditar.nombre || paqueteAEditar.Nombre || '',
+      diasestadia: paqueteAEditar.diasestadia || paqueteAEditar.diasestadia || '',
+      descripcion: paqueteAEditar.descripcion || paqueteAEditar.descripcion || ''
     },
     urlParams,
     () => {
       // Callback OnSuccess
-      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
+      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
       setModalAbierto(false); // Cerramos el modal al tener éxito
     },
     'PUT' // <--- Le decimos a nuestro custom hook que esto es una actualizacion
   );
 
   return (
-    <ModalPlantilla modulo="editar producto" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="editar paquete" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precionoche" placeholder="Precio por noche" value={formData.precionoche} onChange={handleChange} required />
-        <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
+        <input 
+          type="number" 
+          name="tipoid" 
+          placeholder="Tipo de paquete" 
+          value={formData.tipoid} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="text" 
+          name="nombre" 
+          placeholder="Nombre del paquete" 
+          value={formData.nombre} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          name="diasestadia" 
+          placeholder="Días de estadía" 
+          value={formData.diasestadia} 
+          onChange={handleChange} 
+          required 
+        />
+        <textarea 
+          name="descripcion" 
+          placeholder="Descripción del paquete" 
+          value={formData.descripcion} 
+          onChange={handleChange} 
+          required 
+        />
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Actualizando...' : 'Actualizar Cabaña'}
+          {submitting ? 'Actualizando...' : 'Actualizar Paquete'}
         </button>
       </Form>
     </ModalPlantilla>

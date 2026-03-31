@@ -35,74 +35,74 @@ const Form = styled.form`
   }
 `;
 
-export default function ModalEditar({ setModalAbierto, fetchData, productoAEditar }) {
-  // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
+export default function ModalEditar({ setModalAbierto, fetchData, servicioAEditar }) {
+  // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "servicioAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.productoid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/services/${servicioAEditar.servicioid}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: productoAEditar.nombre || productoAEditar.Nombre || '',
-      tipo: productoAEditar.tipo || productoAEditar.Tipo || '',
-      stock: productoAEditar.stock || productoAEditar.Stock || '',
-      precioventa: productoAEditar.precioventa || productoAEditar['Precio Venta'] || '',
-      descripcion: productoAEditar.descripcion || productoAEditar.Descripción || ''
+      nombre: servicioAEditar.nombre || servicioAEditar.Nombre || '',
+      encargado: servicioAEditar.encargado || servicioAEditar.Encargado || '',
+      duracionminutos: servicioAEditar.duracionminutos || servicioAEditar.DuracionMinutos || '',
+      precio: servicioAEditar.precio || servicioAEditar.Precio || '',
+      descripcion: servicioAEditar.descripcion || servicioAEditar.Descripción || ''
     },
     urlParams,
     () => {
       // Callback OnSuccess
-      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
+      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`);
       setModalAbierto(false); // Cerramos el modal al tener éxito
     },
     'PUT' // <--- Le decimos a nuestro custom hook que esto es una actualizacion
   );
 
   return (
-    <ModalPlantilla modulo="editar producto" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="editar servicio" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input 
           type="text" 
           name="nombre" 
-          placeholder="Nombre del producto" 
+          placeholder="Nombre del servicio" 
           value={formData.nombre} 
           onChange={handleChange} 
           required 
         />
         <input 
           type="text" 
-          name="tipo" 
-          placeholder="Tipo (ej: Limpieza, Bebidas...)" 
-          value={formData.tipo} 
+          name="encargado" 
+          placeholder="Encargado" 
+          value={formData.encargado} 
           onChange={handleChange} 
           required 
         />
         <input 
           type="number" 
-          name="stock" 
-          placeholder="Cantidad en stock" 
-          value={formData.stock} 
+          name="duracionminutos" 
+          placeholder="Duración en minutos" 
+          value={formData.duracionminutos} 
           onChange={handleChange} 
           required 
         />
         <input 
           type="number" 
           step="0.01" 
-          name="precioventa" 
-          placeholder="Precio de venta" 
-          value={formData.precioventa} 
+          name="precio" 
+          placeholder="Precio por hora" 
+          value={formData.precio} 
           onChange={handleChange} 
           required 
         />
         <textarea 
           name="descripcion" 
-          placeholder="Descripción del producto" 
+          placeholder="Descripción del servicio" 
           value={formData.descripcion} 
           onChange={handleChange} 
           required 
         />
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Actualizando...' : 'Actualizar Producto'}
+          {submitting ? 'Actualizando...' : 'Actualizar Servicio'}
         </button>
       </Form>
     </ModalPlantilla>
