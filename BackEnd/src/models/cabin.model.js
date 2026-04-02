@@ -26,7 +26,7 @@ export const cabin = {
   `,
   createCabin: `
     INSERT INTO Cabanas (nombre, precionoche, fecharegistro, descripcion, fechamantenimiento, estado)
-    VALUES ($1, $2, CURRENT_DATE, $3, 'null', 'Activo')
+    VALUES ($1, $2, CURRENT_DATE, $3, null, 'Activo')
     RETURNING nombre, precionoche
   `,
   updateCabin: `
@@ -34,7 +34,7 @@ export const cabin = {
       nombre = COALESCE(NULLIF($1, ''), nombre),
       precionoche = COALESCE(NULLIF($2::text, '')::numeric, precionoche),
       fecharegistro = CURRENT_DATE,
-      descripcion = COALESCE(NULLIF($3, ''), descripcion),
+      descripcion = COALESCE(NULLIF($3, ''), descripcion)
     WHERE cabanaid = $4
     RETURNING nombre, fecharegistro
   `,
