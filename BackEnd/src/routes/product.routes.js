@@ -16,6 +16,6 @@ router.post('/search', getProductByName);
 router.post('/', createProduct);
 router.put('/:id', updateProduct);
 router.patch('/:id', sellProduct);
-router.delete('/:id', deleteProduct);
+router.delete('/delete/:id', deleteProduct);
 
 export default router;

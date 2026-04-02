@@ -66,7 +66,8 @@ CREATE TABLE Usuarios (
     Nombre VARCHAR(50) NOT NULL,
     Contacto VARCHAR(100) UNIQUE, -- Espacio para encriptación
     Sueldo DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    NumeroIdentificacion VARCHAR(100) UNIQUE NOT NULL -- VARCHAR para hashes/encriptación
+    NumeroIdentificacion VARCHAR(100) UNIQUE NOT NULL, -- VARCHAR para hashes/encriptación
+    Estado VARCHAR(50) DEFAULT 'Activo'
 );
 
 CREATE TABLE Login (

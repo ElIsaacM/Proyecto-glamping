@@ -8,7 +8,7 @@ import Plantilla from "../plantilla";
 import ProductoGraph from "../../components/organisms/graphs/productoGraph";
 import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
-import TablaGeneral from "../../components/organisms/tables/tabla";
+import TablaGeneral from "../../components/organisms/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { productosCardData } from "./componentsData/productosData";
 

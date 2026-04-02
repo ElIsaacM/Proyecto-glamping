@@ -1,6 +1,7 @@
 export const cabin = {
   getCabins: `
     SELECT 
+      cabanaid,
       nombre,
       precionoche,
       fecharegistro,
@@ -9,10 +10,11 @@ export const cabin = {
       estado
     FROM Cabanas
     WHERE estado <> 'inactivo'
-    ORDER BY fechamantenimiento DESC
+    ORDER BY fecharegistro DESC
   `,
   getCabinByName: `
     SELECT 
+      cabanaid,
       nombre,
       precionoche,
       fecharegistro,
@@ -34,7 +36,7 @@ export const cabin = {
       nombre = COALESCE(NULLIF($1, ''), nombre),
       precionoche = COALESCE(NULLIF($2::text, '')::numeric, precionoche),
       fecharegistro = CURRENT_DATE,
-      descripcion = COALESCE(NULLIF($3, ''), descripcion),
+      descripcion = COALESCE(NULLIF($3, ''), descripcion)
     WHERE cabanaid = $4
     RETURNING nombre, fecharegistro
   `,

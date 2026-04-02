@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import SelectBase from "../atoms/select/select-base";
+import SelectBase from "../atoms/select/selectBase";
 
 const Buscador_Filtro = styled.div`
   display: flex;
