@@ -6,7 +6,7 @@ import Plantilla from "../plantilla";
 import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import LinearCard from "../../components/molecules/cards/linearCard";
-import TablaGeneral from "../../components/organisms/tables/tabla";
+import TablaGeneral from "../../components/organisms/tabla";
 import { pagosCardData } from "./componentsData/pagosData";
 
 import ModalAgregar from "./modales/modalAgregar";

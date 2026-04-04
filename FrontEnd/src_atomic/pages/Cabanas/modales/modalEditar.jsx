@@ -57,11 +57,32 @@ export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar 
   );
 
   return (
-    <ModalPlantilla modulo="editar producto" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="editar cabaña" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precionoche" placeholder="Precio por noche" value={formData.precionoche} onChange={handleChange} required />
-        <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
+        <input 
+          type="text" 
+          name="nombre" 
+          placeholder="Nombre de la cabaña" 
+          value={formData.nombre} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          step="0.01" 
+          name="precionoche" 
+          placeholder="Precio por noche" 
+          value={formData.precionoche} 
+          onChange={handleChange} 
+          required 
+        />
+        <textarea 
+          name="descripcion" 
+          placeholder="Descripción de la cabaña" 
+          value={formData.descripcion} 
+          onChange={handleChange} 
+          required 
+        />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Actualizando...' : 'Actualizar Cabaña'}
         </button>

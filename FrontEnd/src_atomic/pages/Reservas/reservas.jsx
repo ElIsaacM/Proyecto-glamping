@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Plantilla from "../plantilla";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
 import Buscador from "../../components/molecules/buscador";
-import TablaGeneral from "../../components/organisms/tables/tabla";
+import TablaGeneral from "../../components/organisms/tabla";
 import { useFetch } from "../../hooks/fetchConnect";
 import { useEffect } from "react";
 

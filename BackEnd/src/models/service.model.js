@@ -48,3 +48,11 @@ export const service = {
     RETURNING nombre
   `
 }
+
+export const serviceFilters = {
+
+}
+
+export const serviceStats = {
+
+}

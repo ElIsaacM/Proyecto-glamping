@@ -1,6 +1,7 @@
 export const cabin = {
   getCabins: `
     SELECT 
+      cabanaid,
       nombre,
       precionoche,
       fecharegistro,
@@ -9,10 +10,11 @@ export const cabin = {
       estado
     FROM Cabanas
     WHERE estado <> 'inactivo'
-    ORDER BY fechamantenimiento DESC
+    ORDER BY fecharegistro DESC
   `,
   getCabinByName: `
     SELECT 
+      cabanaid,
       nombre,
       precionoche,
       fecharegistro,

@@ -6,24 +6,6 @@ export const login = {
     FROM login
     WHERE email = $1 AND password = $2
   `,
-  createLogin: `
-    WITH insert_user AS (
-      INSERT INTO usuarios (rolid, identificacionid, nombre, contacto, sueldo, numeroidentificacion)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING usuarioid, nombre, rolid
-    ),
-    insert_login AS (
-      INSERT INTO login (usuarioid, email, password)
-      SELECT usuarioid, $7, $8 FROM insert_user
-      RETURNING email
-    )
-    SELECT 
-      u.nombre, 
-      u.rolid, 
-      l.email
-    FROM insert_user u
-    CROSS JOIN insert_login l;
-  `,
   restoreLogin: `
     UPDATE login
     SET password = $1

@@ -13,6 +13,6 @@ router.get('/', getPackages);
 router.post('/search', getPackageByName);
 router.post('/', createPackage);
 router.put('/:id', updatePackage);
-router.delete('/:id', deletePackage);
+router.delete('/delete:id', deletePackage);
 
 export default router;

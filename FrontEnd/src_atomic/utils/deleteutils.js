@@ -5,7 +5,7 @@ export const deleteUtils = {
     )) return;
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/delete/${id}`, {
         method: 'DELETE'
       });
 

@@ -9,7 +9,7 @@ import ServicioGraph from "../../components/organisms/graphs/servicioGraph";
 import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
-import TablaGeneral from "../../components/organisms/tables/tabla";
+import TablaGeneral from "../../components/organisms/tabla";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { serviciosCardData, serviciosTableData } from "./componentsData/serviciosData";
 

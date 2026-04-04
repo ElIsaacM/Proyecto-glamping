@@ -13,6 +13,6 @@ router.get('/', getservices);
 router.post('/search', getserviceByName);
 router.post('/', createService);
 router.put('/:id', updateService);
-router.delete('/:id', deleteService);
+router.delete('/delete/:id', deleteService);
 
 export default router;
