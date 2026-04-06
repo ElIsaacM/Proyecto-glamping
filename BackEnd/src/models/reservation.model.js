@@ -2,19 +2,20 @@ export const reservation = {
   getReservations: `
     SELECT
       *
-    FROM vista_facturas_cliente
-    ORDER BY fechafactura DESC
+    FROM vista_reservas
+    ORDER BY fecha DESC
   `,
   getReservationByClient: `
     SELECT
       *
-    FROM vista_facturas_cliente
+    FROM vista_reservas
     WHERE cliente ILIKE '%' || $1 || '%'
-    ORDER BY fechafactura DESC
+    ORDER BY fecha DESC
   `,
   createReservation: `
     -- Por resolver
-    -- Nota: agregar una obtencion de datos si el cliente 
+    -- Insertar una factura por cada reserva
+    -- Nota: agregar una obtencion de datos en el controller si el cliente 
     -- ingresa correctamente la cc y el correo, de este modo no tendría que ingresar de nuevo sus datos
   `,
   updateReservation: `

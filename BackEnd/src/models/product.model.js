@@ -1,29 +1,18 @@
 export const product = {
   getProducts: `
     SELECT 
-      productoid,
-      nombre, 
-      tipo, 
-      stock, 
-      precioventa, 
-      descripcion, 
-      fechaactualizacion
-    FROM Productos 
+      * 
+    FROM vista_productos
     WHERE estado = 'Activo' 
-    ORDER BY productoid DESC
+    ORDER BY ID DESC
     `,
   getProductByName: `
     SELECT 
-      productoid,
-      nombre, 
-      tipo, 
-      stock, 
-      precioventa, 
-      descripcion, 
-      fechaactualizacion 
-    FROM Productos 
+      * 
+    FROM vista_productos
     WHERE nombre ILIKE '%' || $1 || '%'
     `,
+  // Nota: en la nueva DB ya no existe stock y ya el precioventa es precio
   createProduct: `
     INSERT INTO Productos (nombre, tipo, stock, precioventa, descripcion, fechaactualizacion) 
     VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) 
@@ -53,3 +42,50 @@ export const product = {
     RETURNING nombre
     `,
 };
+
+export const productFilters = {
+  idle_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Inactivo'
+  `,
+  expensive_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Activo'
+    ORDER BY precio DESC
+  `,
+  cheap_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Activo'
+    ORDER BY precio ASC
+  `
+}
+
+export const productStats = {
+  most_frecuent_product: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad DESC
+    LIMIT 1
+  `,
+  least_frecuent_product: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad ASC
+    LIMIT 1
+  `,
+  top_products: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad DESC
+    LIMIT 3
+  `
+}

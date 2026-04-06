@@ -2,15 +2,15 @@ export const user = {
   getUsers: `
     SELECT 
       *
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo' 
-    ORDER BY usuarioid DESC
+    ORDER BY id DESC
   `,
   getUserByName: `
     SELECT 
       *
-    FROM usuarios
-    WHERE nombre ILIKE '%' || $1 || '%'
+    FROM vista_usuarios
+    WHERE usuario ILIKE '%' || $1 || '%'
   `,
   createUser: `
     WITH insert_user AS (
@@ -33,9 +33,8 @@ export const user = {
   updateUser: `
     WITH update_login AS (
       UPDATE login SET
-        email = COALESCE(NULLIF($7, ''), email),
-        contrasena = COALESCE(NULLIF($8, ''), contrasena)
-      WHERE usuarioid = $9
+        password = COALESCE(NULLIF($7, ''), password)
+      WHERE usuarioid = $8
       RETURNING usuarioid -- Retornamos algo para confirmar que se ejecutó
     ),
     update_usuarios AS (
@@ -46,7 +45,7 @@ export const user = {
         contacto = COALESCE(NULLIF($4, ''), contacto),
         sueldo = COALESCE(NULLIF($5::text, '')::numeric, sueldo),
         numeroidentificacion = COALESCE(NULLIF($6, ''), numeroidentificacion)
-      WHERE usuarioid = $9
+      WHERE usuarioid = $8
       RETURNING nombre, rolid
     )
     SELECT nombre, rolid FROM update_usuarios; 
@@ -69,29 +68,28 @@ export const userFilters = {
   payroll_desc: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo'
     ORDER BY sueldo DESC
   `,
   payroll_asc: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo'
     ORDER BY sueldo ASC
   `,
   idle_status: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Inactivo'
   `,
   admin_users: `
     SELECT 
       * 
-    FROM usuarios u
-    JOIN roles r ON u.rolid = r.rolid
-    WHERE r.nombre = 'Administrador'
+    FROM vista_usuarios
+    WHERE rol = 'Administrador'
   `
 }
 
@@ -99,8 +97,8 @@ export const userStats = {
   getStats: `
     SELECT 
       COUNT(*) AS total_active_users,
-      (SELECT nombre FROM usuarios WHERE sueldo = (SELECT MAX(sueldo) FROM usuarios WHERE estado = 'Activo') LIMIT 1) AS highest_payroll,
-      (SELECT nombre FROM usuarios WHERE sueldo = (SELECT MIN(sueldo) FROM usuarios WHERE estado = 'Activo') LIMIT 1) AS lowest_payroll,
+      (SELECT nombre FROM usuarios WHERE sueldo = (SELECT MAX(sueldo) FROM usuarios WHERE estado = 'Activo')) AS highest_payroll,
+      (SELECT nombre FROM usuarios WHERE sueldo = (SELECT MIN(sueldo) FROM usuarios WHERE estado = 'Activo')) AS lowest_payroll,
       SUM(sueldo) AS total_payroll
     FROM usuarios
     WHERE estado = 'Activo';
