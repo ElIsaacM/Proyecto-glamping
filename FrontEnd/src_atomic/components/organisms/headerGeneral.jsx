@@ -26,7 +26,7 @@ function HeaderGeneral({ user }) {
       </div>
       <div>
         <i class="bi bi-bell-fill"></i>
-        <img width={'30px'} src="../src/assets/Logo glamping.svg" alt="" />
+        <img width={'30px'} src="../../src_atomic/assets/Logo glamping.svg" alt="" />
       </div>
     </Header>
   );

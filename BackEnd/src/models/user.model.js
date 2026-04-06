@@ -2,15 +2,15 @@ export const user = {
   getUsers: `
     SELECT 
       *
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo' 
-    ORDER BY usuarioid DESC
+    ORDER BY id DESC
   `,
   getUserByName: `
     SELECT 
       *
-    FROM usuarios
-    WHERE nombre ILIKE '%' || $1 || '%'
+    FROM vista_usuarios
+    WHERE usuario ILIKE '%' || $1 || '%'
   `,
   createUser: `
     WITH insert_user AS (
@@ -68,29 +68,28 @@ export const userFilters = {
   payroll_desc: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo'
     ORDER BY sueldo DESC
   `,
   payroll_asc: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Activo'
     ORDER BY sueldo ASC
   `,
   idle_status: `
     SELECT 
       * 
-    FROM usuarios
+    FROM vista_usuarios
     WHERE estado = 'Inactivo'
   `,
   admin_users: `
     SELECT 
       * 
-    FROM usuarios u
-    JOIN roles r ON u.rolid = r.rolid
-    WHERE r.nombre = 'Administrador'
+    FROM vista_usuarios
+    WHERE rol = 'Administrador'
   `
 }
 

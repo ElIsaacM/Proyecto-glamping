@@ -50,8 +50,8 @@ function Usuarios() {
   const eliminarUsuario = (usuario) => {
     deleteUtils.eliminarRegistro(
       'users',
-      usuario.usuarioid,
-      usuario.nombre,
+      usuario.id,
+      usuario.usuario,
       handleFetchData
     );
   }
@@ -59,8 +59,8 @@ function Usuarios() {
   const activarUsuario = (usuario) => {
     activateUtils.activarRegistro(
       'users',
-      usuario.usuarioid,
-      usuario.nombre,
+      usuario.id,
+      usuario.usuario,
       handleFetchData
     );
   }

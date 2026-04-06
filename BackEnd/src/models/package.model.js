@@ -2,30 +2,16 @@
 export const packages = {
   getPackages: `
     SELECT
-      paqueteid,
-      tipoid,
-      registradoporid,
-      nombre,
-      diasestadia,
-      fecharegistro,
-      descripcion
-    FROM paquetes
+      * 
+    FROM vista_paquetes
     WHERE estado = 'Activo'
-    ORDER BY fecharegistro DESC
+    ORDER BY fecha DESC
   `,
   getPackageByName: `
     SELECT
-      p.paqueteid,
-      tp.nombre AS tipo,
-      u.nombre AS registradoPor,
-      p.nombre,
-      p.diasestadia,
-      p.fecharegistro,
-      p.descripcion
-    FROM paquetes p
-    JOIN tipopaquete tp ON p.tipoid = tp.tipoid
-    JOIN usuarios u ON p.registradoporid = u.usuarioid
-    WHERE p.nombre ILIKE '%' || $1 || '%'
+      * 
+    FROM vista_paquetes
+    WHERE nombre ILIKE '%' || $1 || '%'
   `,
   // Un paquete debe incluir (servicios, productos, cabañas)
   createPackage: `
@@ -48,5 +34,60 @@ export const packages = {
       estado = 'Inactivo'
     WHERE paqueteid = $1
     RETURNING nombre
+  `
+}
+
+export const packageFilters = {
+  idle_packages: `
+    SELECT 
+      * 
+    FROM vista_paquetes
+    WHERE estado = 'Inactivo'
+  `,
+  type_packages_ASC: `
+    SELECT 
+      * 
+    FROM vista_paquetes
+    WHERE estado = 'Activo'
+    -- AND tipoid <> 11 -- Ajustar con la id de personalizado (1)
+    ORDER BY tipoid ASC
+  `,
+  longer_stay_packages: `
+    SELECT 
+      * 
+    FROM vista_paquetes
+    WHERE estado = 'Activo'
+    ORDER BY dias DESC
+  `,
+  shorter_stay_packages: `
+    SELECT 
+      * 
+    FROM vista_paquetes
+    WHERE estado = 'Activo'
+    ORDER BY dias ASC
+  `
+}
+
+export const packageStats = {
+  most_frecuent_package: `
+    SELECT 
+      * 
+    FROM vista_paquetes_stats 
+    ORDER BY cantidad DESC
+    LIMIT 1
+  `,
+  least_frecuent_package: `
+    SELECT 
+      * 
+    FROM vista_paquetes_stats 
+    ORDER BY cantidad ASC
+    LIMIT 1
+  `,
+  top_packages: `
+    SELECT 
+      * 
+    FROM vista_paquetes_stats 
+    ORDER BY cantidad DESC
+    LIMIT 3
   `
 }

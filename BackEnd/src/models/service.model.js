@@ -1,28 +1,16 @@
 export const service = {
   getServices: `
     SELECT 
-      servicioid,
-      nombre,
-      encargado,
-      duracionminutos,
-      precio,
-      descripcion,
-      fechaactualizacion
-    FROM servicios
+      *
+    FROM vista_servicios
     WHERE estado = 'Activo'
-    ORDER BY servicioid DESC
+    ORDER BY id DESC
     `,
   getServiceByName: `
     SELECT
-      servicioid,
-      nombre,
-      encargado,
-      duracionminutos,
-      precio,
-      descripcion,
-      fechaactualizacion
-    FROM Servicios
-    WHERE nombre ILIKE '%' || $1 || '%'
+      *
+    FROM vista_servicios
+    WHERE servicio ILIKE '%' || $1 || '%'
   `,
   createService: `
     INSERT INTO Servicios (nombre, encargado, duracionminutos, precio, descripcion, fechaactualizacion)
@@ -46,13 +34,72 @@ export const service = {
     SET estado = 'Inactivo'
     WHERE servicioid = $1
     RETURNING nombre
+  `,
+  activateService: `
+    UPDATE Servicios
+    SET estado = 'Activo'
+    WHERE servicioid = $1
+    RETURNING nombre
   `
 }
 
 export const serviceFilters = {
-
+  idle_services: `
+    SELECT 
+      * 
+    FROM vista_servicios
+    WHERE estado = 'Inactivo'
+  `,
+  longer_services: `
+    SELECT 
+      * 
+    FROM vista_servicios
+    WHERE estado = 'Activo'
+    ORDER BY "Duracion en minutos" DESC
+  `,
+  shorter_services: `
+    SELECT 
+      * 
+    FROM vista_servicios
+    WHERE estado = 'Activo'
+    ORDER BY "Duracion en minutos" ASC
+  `,
+  expensive_services: `
+    SELECT 
+      * 
+    FROM vista_servicios
+    WHERE estado = 'Activo'
+    ORDER BY precio DESC
+  `,
+  cheap_services: `
+    SELECT 
+      * 
+    FROM vista_servicios
+    WHERE estado = 'Activo'
+    ORDER BY precio ASC
+  `
 }
 
 export const serviceStats = {
-
+  most_frecuent_service: `
+    SELECT 
+      * 
+    FROM vista_servicios_stats 
+    ORDER BY veces_reservado DESC
+    LIMIT 1
+  `,
+  least_frecuent_service: `
+    SELECT 
+      * 
+    FROM vista_servicios_stats 
+    ORDER BY veces_reservado ASC
+    LIMIT 1
+  `,
+  top_services: `
+    SELECT 
+      * 
+    FROM vista_servicios_stats 
+    ORDER BY veces_reservado DESC
+    LIMIT 3
+  `
 }

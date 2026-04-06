@@ -4,10 +4,11 @@ function ProductoGraph() {
   const data = [
     {
       titulo: 'Top 3 productos',
-      img: '../../src/assets/Grafico.svg',
-      top1: 'Coca cola',
-      top2: 'Bandeja paisa',
-      top3: 'Margarita',
+      data: [
+        { name: 'Coca cola', value: 10, income: 30 },
+        { name: 'Bandeja paisa', value: 5, income: 75 },
+        { name: 'Margarita', value: 2, income: 20 }
+      ]
     },
   ];
 

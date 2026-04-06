@@ -47,3 +47,47 @@ export const cabin = {
     RETURNING nombre
   `,
 }
+
+export const cabinFilters = {
+  
+}
+
+export const cabinStats = {
+  get_stats: `
+    SELECT
+      c.nombre AS "Cabaña",
+      COUNT(DISTINCT r.reservaid) AS "Veces reservada",
+      COALESCE(SUM(f.total), 0) AS "Ingresos generados"
+    FROM cabanas c
+    LEFT JOIN cabanaporpaquete cp ON c.cabanaid = cp.cabanaid
+    LEFT JOIN paquetes p ON cp.paqueteid = p.paqueteid
+    LEFT JOIN reservas r ON p.paqueteid = r.paqueteid
+    LEFT JOIN facturas f ON r.reservaid = f.reservaid
+    WHERE c.estado <> 'inactivo'
+      AND r.estado <> 'Cancelada'
+    GROUP BY c.cabanaid, c.nombre
+    ORDER BY "Veces reservada" DESC
+    LIMIT 1
+  `,
+  total_cabins: `
+    SELECT
+      COUNT(c.cabanaid) AS "Total de cabañas"
+    FROM cabanas c
+    WHERE c.estado <> 'inactivo'
+  `,
+  get_graph_revenue: `
+    SELECT
+      TO_CHAR(f.fechafactura, 'YYYY-MM-DD') AS fecha,
+      SUM(f.total) AS total
+    FROM facturas f
+    JOIN reservas r ON f.reservaid = r.reservaid
+    JOIN paquetes p ON r.paqueteid = p.paqueteid
+    JOIN cabanaporpaquete cp ON p.paqueteid = cp.paqueteid
+    JOIN cabanas c ON cp.cabanaid = c.cabanaid
+    WHERE c.estado <> 'inactivo'
+      AND r.estado <> 'Cancelada'
+    GROUP BY TO_CHAR(f.fechafactura, 'YYYY-MM-DD')
+    ORDER BY fecha ASC
+    LIMIT 30
+  `
+}

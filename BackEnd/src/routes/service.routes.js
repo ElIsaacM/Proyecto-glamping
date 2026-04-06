@@ -4,7 +4,10 @@ import {
     getserviceByName,
     createService,
     updateService,
-    deleteService
+    deleteService,
+    activateService,
+    getServiceFilters,
+    getServiceStats
 } from '../controllers/service.controller.js';
 
 const router = Router();
@@ -14,5 +17,8 @@ router.post('/search', getserviceByName);
 router.post('/', createService);
 router.put('/:id', updateService);
 router.delete('/delete/:id', deleteService);
+router.put('/activate/:id', activateService);
+router.get('/filters', getServiceFilters);
+router.get('/stats', getServiceStats);
 
 export default router;

@@ -4,10 +4,11 @@ function PaqueteGraph() {
   const data = [
     {
       titulo: 'Top 3 paquetes',
-      img: '../../src/assets/Grafico.svg',
-      top1: 'Ocasional',
-      top2: 'Fin de semana',
-      top3: 'Ocasional',
+      data: [
+        { name: 'Ocasional', value: 4, income: 100 },
+        { name: 'Fin de semana', value: 3, income: 150 },
+        { name: 'Premium', value: 1, income: 200 }
+      ]
     },
   ];
 

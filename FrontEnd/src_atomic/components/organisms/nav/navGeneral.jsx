@@ -70,7 +70,7 @@ function NavBarGeneral({ modules }) {
     <NavBar>
       <div>
         <div className="titulo">
-          <img src="../../src/assets/Logo glamping.svg" alt="" />
+          <img src="../../../../src_atomic/assets/Logo glamping.svg" alt="" />
         </div>
         <ModulesCont>
           {modules.map((item, i) => (

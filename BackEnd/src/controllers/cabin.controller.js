@@ -1,4 +1,4 @@
-import { cabin } from "../models/cabin.model.js";
+import { cabin, cabinStats } from "../models/cabin.model.js";
 import pool from "../config/db.js";
 
 export const getCabins = async (req, res) => {
@@ -50,6 +50,24 @@ export const deleteCabin = async (req, res) => {
     );
 
     res.json(deletedCabin.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const getCabinStats = async (req, res) => {
+  try {
+    const [stats, total, graph] = await Promise.all([
+      pool.query(cabinStats.get_stats),
+      pool.query(cabinStats.total_cabins),
+      pool.query(cabinStats.get_graph_revenue),
+    ]);
+
+    res.json({
+      most_reserved: stats.rows[0] || null,
+      total_cabins: total.rows[0] || null,
+      revenue_graph: graph.rows,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
