@@ -31,3 +31,40 @@ export const getreservationByClient = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const activateReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      reservation.activateReservation,
+      [id]
+    );
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+};
+
+export const getReservationStats = async (req, res) => {
+  try {
+    const result = await pool.query()
+
+    res.json(result.rows[0])
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+};
+
+export const reservationFilters = async (req, res) => {
+  try {
+    const [] = await Promise.all([
+
+    ]);
+
+    res.json({
+      
+    });
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+};

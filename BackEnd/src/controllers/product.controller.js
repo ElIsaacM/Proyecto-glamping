@@ -1,5 +1,5 @@
 import pool from "../config/db.js";
-import { product } from "../models/product.model.js";
+import { product, productStats, productFilters as productFiltersModel } from "../models/product.model.js";
 
 export const getProducts = async (req, res) => {
   try {
@@ -132,5 +132,56 @@ export const deleteProduct = async (req, res) => {
       message: "Error al eliminar producto",
       error: error.message,
     });
+  }
+};
+
+export const activateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      product.activateProduct,
+      [id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+};
+
+export const getProductStats = async (req, res) => {
+  try {
+    const [most_frecuent_product, least_frecuent_product, top_products] = await Promise.all([
+      pool.query(productStats.most_frecuent_product),
+      pool.query(productStats.least_frecuent_product),
+      pool.query(productStats.top_products),
+    ]);
+
+    res.json({
+      most_frecuent_product: most_frecuent_product.rows,
+      least_frecuent_product: least_frecuent_product.rows,
+      top_products: top_products.rows,
+    })
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+};
+
+export const productFilters =  async (req, res) => {
+  try {
+    const [idle_products, expensive_products, cheap_products] = await Promise.all([
+      pool.query(productFiltersModel.idle_products),
+      pool.query(productFiltersModel.expensive_products),
+      pool.query(productFiltersModel.cheap_products),
+    ]);
+
+    res.json({
+      idle_products: idle_products.rows,
+      expensive_products: expensive_products.rows,
+      cheap_products: cheap_products.rows,
+    });
+  } catch (error) {
+    res.status(500).json({error: error.message})
   }
 };
