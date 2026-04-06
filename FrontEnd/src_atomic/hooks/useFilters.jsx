@@ -30,7 +30,6 @@ export const useFilters = (data, searchResults, config) => {
 
     // 3. Si hay búsqueda, aplicamos el filtro localmente sobre los resultados
     return current.localFilter ? current.localFilter(base) : base;
-
   }, [filterMode, data, searchResults, filtersData, config]);
 
   return { displayData, filterMode, setFilterMode, fetchFilters };

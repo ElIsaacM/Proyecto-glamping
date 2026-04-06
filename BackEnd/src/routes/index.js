@@ -8,6 +8,7 @@ import paymentRouter from './payment.routes.js';
 import packageRouter from './package.routes.js';
 import serviceRouter from './service.routes.js';
 import userRouter from './user.routes.js';
+import invoiceRouter from './invoices.routes.js';
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use('/payments', paymentRouter);
 router.use('/packages', packageRouter);
 router.use('/services', serviceRouter);
 router.use('/users', userRouter);
+router.use('/invoices', invoiceRouter);
 
 export default router;

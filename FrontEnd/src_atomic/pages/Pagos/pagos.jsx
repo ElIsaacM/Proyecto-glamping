@@ -68,7 +68,7 @@ function Pagos() {
             onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)}
           >reembolsos</button>
           <button className="module-button"
-            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`)}
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/invoices`)}
           >facturas</button>
         </ModulosExtra>
         

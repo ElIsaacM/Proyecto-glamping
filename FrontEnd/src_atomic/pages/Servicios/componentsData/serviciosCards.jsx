@@ -3,7 +3,7 @@ import PieGraph from "../../../components/organisms/graphs/PieGraph";
 import { useEffect } from "react";
 import { useFetch } from "../../../hooks/fetchConnect";
 
-export default function ServiciosCards({ refreshTrigger }) {
+function ServiciosCards({ refreshTrigger }) {
   const { data, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
@@ -54,3 +54,5 @@ export default function ServiciosCards({ refreshTrigger }) {
     </>
   );
 }
+
+export default ServiciosCards;

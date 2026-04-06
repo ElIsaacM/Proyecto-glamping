@@ -16,7 +16,7 @@ router.get('/', getPackages);
 router.post('/search', getPackageByName);
 router.post('/', createPackage);
 router.put('/:id', updatePackage);
-router.delete('/delete:id', deletePackage);
+router.delete('/delete/:id', deletePackage);
 router.put('/activate/:id', activatePackage);
 router.get('/stats', getPackageStats);
 router.get('/filters', packageFilters);

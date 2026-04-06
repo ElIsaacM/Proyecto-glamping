@@ -48,6 +48,7 @@ function SearchTemplate({ modulo, placeholder, onResult, options, onFilterChange
   return (
     <Buscador_Filtro>
       <Buscar>
+        {/* Convertir en un componente =| */}
         <i className="bi bi-search"></i>
         <input
           type="text"
@@ -56,7 +57,11 @@ function SearchTemplate({ modulo, placeholder, onResult, options, onFilterChange
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Buscar>
-      <SelectBase options={options} value={filter} onChange={handleFilterChange} />
+      <SelectBase 
+        options={options} 
+        value={filter} 
+        onChange={handleFilterChange} 
+      />
     </Buscador_Filtro>
   );
 }
