@@ -1,17 +1,25 @@
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import Paginacion from "../molecules/paginacion";
+
+const TableWrapper = styled.div`
+  width: 100%;
+  margin-top: 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  background-color: #ffffff;
+`;
 
 const OverflowTable = styled.div`
-  border-radius: 5px;
-  margin-top: 30px;
-
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
+  border-radius: 5px 5px 0 0;
 `;
 
 const Table = styled.table`
   width: 100%;
-  min-width: 1000px;
+  min-width: 1100px;
   border-collapse: collapse;
 
   th, td{
@@ -57,79 +65,102 @@ const Table = styled.table`
 `;
 
 function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // Adjust rows per page for better view
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset page on data change (e.g. search)
+  }, [data]);
+
   if (!data || data.length === 0) {
-    return <p>No hay datos para mostrar</p>;
+    return <p style={{ marginTop: '20px', color: '#6b7280' }}>No hay datos para mostrar</p>;
   }
 
   const columnas = Object.keys(data[0]);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <OverflowTable>
-      <Table>
-        <thead>
-          <tr>
-            {columnas.map((col, i) => (
-              <th key={i}>{col}</th>
-            ))}
-            {(!hideActions && (acciones || onEdit || onDelete || onActive)) && <th>Acciones</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((fila, i) => (
-            <tr key={i}>
-              {columnas.map((col, j) => (
-                <td key={j}>{fila[col] === null ? 'N / A' : fila[col]}</td>
+    <TableWrapper>
+      <OverflowTable>
+        <Table>
+          <thead>
+            <tr>
+              {columnas.map((col, i) => (
+                <th key={i}>{col}</th>
               ))}
-              {(!hideActions && (acciones || onEdit || onDelete || onActive)) && (
-                <td className="acciones">
-                  {onEdit && (
-                    <button
-                      className="accion-btn"
-                      onClick={() => onEdit(fila)}
-                      title="Editar"
-                      style={{ color: "#FFC107" }}
-                    >
-                      <i className="bi bi-pencil-fill" style={{ fontSize: '1.2rem' }}></i>
-                    </button>
-                  )}
-                  {(onDelete && fila.estado !== 'Inactivo') && (
-                    <button
-                      className="accion-btn"
-                      onClick={() => onDelete(fila)}
-                      title="Eliminar"
-                      style={{ color: "#DC3545" }}
-                    >
-                      <i className="bi bi-bag-dash-fill" style={{ fontSize: '1.2rem' }}></i>
-                    </button>
-                  )}
-                  {(onActive && fila.estado === 'Inactivo') && (
-                    <button
-                      className="accion-btn"
-                      onClick={() => onActive(fila)}
-                      title="Activar"
-                      style={{ color: "#28a745" }}
-                    >
-                      <i className="bi bi-bag-plus-fill" style={{ fontSize: '1.2rem' }}></i>
-                    </button>
-                  )}
-                  {acciones && acciones.map((accion, k) => (
-                    <button
-                      key={k}
-                      className="accion-btn"
-                      onClick={() => accion.onClick(fila)}
-                      title={accion.title}
-                      style={{ color: accion.color || "inherit" }}
-                    >
-                      {accion.icono}
-                    </button>
-                  ))}
-                </td>
-              )}
+              {(!hideActions && (acciones || onEdit || onDelete || onActive)) && <th>Acciones</th>}
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </OverflowTable>
+          </thead>
+          <tbody>
+            {currentItems.map((fila, i) => (
+              <tr key={i}>
+                {columnas.map((col, j) => (
+                  <td key={j}>{fila[col] === null ? 'N / A' : fila[col]}</td>
+                ))}
+                {(!hideActions && (acciones || onEdit || onDelete || onActive)) && (
+                  <td className="acciones">
+                    {onEdit && (
+                      <button
+                        className="accion-btn"
+                        onClick={() => onEdit(fila)}
+                        title="Editar"
+                        style={{ color: "#FFC107" }}
+                      >
+                        <i className="bi bi-pencil-fill" style={{ fontSize: '1.2rem' }}></i>
+                      </button>
+                    )}
+                    {(onDelete && fila.estado !== 'Inactivo') && (
+                      <button
+                        className="accion-btn"
+                        onClick={() => onDelete(fila)}
+                        title="Eliminar"
+                        style={{ color: "#DC3545" }}
+                      >
+                        <i className="bi bi-bag-dash-fill" style={{ fontSize: '1.2rem' }}></i>
+                      </button>
+                    )}
+                    {(onActive && fila.estado === 'Inactivo') && (
+                      <button
+                        className="accion-btn"
+                        onClick={() => onActive(fila)}
+                        title="Activar"
+                        style={{ color: "#28a745" }}
+                      >
+                        <i className="bi bi-bag-plus-fill" style={{ fontSize: '1.2rem' }}></i>
+                      </button>
+                    )}
+                    {acciones && acciones.map((accion, k) => (
+                      <button
+                        key={k}
+                        className="accion-btn"
+                        onClick={() => accion.onClick(fila)}
+                        title={accion.title}
+                        style={{ color: accion.color || "inherit" }}
+                      >
+                        {accion.icono}
+                      </button>
+                    ))}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </OverflowTable>
+
+      <Paginacion
+        currentPage={currentPage}
+        totalPages={totalPages}
+        paginate={paginate}
+      />
+
+    </TableWrapper>
   );
 }
 

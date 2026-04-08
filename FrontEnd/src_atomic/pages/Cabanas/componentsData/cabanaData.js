@@ -1,22 +1,22 @@
 export const cabanaCardData = [
   {
     bgColor: '',
-    texto: 'Total reservas',
+    texto: 'Cabaña mas reservada',
     titulo: 245,
   },
   {
     bgColor: '',
-    texto: 'Total reservas',
+    texto: 'Veces reservada',
     titulo: 245,
   },
   {
     bgColor: '',
-    texto: 'Total reservas',
+    texto: 'Ingresos generados',
     titulo: 245,
   },
   {
     bgColor: 'verde',
-    texto: 'Agregar paquete',
-    titulo: '',
+    texto: 'Total de reservas',
+    titulo: '245',
   },
 ];

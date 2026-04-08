@@ -5,26 +5,13 @@ import { useFetch } from "../../hooks/fetchConnect";
 import { deleteUtils } from "../../utils/deleteUtils";
 
 import Plantilla from "../plantilla";
-import LinearGraph from "../../components/organisms/graphs/linearGraph";
-import SquareCard from "../../components/molecules/cards/squareCard";
-import { cabanaCardData } from "./componentsData/cabanaData";
-import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
-
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
-const CardsCont = styled.div`
-  margin: 50px 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-
-  @media (max-width: 1100px) {
-    grid-template-columns: repeat(1, 1fr);
-  }
-`;
+import CabanasCard from "./componentsData/cabanaCard";
+import Buscador from "../../components/molecules/buscador";
 
 const Botones = styled.div`
   display: flex;
@@ -41,18 +28,25 @@ function Cabanas() {
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [cabanaAEditar, setCabanaAEditar] = useState(null);
 
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
   const { data, loading, error, fetchData } = useFetch();
 
-  useEffect(() => {
+  const handleFetchData = () => {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
-  }, [fetchData]);
+    setRefreshStatsTrigger(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    handleFetchData();
+  }, []);
 
   const eliminarCabana = async (cabana) => {
     deleteUtils.eliminarRegistro(
       'cabins',
       cabana.cabanaid,
       cabana.nombre,
-      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`)
+      handleFetchData
     );
   }
 
@@ -63,10 +57,7 @@ function Cabanas() {
 
   return (
     <Plantilla modulo={"Cabanas"}>
-      <CardsCont>
-        <LinearGraph />
-        <SquareCard squareData={cabanaCardData} />
-      </CardsCont>
+      <CabanasCard refreshTrigger={refreshStatsTrigger} />
 
       <Botones>
         <Buscador placeholder={'Buscar cabana'} />
@@ -84,14 +75,14 @@ function Cabanas() {
       {modalAbierto && (
         <ModalAgregar
           setModalAbierto={setModalAbierto}
-          fetchData={fetchData}
+          fetchData={handleFetchData}
         />
       )}
 
       {modalEditarAbierto && cabanaAEditar && (
         <ModalEditar
           setModalAbierto={setModalEditarAbierto}
-          fetchData={fetchData}
+          fetchData={handleFetchData}
           cabanaAEditar={cabanaAEditar}
         />
       )}

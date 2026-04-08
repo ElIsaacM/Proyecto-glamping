@@ -2,19 +2,21 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
+import { activateUtils } from "../../utils/activateUtils";
 
 import Plantilla from "../plantilla";
-import ServicioGraph from "../../components/organisms/graphs/servicioGraph";
-import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
-import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
 import TablaGeneral from "../../components/organisms/tabla";
-import RectangleCard from "../../components/molecules/cards/rectangleCard";
-import { serviciosCardData, serviciosTableData } from "./componentsData/serviciosData";
 
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
+
+import ServiciosCards from "./componentsData/serviciosCards";
+import ServiciosSearch, {
+  serviciosFilterConfig,
+} from "./componentsData/serviciosSearch";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -42,9 +44,23 @@ const Botones = styled.div`
 function Servicios() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
-  const [servicioAEditar, setServicioAEditar] = useState(null)
-
+  const [servicioAEditar, setServicioAEditar] = useState(null);
   const { data, loading, error, fetchData } = useFetch();
+
+  const [servicios, setServicios] = useState(null);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
+    data,
+    servicios,
+    serviciosFilterConfig,
+  );
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
+  const handleFetchData = () => {
+    setServicios(null);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`);
+    fetchFilters();
+    setRefreshStatsTrigger((prev) => prev + 1);
+  };
 
   useEffect(() => {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`);
@@ -52,53 +68,72 @@ function Servicios() {
 
   const eliminarServicio = (servicio) => {
     deleteUtils.eliminarRegistro(
-      'services',
-      servicio.servicioid,
-      servicio.nombre,
-      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`)
+      "services",
+      servicio.id,
+      servicio.servicio,
+      handleFetchData,
     );
-  }
+  };
+
+  const activarServicio = (servicio) => {
+    activateUtils.activarRegistro(
+      "services",
+      servicio.id,
+      servicio.servicio,
+      handleFetchData,
+    );
+  };
 
   const editarServicio = (servicio) => {
     setServicioAEditar(servicio);
     setModalEditarAbierto(true);
-  }
+  };
 
   return (
-    <Plantilla modulo={'Servicios'}>
-          <CardsCont>
-            <RectangleCard rectangleData={serviciosCardData} />
-            <ServicioGraph />
-          </CardsCont>
+    <Plantilla modulo={"Servicios"}>
+      <CardsCont>
+        <ServiciosCards refreshTrigger={refreshStatsTrigger} />
+      </CardsCont>
 
-          <div>
-            <Botones>
-              <Buscador placeholder={'Buscar servicio'} />
-              <BotonAgregar 
-                modulo={'Agregar servicio'} 
-                color={1} 
-                onClick={() => setModalAbierto(true)} 
-              />
-            </Botones>
-            {loading && <p style={{marginTop: '20px'}}>Cargando servicios...</p>}
-            {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
-            {data && <TablaGeneral data={data} onEdit={editarServicio} onDelete={eliminarServicio} />}
-          </div>
+      <Botones>
+        <ServiciosSearch
+          onResult={setServicios}
+          onFilterChange={setFilterMode}
+        />
+        <BotonAgregar
+          modulo={"Agregar servicio"}
+          color={1}
+          onClick={() => setModalAbierto(true)}
+        />
+      </Botones>
 
-          {modalAbierto && (
-            <ModalAgregar 
-              setModalAbierto={setModalAbierto} 
-              fetchData={fetchData} 
-            />
-          )}
+      {loading && <p style={{ marginTop: "20px" }}>Cargando servicios...</p>}
+      {error && (
+        <p style={{ marginTop: "20px", color: "red" }}>Error: {error}</p>
+      )}
+      {displayData && (
+        <TablaGeneral
+          data={displayData}
+          onEdit={editarServicio}
+          onActive={activarServicio}
+          onDelete={eliminarServicio}
+        />
+      )}
 
-          {modalEditarAbierto && (
-            <ModalEditar 
-              setModalAbierto={setModalEditarAbierto} 
-              fetchData={fetchData} 
-              servicioAEditar={servicioAEditar} 
-            />
-          )}
+      {modalAbierto && (
+        <ModalAgregar
+          setModalAbierto={setModalAbierto}
+          fetchData={handleFetchData}
+        />
+      )}
+
+      {modalEditarAbierto && servicioAEditar && (
+        <ModalEditar
+          setModalAbierto={setModalEditarAbierto}
+          fetchData={handleFetchData}
+          servicioAEditar={servicioAEditar}
+        />
+      )}
     </Plantilla>
   );
 }

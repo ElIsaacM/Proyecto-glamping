@@ -61,9 +61,15 @@ function Pagos() {
       <LinearCard data={pagosCardData} />
       <div>
         <ModulosExtra>
-          <button className="module-button">Pagos</button>
-          <button className="module-button">reembolsos</button>
-          <button className="module-button">facturas</button>
+          <button className="module-button"
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments`)}
+          >Pagos</button>
+          <button className="module-button"
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)}
+          >reembolsos</button>
+          <button className="module-button"
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/invoices`)}
+          >facturas</button>
         </ModulosExtra>
         
         <Botones>

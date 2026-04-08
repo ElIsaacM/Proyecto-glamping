@@ -18,6 +18,7 @@ export const getPackages = async (req, res) => {
 export const getPackageByName = async (req, res) => {
   try {
     const { name } = req.body;
+    
     const result = await pool.query(
       packages.getPackageByName, 
       [name.trim()]
@@ -84,6 +85,7 @@ export const updatePackage = async (req, res) => {
 export const deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await pool.query(
       packages.deletePackage, 
       [id]
@@ -105,6 +107,7 @@ export const deletePackage = async (req, res) => {
 export const activatePackage = async (req, res) => {
   try {
     const { id } = req.params;
+    
     const result = await pool.query(
       packages.activatePackage,
       [id]

@@ -13,8 +13,9 @@ import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
 import UsuariosCard from "./componentsData/usuariosCards";
-import Buscador from "./componentsData/usuariosSearch";
-import { userFilterConfig } from "./componentsData/usuariosSearch";
+import UsuariosSearch, {
+  userFilterConfig,
+} from "./componentsData/usuariosSearch";
 
 const Botones = styled.div`
   display: flex;
@@ -33,14 +34,18 @@ function Usuarios() {
   const { data, loading, error, fetchData } = useFetch();
 
   const [usuarios, setUsuarios] = useState(null);
-  const { displayData, setFilterMode, fetchFilters } = useFilters(data, usuarios, userFilterConfig);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
+    data,
+    usuarios,
+    userFilterConfig,
+  );
   const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
 
   const handleFetchData = () => {
     setUsuarios(null); // Clear search to show updated table
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/users`);
     fetchFilters();
-    setRefreshStatsTrigger(prev => prev + 1);
+    setRefreshStatsTrigger((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -49,41 +54,43 @@ function Usuarios() {
 
   const eliminarUsuario = (usuario) => {
     deleteUtils.eliminarRegistro(
-      'users',
-      usuario.usuarioid,
-      usuario.nombre,
-      handleFetchData
+      "users",
+      usuario.id,
+      usuario.usuario,
+      handleFetchData,
     );
-  }
+  };
 
   const activarUsuario = (usuario) => {
     activateUtils.activarRegistro(
-      'users',
-      usuario.usuarioid,
-      usuario.nombre,
-      handleFetchData
+      "users",
+      usuario.id,
+      usuario.usuario,
+      handleFetchData,
     );
-  }
+  };
 
   const editarUsuario = (usuario) => {
     setUsuarioAEditar(usuario);
     setModalEditarAbierto(true);
-  }
+  };
 
   return (
-    <Plantilla modulo={'Usuarios'}>
+    <Plantilla modulo={"Usuarios"}>
       <UsuariosCard refreshTrigger={refreshStatsTrigger} />
       <Botones>
-        <Buscador onResult={setUsuarios} onFilterChange={setFilterMode} />
+        <UsuariosSearch onResult={setUsuarios} onFilterChange={setFilterMode} />
         <BotonAgregar
-          modulo={'Agregar usuario'}
+          modulo={"Agregar usuario"}
           color={1}
           onClick={() => setModalAbierto(true)}
         />
       </Botones>
 
-      {loading && <p style={{ marginTop: '20px' }}>Cargando usuarios...</p>}
-      {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
+      {loading && <p style={{ marginTop: "20px" }}>Cargando usuarios...</p>}
+      {error && (
+        <p style={{ marginTop: "20px", color: "red" }}>Error: {error}</p>
+      )}
       {displayData && (
         <TablaGeneral
           data={displayData}

@@ -4,10 +4,11 @@ function ServicioGraph() {
   const data = [
     {
       titulo: 'Top 3 servicios',
-      img: '../../src/assets/Grafico.svg',
-      top1: 'Jaccuzi',
-      top2: 'Piscina',
-      top3: 'Masaje',
+      data: [
+        { name: 'Jaccuzi', value: 8, income: 120 },
+        { name: 'Piscina', value: 6, income: 90 },
+        { name: 'Masaje', value: 4, income: 60 }
+      ]
     },
   ];
 

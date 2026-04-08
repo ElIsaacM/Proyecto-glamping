@@ -2,16 +2,16 @@ export const paquetesCardData = [
     {
       bgColor: 'verde',
       icono: 'bi bi-box-fill',
-      titulo: 'Paquete mas cancelado',
+      titulo: 'Paquete Más Reservado',
       info: 'Vacacional',
-      texto: 'El paquete vacacional ha sido cancelado 20 veces este mes',
+      texto: 'El paquete vacacional ha sido reservado 20 veces este mes',
     },
     {
       bgColor: '',
       icono: 'bi bi-box-fill',
-      titulo: 'Paquete mas cancelado',
+      titulo: 'Paquete Menos Reservado',
       info: 'Vacacional',
-      texto: 'El paquete vacacional ha sido cancelado 20 veces este mes',
+      texto: 'El paquete vacacional ha sido reservado 20 veces este mes',
     },
   ];
 
