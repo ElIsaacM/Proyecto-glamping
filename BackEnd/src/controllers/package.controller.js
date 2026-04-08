@@ -107,7 +107,7 @@ export const deletePackage = async (req, res) => {
 export const activatePackage = async (req, res) => {
   try {
     const { id } = req.params;
-
+    
     const result = await pool.query(
       packages.activatePackage,
       [id]

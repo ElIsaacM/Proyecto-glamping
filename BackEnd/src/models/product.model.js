@@ -95,3 +95,50 @@ export const productStats = {
     LIMIT 3
   `,
 };
+
+export const productFilters = {
+  idle_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Inactivo'
+  `,
+  expensive_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Activo'
+    ORDER BY precio DESC
+  `,
+  cheap_products: `
+    SELECT 
+      * 
+    FROM vista_productos
+    WHERE estado = 'Activo'
+    ORDER BY precio ASC
+  `
+}
+
+export const productStats = {
+  most_frecuent_product: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad DESC
+    LIMIT 1
+  `,
+  least_frecuent_product: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad ASC
+    LIMIT 1
+  `,
+  top_products: `
+    SELECT 
+      * 
+    FROM vista_productos_stats 
+    ORDER BY cantidad DESC
+    LIMIT 3
+  `
+}
