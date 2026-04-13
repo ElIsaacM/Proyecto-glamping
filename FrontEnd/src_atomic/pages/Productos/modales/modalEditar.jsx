@@ -39,14 +39,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, productoAEdita
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.productoid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.producto_id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
       nombre: productoAEditar.nombre || productoAEditar.Nombre || '',
       tipo: productoAEditar.tipo || productoAEditar.Tipo || '',
-      stock: productoAEditar.stock || productoAEditar.Stock || '',
-      precioventa: productoAEditar.precioventa || productoAEditar['Precio Venta'] || '',
+      precio: productoAEditar.precio || productoAEditar['Precio Venta'] || '',
       descripcion: productoAEditar.descripcion || productoAEditar.Descripción || ''
     },
     urlParams,
@@ -77,20 +76,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, productoAEdita
           onChange={handleChange} 
           required 
         />
-        <input 
-          type="number" 
-          name="stock" 
-          placeholder="Cantidad en stock" 
-          value={formData.stock} 
-          onChange={handleChange} 
-          required 
-        />
+
         <input 
           type="number" 
           step="0.01" 
-          name="precioventa" 
+          name="precio" 
           placeholder="Precio de venta" 
-          value={formData.precioventa} 
+          value={formData.precio} 
           onChange={handleChange} 
           required 
         />

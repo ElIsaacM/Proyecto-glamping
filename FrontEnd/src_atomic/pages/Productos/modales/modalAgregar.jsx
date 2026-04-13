@@ -38,7 +38,7 @@ const Form = styled.form`
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { nombre: '', tipo: '', stock: '', precioventa: '', descripcion: '' },
+    { nombre: '', tipo: '', precio: '', descripcion: '' },
     `${import.meta.env.VITE_API_BASE_URL}/api/products`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
@@ -65,20 +65,13 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
           onChange={handleChange} 
           required 
         />
-        <input 
-          type="number" 
-          name="stock" 
-          placeholder="Cantidad en stock" 
-          value={formData.stock} 
-          onChange={handleChange} 
-          required 
-        />
+
         <input 
           type="number" 
           step="0.01" 
-          name="precioventa" 
+          name="precio" 
           placeholder="Precio de venta" 
-          value={formData.precioventa} 
+          value={formData.precio} 
           onChange={handleChange} 
           required 
         />

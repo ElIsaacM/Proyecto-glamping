@@ -1,4 +1,4 @@
 .env
 
-generate_backend.js
-check_schema.js
+node_modules
+scratch/

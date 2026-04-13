@@ -9,6 +9,9 @@ import paymentRouter from './payment.routes.js';
 import packageRouter from './package.routes.js';
 import serviceRouter from './service.routes.js';
 import userRouter from './user.routes.js';
+import typesRouter from './types.routes.js';
+import refoundRouter from './refound.routes.js';
+import invoiceRouter from './invoice.routes.js';
 
 const router = Router();
 
@@ -21,5 +24,9 @@ router.use('/payments', paymentRouter);
 router.use('/packages', packageRouter);
 router.use('/services', serviceRouter);
 router.use('/users', userRouter);
+router.use('/refounds', refoundRouter);
+router.use('/invoices', invoiceRouter);
+
+router.use('/types', typesRouter);
 
 export default router;

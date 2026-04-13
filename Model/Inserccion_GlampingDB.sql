@@ -1,79 +1,79 @@
------------------ Tablas Base
--- Roles e Identificaciones
-INSERT INTO Roles (Nombre) VALUES ('Administrador'), ('Recepcionista'), ('Mantenimiento'), ('Mesero'), ('Guía');
+-- Tablas Maestras de Configuración
+INSERT INTO Roles (Nombre) VALUES ('Administrador'), ('Recepcionista'), ('Mantenimiento');
+
 INSERT INTO Identificaciones (Tipo) VALUES ('Cédula de Ciudadanía'), ('Pasaporte'), ('Cédula de Extranjería');
 
--- Servicios y Productos
-INSERT INTO Servicios (Nombre, Encargado, DuracionMinutos, Precio) VALUES 
-('Masaje Relajante', 'Ana Pérez', 60, 50.00),
-('Cena Romántica', 'Chef Juan', 120, 80.00),
-('Tour Bosque', 'Guía Carlos', 180, 30.00),
-('Desayuno Especial', 'Cocina', 45, 15.00),
-('Jacuzzi Privado', 'Limpieza', 90, 40.00);
+INSERT INTO Metodos_Pago (Tipo, Nombre) VALUES 
+('Efectivo', 'Pago físico en recepción'),
+('Transferencia', 'Bancolombia o Nequi'),
+('Tarjeta', 'Datafono Visa/Mastercard');
 
-INSERT INTO Productos (Nombre, Tipo, Stock, PrecioVenta) VALUES 
-('Vino Tinto', 'Bebida', 20, 25.00),
-('Cerveza Artesanal', 'Bebida', 50, 5.00),
-('Kit Fogata', 'Varios', 15, 12.00),
-('Snack Box', 'Comida', 30, 10.00),
-('Botella Agua', 'Bebida', 100, 2.00);
+INSERT INTO Tipo_Paquete (Nombre) VALUES ('Estándar'), ('Romántico'), ('Aventura'), ('Personalizado');
 
--- Cabañas y Tipos de Paquete
-INSERT INTO Cabanas (Nombre, PrecioNoche) VALUES 
-('Nido del Águila', 150.00), ('Refugio Verde', 120.00), ('Vista Azul', 200.00), ('Cueva Calma', 110.00), ('Pino Real', 180.00);
-INSERT INTO TipoPaquete (Nombre) VALUES ('Básico'), ('Premium'), ('Aniversario'), ('Aventura'), ('Relajación');
+-- Infraestructura y Catálogo
+INSERT INTO Cabanas (Nombre, Precio_Noche, Capacidad_Personas, Descripcion, IMG_URL) VALUES 
+('Nido del Águila', 350000, 2, 'Vista panorámica al valle', 'https://url.com/c1.jpg'),
+('Refugio del Bosque', 280000, 4, 'Rodeada de pinos', 'https://url.com/c2.jpg'),
+('Cabaña Cristal', 450000, 2, 'Techo de cristal para ver estrellas', 'https://url.com/c3.jpg');
 
--- Métodos de Pago
-INSERT INTO MetodosPago (Tipo, Nombre) VALUES ('Efectivo', 'Pago en recepción'), ('Tarjeta', 'Visa/Mastercard'), ('Transferencia', 'Nequi/Daviplata');
+INSERT INTO Servicios (Nombre, Encargado, Duracion_Minutos, Precio, Descripcion, IMG_URL) VALUES 
+('Masaje Relajante', 'Marta Soler', 60, 80000, 'Masaje de cuerpo completo', 'https://url.com/s1.jpg'),
+('Cena Romántica', 'Chef Juan', 120, 150000, '3 tiempos a la luz de las velas', 'https://url.com/s2.jpg'),
+('Fogata Privada', 'Personal Campo', 90, 45000, 'Incluye malvaviscos', 'https://url.com/s3.jpg');
 
------------------ Usuarios, Clientes y Paquetes
--- Usuarios (Para el campo RegistradoPorID)
-INSERT INTO Usuarios (RolID, IdentificacionID, Nombre, Contacto, Sueldo, NumeroIdentificacion) VALUES 
-(1, 1, 'Admin Principal', 'admin@glamping.com', 2500.00, '12345678'),
-(2, 1, 'Laura Recepción', 'laura@glamping.com', 1200.00, '87654321');
+INSERT INTO Productos (Nombre, Tipo, Precio, Descripcion, IMG_URL) VALUES 
+('Vino Tinto Reserva', 'Bebida', 95000, 'Botella 750ml', 'https://url.com/p1.jpg'),
+('Kit de Smores', 'Snack', 25000, 'Chocolate, galletas y nubes', 'https://url.com/p2.jpg'),
+('Cerveza Artesanal', 'Bebida', 12000, 'Local 330ml', 'https://url.com/p3.jpg');
 
--- Clientes
-INSERT INTO Clientes (Nombre, Email, Contacto, Identificacion, PaisResidencia) VALUES 
-('Carlos Ruiz', 'carlos@mail.com', '300111', '1010', 'Colombia'),
-('Maria Lopez', 'maria@mail.com', '300222', '2020', 'México'),
-('John Doe', 'john@mail.com', '300333', '3030', 'USA');
+-- Personal y Clientes
+INSERT INTO Usuarios (Rol_ID, Identificacion_ID, Numero_Identificacion, Nombre, Contacto, Sueldo, Fecha_Agregado) VALUES 
+(1, 1, '10203040', 'Joe Lopez', '3001234567', 2500000, CURRENT_TIMESTAMP),
+(2, 1, '50607080', 'Ana Martinez', '3109876543', 1300000, CURRENT_TIMESTAMP);
 
--- Paquetes (Aquí definimos los días para el trigger de fecha)
-INSERT INTO Paquetes (TipoID, RegistradoPorID, Nombre, DiasEstadia, Estado) VALUES 
-(1, 1, 'Escapada Express', 1, 'Activo'),
-(2, 1, 'Fin de Semana Largo', 3, 'Activo'),
-(3, 2, 'Luna de Miel', 2, 'Activo');
+INSERT INTO Clientes (Identificacion_ID, Nombre, Email, Contacto, Identificacion, Pais_Residencia) VALUES 
+(1, 'Carlos Ruiz', 'carlos@mail.com', '3110001122', '123456', 'Colombia'),
+(2, 'Jane Doe', 'jane@mail.com', '+15551234', 'PA887766', 'USA'),
+(1, 'Luis Perez', 'luis@mail.com', '3204445566', '789012', 'Colombia');
 
------------------ Intermedias
--- Cabañas asignadas a paquetes
-INSERT INTO CabanaPorPaquete (PaqueteID, CabanaID) VALUES (1, 1), (2, 2), (3, 3);
+--Paquetes (Crucial para Reservas)
+INSERT INTO Paquetes (Cabana_ID, Tipo_ID, Registrado_Por_ID, Nombre, Dias_Estadia, Descripcion) VALUES 
+(1, 2, 1, 'Escapada Romántica', 2, 'Ideal para parejas en aniversario'),
+(2, 1, 1, 'Plan Familiar', 3, 'Diversión en el bosque'),
+(3, 3, 2, 'Aventura Estelar', 1, 'Noche de telescopio');
 
--- Servicios y Productos asignados a paquetes
-INSERT INTO ServiciosPorPaquete (PaqueteID, ServicioID, CantidadPersonas) VALUES (1, 4, 2), (2, 3, 2), (3, 1, 2), (3, 2, 2);
-INSERT INTO ProductosPorPaquete (PaqueteID, ProductoID, Cantidad) VALUES (1, 5, 2), (2, 2, 6), (3, 1, 1), (3, 3, 1);
+-- Reservas y Facturas (10 Registros)
+-- Reservas
+INSERT INTO Reservas (Paquete_ID, Cliente_ID, Llegada, Salida, Estado, Por_pagar) VALUES 
+(1, 1, '2026-05-01', '2026-05-03', 'Confirmada', 0),
+(1, 2, '2026-05-10', '2026-05-12', 'Confirmada', 150000),
+(2, 3, '2026-06-01', '2026-06-04', 'Confirmada', 0),
+(3, 1, '2026-05-15', '2026-05-16', 'Pendiente', 500000),
+(2, 2, '2026-07-20', '2026-07-23', 'Confirmada', 0),
+(1, 3, '2026-08-10', '2026-08-12', 'Cancelada', 0),
+(3, 2, '2026-09-01', '2026-09-02', 'Confirmada', 0),
+(2, 1, '2026-10-05', '2026-10-08', 'Confirmada', 200000),
+(1, 2, '2026-11-01', '2026-11-03', 'Confirmada', 0),
+(3, 3, '2026-12-24', '2026-12-25', 'Confirmada', 0);
 
+-- Facturas (Relacionadas 1 a 1 con las reservas anteriores)
+-- Nota: 'Total' no se inserta porque es GENERATED ALWAYS
+INSERT INTO Facturas (Reserva_ID, Subtotal, Descuento) VALUES 
+(1, 850000, 10), (2, 920000, 0), (3, 1200000, 5),
+(4, 500000, 0), (5, 1150000, 0), (6, 0, 0),
+(7, 600000, 15), (8, 1100000, 0), (9, 880000, 10),
+(10, 750000, 20);
 
------------------ Reservas y facturas
--- Al insertar la Reserva, el trigger calculará la 'Salida' basándose en 'Llegada' + 'DiasEstadia' del paquete.
-INSERT INTO Reservas (PaqueteID, ClienteID, Llegada, Estado) VALUES 
-(1, 1, '2026-03-10', 'Confirmada'),
-(2, 2, '2026-04-15', 'Confirmada'),
-(3, 3, '2026-05-20', 'Confirmada');
+-- Pagos y Otros (Para completar el flujo)
+INSERT INTO Pagos (Metodo_ID, Factura_ID, Fecha_Pago, Estado, Total_Pagado) VALUES 
+(2, 1, '2026-04-15', 'Completado', 765000),
+(1, 3, '2026-05-20', 'Completado', 1140000);
 
--- Al insertar la Factura, el trigger sumará todo lo del paquete y aplicará el descuento al Subtotal.
-INSERT INTO Facturas (ReservaID, Descuento) VALUES 
-(1, 0.00),  -- Sin descuento
-(2, 10.00), -- 10% de descuento
-(3, 15.00); -- 15% de descuento
+INSERT INTO Danos_Mantenimientos (Cabana_ID, Descripcion, Estado, Responsable) VALUES 
+(1, 'Cambio de bombillas led', 'Terminado', 'Pedro Mantenimiento'),
+(2, 'Fuga en el jacuzzi', 'En proceso', 'Fontanero Ext');
 
------------------ Prueba
-SELECT 
-    f.FacturaID, 
-    r.Llegada, 
-    r.Salida as "Salida Calculada", 
-    f.Subtotal as "Suma Paquete", 
-    f.Descuento as "% Desc", 
-    f.Total as "Total Final"
-FROM Facturas f
-JOIN Reservas r ON f.ReservaID = r.ReservaID;
------------------ Tablas Base
+SELECT * FROM vista_usuarios
+    SELECT rol_id, nombre FROM roles
+	    SELECT identificacion_id, tipo FROM identificaciones
+

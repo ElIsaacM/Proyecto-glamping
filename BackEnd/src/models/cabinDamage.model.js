@@ -1,52 +1,52 @@
 export const cabinDamage = {
   getCabinsDamage: `
     SELECT
-      cabanaid,
+      cabana_id,
       descripcion,
       estado,
-      fecharegistro,
-      fechaarreglo,
+      fecha_registro,
+      fecha_arreglo,
       responsable
     FROM DanosMantenimientos
-    ORDER BY fecharegistro DESC
+    ORDER BY fecha_registro DESC
   `,
   getCabinDamageByName: `
     SELECT
       c.nombre,
       dm.descripcion,
       dm.estado,
-      dm.fecharegistro,
-      dm.fechaarreglo,
+      dm.fecha_registro,
+      dm.fecha_arreglo,
       dm.responsable
     FROM DanosMantenimientos dm
-    JOIN Cabanas c ON dm.cabanaid = c.cabanaid
+    JOIN Cabanas c ON dm.cabana_id = c.cabana_id
     WHERE c.nombre ILIKE '%' || $1 || '%'
   `,
   createCabinDamage: `
     WITH insert_dano AS (
-      INSERT INTO DanosMantenimientos (cabanaid, descripcion, estado, fechaRegistro, fechaarreglo, responsable)
+      INSERT INTO DanosMantenimientos (cabana_id, descripcion, estado, fecha_registro, fecha_arreglo, responsable)
       VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING cabanaid AS cabin_name, fechaarreglo
+      RETURNING cabana_id AS cabin_name, fecha_arreglo;
     ),
     update_cabana AS (
       UPDATE Cabanas
-      SET estado = $3, fechamantenimiento = $5
-      WHERE cabanaid = $1
-      RETURNING nombre
+      SET estado = $3, fecha_arreglo = $5
+      WHERE cabana_id = $1
+      RETURNING nombre;
     )
     SELECT 
       u.nombre AS cabin_name, 
-      i.fechaarreglo
-    FROM update_cabana u, insert_dano i
+      i.fecha_arreglo
+    FROM update_cabana u, insert_dano i;
   `,
   updateCabinDamage: `
     UPDATE DanosMantenimientos SET
       descripcion = COALESCE(NULLIF($1, ''), descripcion),
       estado = COALESCE(NULLIF($2, ''), estado),
-      fechaRegistro = CURRENT_DATE,
-      fechaarreglo = COALESCE(NULLIF($3::text, '')::date, fechaarreglo),
+      fecha_registro = CURRENT_DATE,
+      fecha_arreglo = COALESCE(NULLIF($3::text, ''), fecha_arreglo),
       responsable = COALESCE(NULLIF($4, ''), responsable)
-    WHERE cabanaid = $5
-    RETURNING (SELECT nombre FROM Cabanas WHERE cabanaid = $5) AS cabin_name, fechaarreglo;
+    WHERE cabana_id = $5
+    RETURNING (SELECT nombre FROM Cabanas WHERE cabana_id = $5) AS cabin_name, fecha_arreglo;
   `
 }

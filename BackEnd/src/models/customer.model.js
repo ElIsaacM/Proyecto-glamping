@@ -3,13 +3,13 @@ export const customer = {
     SELECT 
       * 
     FROM vista_clientes
-    WHERE identificacionid = $1
+    WHERE identificacion_id = $1
       AND identificacion = $2
       AND email = $3
   `,
   createCustomer: `
-    INSERT INTO clientes (nombre, email, contacto, identificacion, paisresidencia)
+    INSERT INTO clientes (nombre, email, contacto, identificacion, pais_residencia)
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING clienteid, nombre
+    RETURNING cliente_id, nombre
   `
 }

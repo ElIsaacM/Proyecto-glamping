@@ -10,34 +10,33 @@ export const product = {
     SELECT 
       * 
     FROM vista_productos
-    WHERE nombre ILIKE '%' || $1 || '%'
+    WHERE producto ILIKE '%' || $1 || '%'
     `,
   // Nota: en la nueva DB ya no existe stock y ya el precioventa es precio
   createProduct: `
-    INSERT INTO Productos (nombre, tipo, stock, precioventa, descripcion, fechaactualizacion) 
-    VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) 
-    RETURNING nombre, stock
+    INSERT INTO Productos (nombre, tipo, precio, descripcion, fecha_actualizacion) 
+    VALUES ($1, $2, $3, $4, CURRENT_DATE) 
+    RETURNING nombre
     `,
   updateProduct: `
     UPDATE Productos SET 
       nombre = COALESCE(NULLIF($1, ''), nombre), 
       tipo = COALESCE(NULLIF($2, ''), tipo), 
-      stock = COALESCE(NULLIF($3::text, '')::integer, stock), 
-      precioventa = COALESCE(NULLIF($4::text, '')::numeric, precioventa), 
-      descripcion = COALESCE(NULLIF($5, ''), descripcion), 
-      fechaactualizacion = CURRENT_DATE 
-    WHERE productoid = $6
+      precio = COALESCE(NULLIF($3::text, '')::numeric, precio), 
+      descripcion = COALESCE(NULLIF($4, ''), descripcion), 
+      fecha_actualizacion = CURRENT_DATE 
+    WHERE producto_id = $5
     RETURNING *
-    `,
-  sellProduct: `
-    UPDATE Productos 
-    SET stock = stock - $1
-    WHERE productoid = $2 AND stock >= $1
-    RETURNING productoid, stock
     `,
   deleteProduct: `
     UPDATE Productos 
     SET estado = 'Inactivo' 
+    WHERE producto_id = $1 
+    RETURNING nombre
+    `,
+  activateProduct: `
+    UPDATE Productos 
+    SET estado = 'Activo' 
     WHERE productoid = $1 
     RETURNING nombre
     `,
@@ -71,21 +70,21 @@ export const productStats = {
     SELECT 
       * 
     FROM vista_productos_stats 
-    ORDER BY cantidad DESC
+    ORDER BY veces_reservado DESC
     LIMIT 1
   `,
   least_frecuent_product: `
     SELECT 
       * 
     FROM vista_productos_stats 
-    ORDER BY cantidad ASC
+    ORDER BY veces_reservado ASC
     LIMIT 1
   `,
   top_products: `
     SELECT 
       * 
     FROM vista_productos_stats 
-    ORDER BY cantidad DESC
+    ORDER BY veces_reservado DESC
     LIMIT 3
   `
 }

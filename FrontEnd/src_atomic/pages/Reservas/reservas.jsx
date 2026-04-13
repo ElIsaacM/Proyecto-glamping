@@ -7,7 +7,7 @@ import LinearGraph from "../../components/organisms/graphs/linearGraph";
 import Buscador from "../../components/molecules/buscador";
 import TablaGeneral from "../../components/organisms/tabla";
 import { useFetch } from "../../hooks/fetchConnect";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -41,6 +41,7 @@ function Reservas() {
 
   return (
     <Plantilla modulo={"Reservas"}>
+
           <CardsCont>
             <LinearGraph />
             <SquareCard squareData={reservasCardData} />

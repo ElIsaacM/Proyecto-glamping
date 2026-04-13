@@ -5,9 +5,6 @@ export const getPackages = async (req, res) => {
   try {
     const result = await pool.query(packages.getPackages);
 
-    if (result.rows.length === 0) {
-      throw new Error("Package not found");
-    }
     res.json(result.rows);
 
   } catch (error) {
@@ -18,15 +15,13 @@ export const getPackages = async (req, res) => {
 export const getPackageByName = async (req, res) => {
   try {
     const { name } = req.body;
+    
     const result = await pool.query(
       packages.getPackageByName, 
       [name.trim()]
     );
 
-    if (result.rows.length === 0) {
-      throw new Error("Package not found");
-    }
-    res.json(result.rows[0])
+    res.json(result.rows);
     
   } catch (error) {
     res.status(500).json({message: error.message});
@@ -35,9 +30,9 @@ export const getPackageByName = async (req, res) => {
 
 export const createPackage = async (req, res) => {
   try {
-    const { tipoid, registradoporid, nombre, diasestadia, descripcion } = req.body;
+    const { tipo_id, registrado_por_id, nombre, dias_estadia, descripcion } = req.body;
     const result = await pool.query(packages.createPackage,
-      [tipoid, registradoporid, nombre, diasestadia, descripcion]
+      [tipo_id, registrado_por_id, nombre, dias_estadia, descripcion]
     );
     
     res.status(200).json({
@@ -57,15 +52,15 @@ export const updatePackage = async (req, res) => {
     const { id } = req.params;
 
     const { 
-      tipoid, 
+      tipo_id, 
       nombre, 
-      diasestadia, 
+      dias_estadia, 
       descripcion 
     } = req.body;
     
     const result = await pool.query(
       packages.updatePackage,
-      [tipoid, nombre, diasestadia, descripcion, id]
+      [tipo_id, nombre, dias_estadia, descripcion, id]
     );
 
     res.status(200).json({
@@ -84,6 +79,7 @@ export const updatePackage = async (req, res) => {
 export const deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await pool.query(
       packages.deletePackage, 
       [id]
@@ -105,6 +101,7 @@ export const deletePackage = async (req, res) => {
 export const activatePackage = async (req, res) => {
   try {
     const { id } = req.params;
+    
     const result = await pool.query(
       packages.activatePackage,
       [id]

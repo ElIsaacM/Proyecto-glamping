@@ -31,10 +31,10 @@ export const getserviceByName = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const { nombre, encargado, duracionminutos, precio, descripcion } = req.body;
+    const { nombre, encargado, duracion_minutos, precio, descripcion } = req.body;
     const result = await pool.query(
       service.createService, 
-      [nombre, encargado, duracionminutos, precio, descripcion]
+      [nombre, encargado, duracion_minutos, precio, descripcion]
     );
     
     res.status(200).json({
@@ -53,11 +53,11 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, encargado, duracionminutos, precio, descripcion } = req.body;
+    const { nombre, encargado, duracion_minutos, precio, descripcion } = req.body;
 
     const result = await pool.query(
       service.updateService, 
-      [nombre, encargado, duracionminutos, precio, descripcion, id]
+      [nombre, encargado, duracion_minutos, precio, descripcion, id]
     );
 
     res.status(200).json({

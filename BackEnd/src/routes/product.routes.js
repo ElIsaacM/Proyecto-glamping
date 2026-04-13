@@ -5,7 +5,6 @@ import {
   getProductByName,
   createProduct,
   updateProduct,
-  sellProduct,
   deleteProduct,
   activateProduct,
   getProductStats,
@@ -18,7 +17,6 @@ router.get('/', getProducts);
 router.post('/search', getProductByName);
 router.post('/', createProduct);
 router.put('/:id', updateProduct);
-router.patch('/:id', sellProduct);
 router.delete('/delete/:id', deleteProduct);
 router.put('/activate/:id', activateProduct);
 router.get('/stats', getProductStats);

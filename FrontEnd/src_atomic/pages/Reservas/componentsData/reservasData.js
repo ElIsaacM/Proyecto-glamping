@@ -1,13 +1,13 @@
 export const reservasCardData = [
     {
         bgColor: '',
-        texto: 'Total reservas',
-        titulo: 500,
+        texto: 'ver productos', // debe pedir la id de la reserva
+        titulo: '',
     },
     {
         bgColor: '',
-        texto: 'Completas',
-        titulo: 245,
+        texto: 'Ver servicios', // debe pedir la id de la reserva
+        titulo: '',
     },
     {
         bgColor: '',
@@ -16,7 +16,7 @@ export const reservasCardData = [
     },
     {
         bgColor: 'verde',
-        texto: 'Ver pagos',
+        texto: 'Ver cliente', // debe pedir la id de la reserva
         titulo: '',
     },
 ];

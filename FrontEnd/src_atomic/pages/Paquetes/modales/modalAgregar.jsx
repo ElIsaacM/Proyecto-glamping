@@ -39,7 +39,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   // Agregar capacidad personas
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { tipoid: '', registradoporid: '', nombre: '', diasestadia: '', descripcion: ''},
+    { tipo_id: '', registrado_por_id: '', nombre: '', dias_estadia: '', descripcion: ''},
     `${import.meta.env.VITE_API_BASE_URL}/api/packages`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
@@ -52,17 +52,17 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input 
           type="number" 
-          name="tipoid" 
+          name="tipo_id" 
           placeholder="Tipo de paquete" 
-          value={formData.tipoid} 
+          value={formData.tipo_id} 
           onChange={handleChange} 
           required 
         />
         <input 
           type="number" 
-          name="registradoporid" 
+          name="registrado_por_id" 
           placeholder="Registrado por" 
-          value={formData.registradoporid} 
+          value={formData.registrado_por_id} 
           onChange={handleChange} 
           required 
         />
@@ -76,9 +76,9 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
         />
         <input 
           type="number" 
-          name="diasestadia" 
+          name="dias_estadia" 
           placeholder="Días de estadía" 
-          value={formData.diasestadia} 
+          value={formData.dias_estadia} 
           onChange={handleChange} 
           required 
         />

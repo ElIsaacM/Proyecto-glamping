@@ -9,35 +9,35 @@ export const payment = {
     SELECT
       * 
     FROM vista_pagos
-    WHERE factura ILIKE '%' || $1 || '%'
+    WHERE factura::text ILIKE '%' || $1 || '%'
   `,
   createPaymentManually: `
-    INSERT INTO pagos (facturaid, fechapago, metodoid, estado, totalpagado)
+    INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
     SELECT 
-      f.facturaid,    
+      f.factura_id,    
       CURRENT_DATE,   
       $2,             
       $3,             
       $4              
     FROM facturas f
-    JOIN reservas r ON f.reservaid = r.reservaid
-    JOIN clientes c ON r.clienteid = c.clienteid
-    WHERE f.facturaid = $1 AND c.email = $5
-    RETURNING facturaid, fechapago;
+    JOIN reservas r ON f.reserva_id = r.reserva_id
+    JOIN clientes c ON r.cliente_id = c.cliente_id
+    WHERE f.factura_id = $1 AND c.email = $5
+    RETURNING factura_id, fecha_pago;
   `,
   createPaymentWithApi: `
-    INSERT INTO pagos (facturaid, fechapago, metodoid, estado, totalpagado)
+    INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
     SELECT 
-      f.facturaid,    
+      f.factura_id,    
       CURRENT_DATE,   
       $2,             
       $3,             
       $4              
     FROM facturas f
-    JOIN reservas r ON f.reservaid = r.reservaid
-    JOIN clientes c ON r.clienteid = c.clienteid
-    WHERE f.facturaid = $1 AND c.email = $5
-    RETURNING facturaid, fechapago;
+    JOIN reservas r ON f.reserva_id = r.reserva_id
+    JOIN clientes c ON r.cliente_id = c.cliente_id
+    WHERE f.factura_id = $1 AND c.email = $5
+    RETURNING factura_id, fecha_pago;
   `,
 }
 
@@ -51,3 +51,52 @@ export const payment = {
 // Nota: ajustar para que el total mostrado en frontend
 // sea la suma de todos los pagos por factura, con el fin 
 // de que si un cliente paga 2 veces, el sistema muestre que pagó el total
+
+export const paymentFilters = {
+  getRecentPayments: `
+    SELECT
+      *
+    FROM vista_pagos
+    ORDER BY fecha DESC
+  `,
+  getSucefullyPayments: `
+    SELECT
+      *
+    FROM vista_pagos
+    WHERE estado = 'Completado'
+    ORDER BY fecha DESC
+  `,
+  // getRejectedPayments: `
+  //   SELECT
+  //     *
+  //   FROM vista_pagos
+  //   WHERE estado = 'Rechazado'
+  //   ORDER BY fecha DESC
+  // `,
+}
+
+export const paymentStats = {
+  getSuccessfulPayments: `
+    SELECT 
+      COUNT(id) AS "Pagos exitosos"
+    FROM vista_pagos
+    WHERE estado = 'Completado'
+  `,
+  getRejectedPayments: `
+    SELECT 
+      COUNT(id) AS "Pagos rechazados"
+    FROM vista_pagos
+    WHERE estado = 'Rechazado'
+  `,
+  getPendingRefunds: `
+    SELECT 
+      COUNT(id) AS "Reembolsos pendientes"
+    FROM vista_reembolsos
+    WHERE estado = 'Pendiente'
+  `,
+  getRevenue: `
+    SELECT 
+      Ganancia_total
+    FROM vista_pagos_stats
+  `,
+}

@@ -5,36 +5,33 @@ export const invoice = {
     FROM vista_facturas
     ORDER BY fecha DESC
   `,
-  getInvoicesByID: `
+  getInvoicesByClient: `
     SELECT
       * 
     FROM vista_facturas
-    WHERE id ILIKE '%' || $1 || '%'
+    WHERE cliente = $1
   `,
   createInvoice: `
-    INSERT INTO facturas (reservaid, fechafactura, subtotal, descuento, total, totalrestante)
+    INSERT INTO facturas (reserva_id, fecha_factura, subtotal, descuento, total, total_restante)
     SELECT 
-      r.reservaid,    
+      r.reserva_id,    
       CURRENT_DATE,   
       $1,             
       $2,             
       $1 * (1 - $2 / 100.0),             
       $1 * (1 - $2 / 100.0)           
     FROM reservas r
-    JOIN clientes c ON r.clienteid = c.clienteid
-    WHERE r.reservaid = $4 AND c.email = $5
-    RETURNING facturaid, fechafactura, total;
+    JOIN clientes c ON r.cliente_id = c.cliente_id
+    WHERE r.reserva_id = $4 AND c.email = $5
+    RETURNING factura_id, fecha_factura, total;
   `,
-  updateInvoiceByPayment: `
-    UPDATE facturas f
-    SET totalrestante = f.total - COALESCE(pago_total, 0)
-    FROM (
-	    SELECT
-		    facturaid,
-		    SUM(totalpagado) AS pago_total
-	    FROM pagos
-	    GROUP BY facturaid
-    ) AS p
-    WHERE f.facturaid = p.facturaid
-  `
+  // Se actualiza el total de la factura cuando se agregan nuevos productos o servicios
+  updateInvoiceByPackage: `
+    UPDATE Facturas
+    SET 
+      subtotal = $1, -- El nuevo subtotal calculado en el Backend
+      total = $1 - ($1 * (COALESCE(descuento, 0) / 100))
+    WHERE reserva_id = $2
+    RETURNING total;
+  `,
 }

@@ -12,11 +12,11 @@ export const getCabins = async (req, res) => {
 
 export const createCabin = async (req, res) => {
   try {
-    const { nombre, precionoche, descripcion } = req.body;
+    const { nombre, precio_noche, descripcion } = req.body;
 
     const newCabin = await pool.query(
       cabin.createCabin, 
-      [nombre, precionoche, descripcion]
+      [nombre, precio_noche, descripcion]
     );
 
     res.json(newCabin.rows[0]);
@@ -27,11 +27,11 @@ export const createCabin = async (req, res) => {
 
 export const updateCabin = async (req, res) => {
   try {
-    const { nombre, precionoche, descripcion } = req.body;
+    const { nombre, precio_noche, descripcion } = req.body;
 
     const updatedCabin = await pool.query(
       cabin.updateCabin,
-      [nombre, precionoche, descripcion, req.params.id]
+      [nombre, precio_noche, descripcion, req.params.id]
     );
 
     res.json(updatedCabin.rows[0]);

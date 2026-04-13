@@ -13,7 +13,7 @@ export const service = {
     WHERE servicio ILIKE '%' || $1 || '%'
   `,
   createService: `
-    INSERT INTO Servicios (nombre, encargado, duracionminutos, precio, descripcion, fechaactualizacion)
+    INSERT INTO Servicios (nombre, encargado, duracion_minutos, precio, descripcion, fecha_actualizacion)
     VALUES ($1, $2, $3, $4, $5, CURRENT_DATE)
     RETURNING nombre, precio
   `,
@@ -22,23 +22,23 @@ export const service = {
     SET
       nombre = COALESCE(NULLIF($1, ''), nombre),
       encargado = COALESCE(NULLIF($2, ''), encargado),
-      duracionminutos = COALESCE(NULLIF($3::text, '')::integer, duracionminutos),
+      duracion_minutos = COALESCE(NULLIF($3::text, '')::integer, duracion_minutos),
       precio = COALESCE(NULLIF($4::text, '')::numeric, precio),
       descripcion = COALESCE(NULLIF($5, ''), descripcion),
-      fechaactualizacion = CURRENT_DATE
-    WHERE servicioid = $6
+      fecha_actualizacion = CURRENT_DATE
+    WHERE servicio_id = $6
     RETURNING nombre, precio
   `,
   deleteService: `
     UPDATE Servicios
     SET estado = 'Inactivo'
-    WHERE servicioid = $1
+    WHERE servicio_id = $1
     RETURNING nombre
   `,
   activateService: `
     UPDATE Servicios
     SET estado = 'Activo'
-    WHERE servicioid = $1
+    WHERE servicio_id = $1
     RETURNING nombre
   `
 }

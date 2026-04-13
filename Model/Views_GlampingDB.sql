@@ -1,176 +1,338 @@
--------------------------- Views de facturas -----------------------------
-CREATE OR REPLACE VIEW vista_facturas AS
+-------------------------- Views servicios -----------------------------
+CREATE VIEW vista_servicios AS
+SELECT
+	servicio_id AS ID,
+	nombre AS Servicio,
+	encargado,
+	duracion_minutos AS "Duracion en minutos",
+	precio,
+	descripcion, 
+	fecha_actualizacion AS Actualizacion,
+	estado
+FROM Servicios;
+
+CREATE VIEW vista_servicios_stats AS
+SELECT
+    s.nombre AS sercicio,
+    COUNT(s.servicio_id) AS veces_reservado,
+    SUM(s.precio) AS ingresos_generados
+FROM servicios s
+JOIN servicios_Por_Paquete spq ON s.servicio_id = spq.servicio_id
+JOIN paquetes p ON spq.paquete_id = p.paquete_id
+JOIN reservas r ON r.paquete_id = p.paquete_id
+WHERE s.estado <> 'Activo' 
+  AND r.estado = 'Confirmada'
+GROUP BY s.nombre, s.servicio_id;
+
+-------------------------- Views productos -----------------------------
+CREATE VIEW vista_productos AS
+SELECT
+	producto_id AS ID,
+	nombre AS Producto,
+	tipo,
+	precio,
+	descripcion,
+	fecha_actualizacion AS Actualizacion, 
+	estado
+FROM productos;
+
+CREATE VIEW vista_productos_stats AS
+SELECT
+    p.nombre AS producto,
+    COUNT(p.producto_id) AS veces_reservado,
+    SUM(p.precio) AS ingresos_generados
+FROM productos p
+JOIN productos_por_paquete ppq ON p.producto_id = ppq.producto_id
+JOIN paquetes pq ON ppq.paquete_id = pq.paquete_id
+JOIN reservas r ON r.paquete_id = pq.paquete_id
+WHERE p.estado = 'Activo' 
+  AND r.estado = 'Confirmada'
+GROUP BY p.nombre, p.producto_id;
+
+-------------------------- Views cabañas -----------------------------
+CREATE VIEW vista_cabanas AS
 SELECT 
-	f.facturaid AS ID,
-	f.reservaid AS Reserva,
-	c.nombre AS Cliente,
-	f.fechafactura AS fecha,
-	f.subtotal,
-	f.total,
-	f.totalrestante AS "Por Pagar"
+	cabana_id AS ID,
+	nombre,
+	precio_noche AS "precio noche",
+	capacidad_personas AS capacidad,
+	fecha_registro AS actualizacion,
+	descripcion,
+	fecha_mantenimiento AS mantenimiento,
+	estado
+FROM cabanas;
+
+CREATE VIEW vista_cabanas_stats AS
+SELECT
+  	c.nombre AS "Cabaña",
+    COUNT(DISTINCT r.reserva_id) AS "Veces reservada",
+    COALESCE(SUM(f.total), 0) AS "Ingresos generados"  
+FROM cabanas c  
+LEFT JOIN paquetes p ON c.cabana_id = p.cabana_id
+LEFT JOIN reservas r ON p.paquete_id = r.paquete_id
+LEFT JOIN facturas f ON r.reserva_id = f.reserva_id
+WHERE c.estado <> 'inactivo'
+	AND r.estado <> 'Cancelada'
+GROUP BY c.cabana_id, c.nombre;
+
+CREATE OR REPLACE VIEW vista_cabanas_revenue AS
+SELECT
+  TO_CHAR(f.fecha_factura, 'YYYY-MM-DD') AS fecha,
+  SUM(COALESCE(c.precio_noche, 0) * COALESCE(p.dias_estadia, 0)) AS total
 FROM facturas f
-LEFT JOIN pagos p ON f.facturaid = p.facturaid
-JOIN reservas r ON r.reservaid = f.reservaid
-JOIN clientes c ON c.clienteid = r.clienteid
-WHERE r.estado <> 'Cancelada';
+JOIN reservas r ON f.reserva_id = r.reserva_id
+JOIN paquetes p ON r.paquete_id = p.paquete_id
+JOIN cabanas c ON p.cabana_id = c.cabana_id
+WHERE c.estado <> 'Inactivo'
+  AND r.estado = 'Pagada' -- Filtramos por el estado de la factura
+GROUP BY TO_CHAR(f.fecha_factura, 'YYYY-MM-DD');
 
-SELECT * FROM facturas;
+SELECT * FROM facturas
 
--------------------------- Views de pagos -----------------------------
-CREATE VIEW vista_pagos AS
-SELECT 
-	p.pagoid AS ID,
-	mp.nombre AS Metodo,
-	p.facturaid AS Factura,
-	p.fechapago AS Fecha,
-	p.estado,
-	p.totalpagado
-FROM pagos p
-JOIN metodospago mp ON mp.metodoid = p.metodoid;
-
-SELECT * FROM Pagos
-
--------------------------- Views de reembolsos -----------------------------
-CREATE VIEW vista_reembolsos_factura AS
-SELECT 
-    r.reembolsoid AS ID,
-    r.pagoid AS Pago,
-    p.facturaid AS Factura,
-    r.fecha,
-    r.justificacion,
-    r.estado,
-    (SELECT f.total * 0.9 FROM facturas f WHERE f.facturaid = p.facturaid) AS Reembolsado
-FROM reembolsos r
-JOIN pagos p ON p.pagoid = r.pagoid;
-
-CREATE INDEX idx_reservas_cliente ON reservas(clienteid);
-CREATE INDEX idx_facturas_reserva ON facturas(reservaid);
-CREATE INDEX idx_pagos_factura ON pagos(facturaid);
-CREATE INDEX idx_clientes_nombre ON clientes(nombre);
-
--------------------------- Views de reservas -----------------------------
-CREATE VIEW vista_reservas AS
-SELECT 
-	r.reservaid AS ID,
-	p.nombre AS Paquete,
-	c.nombre AS Cliente,
-	r.fecharegistro AS fecha,
-	r.llegada,
-	r.salida,
-	r.estado
-FROM Reservas r
-JOIN Clientes c ON c.clienteid = r.clienteid
-JOIN Paquetes p ON p.paqueteid = r.paqueteid
+-------------------------- Views daños y mantenimientos -----------------------------
+CREATE VIEW vista_danos_mantenimientos AS
+SELECT
+	dm.dano_id AS ID,
+	c.nombre AS cabana,
+	dm.descripcion,
+	dm.estado,
+	dm.fecha_registro AS registro,
+	dm.fecha_arreglo AS Arreglo,
+	dm.responsable
+FROM danos_mantenimientos dm
+JOIN cabanas c ON c.cabana_id = dm.cabana_id;
 
 -------------------------- Views usuarios -----------------------------
-CREATE VIEW vista_usuarios AS
+CREATE OR REPLACE VIEW vista_usuarios AS
 SELECT 
-	u.usuarioid AS ID,
+	u.usuario_id AS ID,
+	u.rol_id,
+    u.identificacion_id,
 	r.nombre AS Rol,
 	i.tipo AS Identificacion,
-	u.numeroidentificacion AS "# Identificacion",
+	u.numero_identificacion AS "# Identificacion",
 	u.nombre AS Usuario,
 	u.contacto AS Contacto,
 	u.sueldo AS Sueldo,
 	u.estado AS Estado
 FROM usuarios u 
-JOIN roles r ON u.rolid = r.rolid
-JOIN identificaciones i ON i.identificacionid = u.identificacionid
+JOIN roles r ON u.rol_id = r.rol_id
+JOIN identificaciones i ON i.identificacion_id = u.identificacion_id;
 
--------------------------- Views servicios -----------------------------
-CREATE VIEW vista_servicios AS
-SELECT
-	servicioID AS ID,
-	nombre AS Servicio,
-	encargado,
-	duracionMinutos AS "Duracion en minutos",
-	precio,
-	descripcion, 
-	fechaactualizacion AS Actualizacion,
-	estado 
-FROM Servicios
+CREATE VIEW vista_usuarios_stats AS
+SELECT 
+  	COUNT(*) AS total_active_users,
+	(
+  		SELECT nombre 
+  		FROM usuarios 
+		WHERE estado = 'Activo'
+		ORDER BY sueldo DESC
+		LIMIT 1
+	) AS highest_payroll,
+  	(
+	  	SELECT nombre 
+		FROM usuarios 
+		WHERE estado = 'Activo'
+		ORDER BY sueldo ASC
+		LIMIT 1
+	) AS lowest_payroll,
+  SUM(sueldo) AS total_payroll
+FROM usuarios;
 
-CREATE INDEX idx_servicios_activos_id ON servicios(servicioid) WHERE estado = 'Activo';
+-------------------------- Views login -----------------------------
+CREATE VIEW vista_login AS
+SELECT 
+	l.usuario_id AS usuario,
+	u.rol_id AS rol,
+	l.email,
+	l.contrasena,
+	l.estado
+FROM login l
+JOIN usuarios u ON u.usuario_id = l.usuario_id;
 
-CREATE VIEW vista_servicios_stats AS
-SELECT
-    s.nombre AS servicio_nombre,
-    COUNT(s.servicioid) AS veces_reservado,
-    SUM(s.precio) AS ingresos_generados
-FROM servicios s
-JOIN serviciosPorPaquete spq ON s.servicioid = spq.servicioid
-JOIN paquetes p ON spq.paqueteid = p.paqueteid
-JOIN reservas r ON r.paqueteid = p.paqueteid
-WHERE s.estado = 'Activo' 
-  AND r.estado = 'Confirmada'
-GROUP BY s.nombre, s.servicioid;
-
--------------------------- Views productos -----------------------------
-CREATE VIEW vista_productos AS
-SELECT
-	productoid AS ID,
-	nombre AS Producto,
-	tipo,
-	precioVenta AS Precio,
-	descripcion,
-	fechaActualizacion AS Actualizacion, 
-	estado
-FROM productos
-
-CREATE INDEX idx_productos_activos_id ON productos(productoid) WHERE estado = 'Activo';
-
-CREATE VIEW vista_productos_stats AS
-SELECT
-    p.nombre AS producto_nombre,
-    COUNT(p.productoid) AS veces_reservado,
-    SUM(p.precioventa) AS ingresos_generados
-FROM productos p
-JOIN productosPorPaquete ppq ON p.productoid = ppq.productoid
-JOIN paquetes pq ON ppq.paqueteid = pq.paqueteid
-JOIN reservas r ON r.paqueteid = pq.paqueteid
-WHERE p.estado = 'Activo' 
-  AND r.estado = 'Confirmada'
-GROUP BY p.nombre, p.productoid;
-
-SELECT * FROM productos
+-------------------------- Views logs - login -----------------------------
+CREATE VIEW vista_logs_login AS
+SELECT 
+	l.email,
+	ll.accion,
+	ll.fecha_hora AS fecha,
+	ll.detalles
+FROM logs_login ll
+JOIN login l ON ll.login_id = l.login_id;
 
 -------------------------- Views paquetes -----------------------------
 CREATE VIEW vista_paquetes AS
 SELECT 
-	p.paqueteid AS ID,
+	p.paquete_id AS ID,
 	tp.nombre AS Tipo,
 	u.nombre AS Registrador,
 	p.nombre,
-	p.diasEstadia AS Dias,
-	p.fechaRegistro AS fecha,
+	p.dias_estadia AS Dias,
+	p.fecha_registro AS fecha,
 	p.descripcion,
 	p.estado
 FROM paquetes p
-JOIN tipopaquete tp ON tp.tipoid = p.tipoid
-JOIN usuarios u ON u.usuarioid = p.registradoporid
+JOIN tipo_paquete tp ON tp.tipo_id = p.tipo_id
+JOIN usuarios u ON u.usuario_id = p.registrado_por_id;
 
-SELECT * FROM paquetes
+CREATE VIEW vista_paquetes_stats AS
+SELECT
+    p.nombre AS paquete,
+    COUNT(p.paquete_id) AS veces_reservado
+FROM paquetes p
+JOIN reservas r ON r.paquete_id = p.paquete_id
+WHERE p.estado = 'Activo' 
+  AND p.tipo_id <> 1 -- Personalizado
+  AND r.estado = 'Confirmada'
+GROUP BY p.nombre;
 
+-------------------------- Views de servicios por paquete -----------------------------
+CREATE OR REPLACE VIEW vista_servicios_por_paquete AS
+SELECT
+	sp.servicio_paquete_id AS ID,
+	p.paquete_id, -- Para los join a reservas
+	p.nombre AS paquete,
+	s.nombre AS servicio,
+	s.img_url,
+	cantidad_personas AS personas
+FROM servicios_por_paquete sp
+JOIN paquetes p ON p.paquete_id = sp.paquete_id
+JOIN servicios s ON s.servicio_id = sp.servicio_id;
 
-CREATE INDEX idx_reservas_estado_paquete ON reservas(estado, paqueteid);
-CREATE INDEX idx_spq_relacion_servicios ON serviciosPorPaquete(paqueteid, servicioid);
-CREATE INDEX idx_spq_relacion_productos ON productosPorPaquete(productoid, paqueteid);
+-------------------------- Views de productos por paquete -----------------------------
+CREATE OR REPLACE VIEW vista_productos_por_paquete AS
+SELECT
+	ppq.producto_paquete_id AS ID,
+	pq.paquete_id, -- Para los join a reservas
+	pq.nombre AS paquete,
+	p.nombre AS producto,
+	p.img_url,
+	cantidad
+FROM productos_por_paquete ppq
+JOIN paquetes pq ON pq.paquete_id = ppq.paquete_id
+JOIN productos p ON p.producto_id = ppq.producto_id;
 
--------------------------- Views cabañas -----------------------------
+-------------------------- Views de clientes -----------------------------
+CREATE VIEW vista_clientes AS
+SELECT
+	c.cliente_id AS ID,
+	i.tipo AS "Tipo ident..",
+	c.identificacion AS "# ident..",
+	c.nombre AS cliente,
+	c.email,
+	c.contacto,
+	c.pais_residencia AS residencia
+FROM clientes c
+JOIN identificaciones i ON c.identificacion_id = i.identificacion_id;
 
+-------------------------- Views de reservas -----------------------------
+CREATE VIEW vista_reservas AS
+SELECT 
+	r.reserva_id AS ID,
+	p.nombre AS Paquete,
+	c.nombre AS Cliente,
+	r.fecha_registro AS fecha,
+	r.llegada,
+	r.salida,
+	r.estado,
+	r.por_pagar AS "Pago restante"
+FROM Reservas r
+JOIN Clientes c ON c.cliente_id = r.cliente_id
+JOIN Paquetes p ON p.paquete_id = r.paquete_id;
 
-SELECT * FROM cabanas
+CREATE VIEW vista_reservas_revenue AS
+SELECT
+  TO_CHAR(f.fecha_factura, 'YYYY-MM-DD') AS fecha,
+  SUM(f.total) AS total
+FROM reservas r
+JOIN facturas f ON f.reserva_id = r.reserva_id
+WHERE r.estado <> 'Cancelada'
+GROUP BY TO_CHAR(f.fecha_factura, 'YYYY-MM-DD');
 
--------------------------- Views paquetes -----------------------------
--------------------------- Views paquetes -----------------------------
--------------------------- Views paquetes -----------------------------
--------------------------- Views paquetes -----------------------------
--------------------------- Views paquetes -----------------------------
+-------------------------- Views de facturas -----------------------------
+CREATE OR REPLACE VIEW vista_facturas AS
+SELECT 
+	f.factura_id AS ID,
+	f.reserva_id AS Reserva,
+	c.nombre AS Cliente,
+	f.fecha_factura AS fecha,
+	f.subtotal,
+	f.total
+FROM facturas f
+LEFT JOIN pagos p ON f.factura_id = p.factura_id
+JOIN reservas r ON r.reserva_id = f.reserva_id
+JOIN clientes c ON c.cliente_id = r.cliente_id
+WHERE r.estado <> 'Cancelada';
 
+-------------------------- Views de pagos -----------------------------
+CREATE VIEW vista_pagos AS
+SELECT 
+	p.pago_id AS ID,
+	mp.nombre AS Metodo,
+	p.factura_id AS Factura,
+	p.fecha_pago AS Fecha,
+	p.estado,
+	p.total_pagado
+FROM pagos p
+JOIN metodos_pago mp ON mp.metodo_id = p.metodo_id;
 
-SELECT * FROM servicios
+CREATE VIEW vista_pagos_stats AS
+SELECT
+	SUM(total_pagado) AS Ganancia_total,
+	COUNT(*) AS Total_pagos
+FROM pagos;
 
+-------------------------- Views de reembolsos -----------------------------
+CREATE VIEW vista_reembolsos AS
+SELECT 
+    reembolso_id AS ID,
+    factura_id AS Factura,
+    fecha,
+    justificacion,
+    estado,
+    monto
+FROM reembolsos;
 
+-------------------------- Views Tipos -----------------------------
 
+--- Tipos de paquetes
 
+--- Roles
 
+--- Identificaciones
+
+--- metodos de pago
+
+-------------------------- Indices -----------------------------
+
+-- 1. RESERVAS Y FACTURACIÓN (Tablas de alto crecimiento)
+CREATE INDEX idx_facturas_fecha_total_incl ON facturas (fecha_factura) INCLUDE (total, reserva_id);
+
+-- Índice parcial: Ignora cancelaciones para reducir el tamaño en disco y acelerar JOINs
+CREATE INDEX idx_reservas_perf ON reservas (paquete_id, cliente_id) WHERE estado <> 'Cancelada';
+
+-- 2. TABLAS DE UNIÓN (Muchos a Muchos)
+CREATE INDEX idx_spq_paquete_busqueda ON servicios_por_paquete (paquete_id, servicio_id);
+CREATE INDEX idx_ppq_paquete_busqueda ON productos_por_paquete (paquete_id, producto_id);
+
+-- 3. AUDITORÍA Y CONTROL (Tablas con inserción constante)
+CREATE INDEX idx_logs_login_reciente ON logs_login (fecha_hora DESC);
+
+CREATE INDEX idx_danos_cabana_estado ON danos_mantenimientos (cabana_id, estado);
+
+-- 4. BÚSQUEDA Y CLIENTES
+CREATE INDEX idx_clientes_nombre_pattern ON clientes (nombre varchar_pattern_ops);
+
+/*
+	Las tablas que mas datos van a contener son: 
+	- reservas, 
+	- paquetes, 
+	- pagos, 
+	- facturas, 
+	- clientes, 
+	- logs_login, 
+	- reembolsos, 
+	- danos_mantenimientos,
+	- servicios_Por_Paquete,
+	- productos_por_paquete
+*/

@@ -11,31 +11,37 @@ export const packages = {
     SELECT
       * 
     FROM vista_paquetes
-    WHERE nombre ILIKE '%' || $1 || '%'
+    WHERE tipo ILIKE '%' || $1 || '%'
   `,
   // Un paquete debe incluir (servicios, productos, cabañas)
   createPackage: `
-    INSERT INTO paquetes (tipoid, registradoporid, nombre, diasestadia, fecharegistro, descripcion, estado)
+    INSERT INTO paquetes (tipo_id, registrado_por_id, nombre, dias_estadia, fecha_registro, descripcion, estado)
     VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, 'Activo')
-    RETURNING nombre, fecharegistro
+    RETURNING nombre, fecha_registro
   `,
   updatePackage: `
     UPDATE paquetes SET
-      tipoid = COALESCE(NULLIF($1::text, '')::integer, tipoid),
+      tipo_id = COALESCE(NULLIF($1::text, '')::integer, tipo_id),
       nombre = COALESCE(NULLIF($2, ''), nombre),
-      diasestadia = COALESCE(NULLIF($3::text, '')::integer, diasestadia),
+      dias_estadia = COALESCE(NULLIF($3::text, '')::integer, dias_estadia),
       descripcion = COALESCE(NULLIF($4, ''), descripcion),
-      fecharegistro = CURRENT_DATE
-    WHERE paqueteid = $5
-    RETURNING nombre, fecharegistro
+      fecha_registro = CURRENT_DATE
+    WHERE paquete_id = $5
+    RETURNING nombre, fecha_registro
   `,
   deletePackage: `
     UPDATE paquetes SET
       estado = 'Inactivo'
+    WHERE paquete_id = $1
+    RETURNING nombre
+  `,
+  activatePackage: `
+    UPDATE paquetes SET
+      estado = 'Activo'
     WHERE paqueteid = $1
     RETURNING nombre
-  `
-}
+  `,
+};
 
 export const packageFilters = {
   idle_packages: `
@@ -49,8 +55,14 @@ export const packageFilters = {
       * 
     FROM vista_paquetes
     WHERE estado = 'Activo'
-    -- AND tipoid <> 11 -- Ajustar con la id de personalizado (1)
-    ORDER BY tipoid ASC
+    ORDER BY tipo ASC
+  `,
+  type_packages_DESC: `
+    SELECT 
+      * 
+    FROM vista_paquetes
+    WHERE estado = 'Activo'
+    ORDER BY tipo DESC
   `,
   longer_stay_packages: `
     SELECT 
@@ -65,29 +77,29 @@ export const packageFilters = {
     FROM vista_paquetes
     WHERE estado = 'Activo'
     ORDER BY dias ASC
-  `
-}
+  `,
+};
 
 export const packageStats = {
   most_frecuent_package: `
     SELECT 
       * 
     FROM vista_paquetes_stats 
-    ORDER BY cantidad DESC
+    ORDER BY veces_reservado DESC
     LIMIT 1
   `,
   least_frecuent_package: `
     SELECT 
       * 
     FROM vista_paquetes_stats 
-    ORDER BY cantidad ASC
+    ORDER BY veces_reservado ASC
     LIMIT 1
   `,
   top_packages: `
     SELECT 
       * 
     FROM vista_paquetes_stats 
-    ORDER BY cantidad DESC
+    ORDER BY veces_reservado DESC
     LIMIT 3
-  `
-}
+  `,
+};

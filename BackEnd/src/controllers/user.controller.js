@@ -5,10 +5,6 @@ export const getusers = async (req, res) => {
   try {
     const result = await pool.query(user.getUsers);
 
-    if (result.rows.length === 0) {
-      throw new Error("User not found!");
-    }
-
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ 
@@ -32,25 +28,21 @@ export const getuserByName = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     const {
-      rolid,
-      identificacionid,
+      rol_id,
+      identificacion_id,
       nombre,
       contacto,
       sueldo,
-      numeroidentificacion,
-      email,
-      contrasena,
+      numero_identificacion,
     } = req.body;
 
     const result = await pool.query(user.createUser, [
-      rolid,
-      identificacionid,
+      rol_id,
+      identificacion_id,
       nombre,
       contacto,
       sueldo,
-      numeroidentificacion,
-      email,
-      contrasena,
+      numero_identificacion,
     ]);
 
     res.status(201).json(result.rows[0]);
@@ -63,25 +55,21 @@ export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      rolid,
-      identificacionid,
+      rol_id,
+      identificacion_id,
       nombre,
       contacto,
       sueldo,
-      numeroidentificacion,
-      email,
-      contrasena,
+      numero_identificacion,
     } = req.body;
 
     const result = await pool.query(user.updateUser, [
-      rolid,
-      identificacionid,
+      rol_id,
+      identificacion_id,
       nombre,
       contacto,
       sueldo,
-      numeroidentificacion,
-      email,
-      contrasena,
+      numero_identificacion,
       id,
     ]);
 

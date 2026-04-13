@@ -39,13 +39,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, servicioAEdita
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "servicioAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/services/${servicioAEditar.servicioid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/services/${servicioAEditar.servicio_id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
       nombre: servicioAEditar.nombre || servicioAEditar.Nombre || '',
       encargado: servicioAEditar.encargado || servicioAEditar.Encargado || '',
-      duracionminutos: servicioAEditar.duracionminutos || servicioAEditar.DuracionMinutos || '',
+      duracion_minutos: servicioAEditar.duracion_minutos || servicioAEditar.DuracionMinutos || '',
       precio: servicioAEditar.precio || servicioAEditar.Precio || '',
       descripcion: servicioAEditar.descripcion || servicioAEditar.Descripción || ''
     },
@@ -79,9 +79,9 @@ export default function ModalEditar({ setModalAbierto, fetchData, servicioAEdita
         />
         <input 
           type="number" 
-          name="duracionminutos" 
+          name="duracion_minutos" 
           placeholder="Duración en minutos" 
-          value={formData.duracionminutos} 
+          value={formData.duracion_minutos} 
           onChange={handleChange} 
           required 
         />

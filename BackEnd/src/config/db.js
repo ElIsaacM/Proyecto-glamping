@@ -1,19 +1,24 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import pg from 'pg';
 
 const { Pool } = pg;
 
-const config = {
+const local_config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER,
+  host: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
   port: Number(process.env.DB_PORT),
-}
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+};
 
-console.log('Config DB:', { ...config, password: '****' }); // Tip: ocultar password en logs
+const config = {
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+};
+
+console.log('Config DB:', { ...local_config, password: '****' }); // Tip: ocultar password en logs
 
 // Creamos una instancia del Pool (maneja múltiples conexiones de forma eficiente)
 const pool = new Pool(config);

@@ -36,13 +36,13 @@ const Form = styled.form`
 `;
 
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
-  //nota: quiero qu el modal de agregar, pida los datos (facturaid, correo del cliente, totalpagado) de diferentes tablas, eso se debe manejar desde el model? 
+  //nota: quiero qu el modal de agregar, pida los datos (factura_id, correo del cliente, total_pagado) de diferentes tablas, eso se debe manejar desde el model? 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      facturaid: '',
+      factura_id: '',
       email: '',
-      metodoid: 7,
-      totalpagado: ''
+      metodo_id: 7,
+      total_pagado: ''
     },
     `${import.meta.env.VITE_API_BASE_URL}/api/payments`,
     () => {
@@ -54,9 +54,9 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   return (
     <ModalPlantilla modulo="pagos" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="facturaid" placeholder="ID de la factura" value={formData.facturaid} onChange={handleChange} required />
+        <input type="text" name="factura_id" placeholder="ID de la factura" value={formData.factura_id} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Correo del cliente" value={formData.email} onChange={handleChange} required />
-        <input type="number" step="0.01" name="totalpagado" placeholder="Total pagado" value={formData.totalpagado} onChange={handleChange} required />
+        <input type="number" step="0.01" name="total_pagado" placeholder="Total pagado" value={formData.total_pagado} onChange={handleChange} required />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Pago'}
         </button>
