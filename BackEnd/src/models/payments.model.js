@@ -13,30 +13,27 @@ export const payment = {
   `,
   createPaymentManually: `
     INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
-    SELECT 
-      f.factura_id,    
-      CURRENT_DATE,   
-      $2,             
-      $3,             
-      $4              
-    FROM facturas f
-    JOIN reservas r ON f.reserva_id = r.reserva_id
-    JOIN clientes c ON r.cliente_id = c.cliente_id
-    WHERE f.factura_id = $1 AND c.email = $5
-    RETURNING factura_id, fecha_pago;
+    SELECT $1, CURRENT_DATE, $2, $3, $4
+    WHERE EXISTS (
+      SELECT 1 FROM facturas f
+      JOIN reservas r ON f.reserva_id = r.reserva_id
+      JOIN clientes c ON r.cliente_id = c.cliente_id
+      WHERE f.factura_id = $1 AND c.email = $5
+    )
+    AND EXISTS (SELECT 1 FROM metodos_pago WHERE metodo_id = $2)
+    RETURNING factura_id, total_pagado;
   `,
   createPaymentWithApi: `
     INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
-    SELECT 
-      f.factura_id,    
-      CURRENT_DATE,   
-      $2,             
-      $3,             
-      $4              
-    FROM facturas f
-    JOIN reservas r ON f.reserva_id = r.reserva_id
-    JOIN clientes c ON r.cliente_id = c.cliente_id
-    WHERE f.factura_id = $1 AND c.email = $5
+    SELECT $1, CURRENT_DATE, $2, $3, $4
+    WHERE EXISTS (
+      SELECT 1 
+      FROM facturas f
+      JOIN reservas r ON f.reserva_id = r.reserva_id
+      JOIN clientes c ON r.cliente_id = c.cliente_id
+      WHERE f.factura_id = $1 AND c.email = $5
+    )
+    AND EXISTS (SELECT 1 FROM metodos_pago WHERE metodo_id = $2)
     RETURNING factura_id, fecha_pago;
   `,
 }
@@ -66,13 +63,13 @@ export const paymentFilters = {
     WHERE estado = 'Completado'
     ORDER BY fecha DESC
   `,
-  getRejectedPayments: `
-    SELECT
-      *
-    FROM vista_pagos
-    WHERE estado = 'Rechazado'
-    ORDER BY fecha DESC
-  `,
+  // getRejectedPayments: `
+  //   SELECT
+  //     *
+  //   FROM vista_pagos
+  //   WHERE estado = 'Rechazado'
+  //   ORDER BY fecha DESC
+  // `,
 }
 
 export const paymentStats = {

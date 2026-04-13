@@ -21,7 +21,7 @@ const config = {
 console.log('Config DB:', { ...local_config, password: '****' }); // Tip: ocultar password en logs
 
 // Creamos una instancia del Pool (maneja múltiples conexiones de forma eficiente)
-const pool = new Pool(local_config);
+const pool = new Pool(config);
 
 export const connectDB = async () => {
   try {

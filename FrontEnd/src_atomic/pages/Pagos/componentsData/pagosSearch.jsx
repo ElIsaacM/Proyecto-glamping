@@ -8,7 +8,7 @@ export const pagosFilterConfig = {
       localFilter: (arr) => [...arr].sort((a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago))
     },
     "Pagos exitosos": {
-      cacheKey: 'successful_payments',
+      cacheKey: 'sucefull_payments',
       localFilter: (arr) => arr.filter(p => p.estado === 'exitoso')
     },
     "Pagos rechazados": {
@@ -25,6 +25,9 @@ function Buscador({ onResult, onFilterChange }) {
     { nombre: 'Pagos exitosos', selected: '' },
     { nombre: 'Pagos rechazados', selected: '' },
   ];
+
+  console.log(onResult);
+  console.log(onFilterChange);
 
   return (
     <SearchTemplate

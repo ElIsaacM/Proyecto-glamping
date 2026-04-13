@@ -41,7 +41,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
     {
       factura_id: '',
       email: '',
-      metodo_id: 7,
+      metodo_id: 1,
       total_pagado: ''
     },
     `${import.meta.env.VITE_API_BASE_URL}/api/payments`,
@@ -54,9 +54,31 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   return (
     <ModalPlantilla modulo="pagos" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input type="text" name="factura_id" placeholder="ID de la factura" value={formData.factura_id} onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Correo del cliente" value={formData.email} onChange={handleChange} required />
-        <input type="number" step="0.01" name="total_pagado" placeholder="Total pagado" value={formData.total_pagado} onChange={handleChange} required />
+        <input 
+          type="number" 
+          name="factura_id" 
+          placeholder="ID de la factura" 
+          value={formData.factura_id} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="email" 
+          name="email" 
+          placeholder="Correo del cliente" 
+          value={formData.email} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          step="0.01" 
+          name="total_pagado" 
+          placeholder="Total pagado" 
+          value={formData.total_pagado} 
+          onChange={handleChange} 
+          required 
+        />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Pago'}
         </button>

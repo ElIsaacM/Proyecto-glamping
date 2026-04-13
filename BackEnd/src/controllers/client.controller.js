@@ -1,5 +1,5 @@
-import pool from "../config/db.js";
-import { customer } from '../models/customer.model.js'
+import pool from '../config/db.js';
+import { customer } from '../models/customer.model.js';
 
 export const getCustomerData = async (req, res) => {
   try {

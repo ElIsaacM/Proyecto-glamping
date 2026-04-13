@@ -10,7 +10,9 @@ import TablaGeneral from "../../components/organisms/tabla";
 import ModalAgregar from "./modales/modalAgregar";
 
 import PagosCard from "./componentsData/pagosCards";
-import Buscador, { pagosFilterConfig } from "./componentsData/pagosSearch";
+import Buscador, {
+  pagosFilterConfig
+} from "./componentsData/pagosSearch";
 
 const ModulosExtra = styled.div`
   display: flex;
@@ -84,7 +86,11 @@ function Pagos() {
         </ModulosExtra>
 
         <Botones>
-          <Buscador onResult={setPagos} onFilterChange={setFilterMode} />
+          <Buscador
+            onResult={(val) => setPagos(val)}
+            onFilterChange={(mode) => setFilterMode(mode)}
+          />
+
           <BotonAgregar
             modulo={'Agregar pago'}
             color={1}
@@ -92,7 +98,7 @@ function Pagos() {
           />
         </Botones>
 
-        {loading && <p style={{ marginTop: '20px' }}>Cargando productos...</p>}
+        {loading && <p style={{ marginTop: '20px' }}>Cargando...</p>}
         {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
         {displayData && <TablaGeneral data={displayData} />}
       </div>

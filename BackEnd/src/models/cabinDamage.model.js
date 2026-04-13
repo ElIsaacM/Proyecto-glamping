@@ -1,4 +1,4 @@
-const cabinDamage = {
+export const cabinDamage = {
   getCabinsDamage: `
     SELECT
       cabana_id,
