@@ -38,7 +38,7 @@ const Form = styled.form`
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { nombre: '', encargado: '', duracionminutos: '', precio: '', descripcion: '' },
+    { nombre: '', encargado: '', duracion_minutos: '', precio: '', descripcion: '' },
     `${import.meta.env.VITE_API_BASE_URL}/api/services`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`);
@@ -67,9 +67,9 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
         />
         <input 
           type="number" 
-          name="duracionminutos" 
+          name="duracion_minutos" 
           placeholder="Duración en minutos" 
-          value={formData.duracionminutos} 
+          value={formData.duracion_minutos} 
           onChange={handleChange} 
           required 
         />

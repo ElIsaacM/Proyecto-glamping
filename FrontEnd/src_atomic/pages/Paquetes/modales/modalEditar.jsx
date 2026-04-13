@@ -39,13 +39,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/packages/${paqueteAEditar.paqueteid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/packages/${paqueteAEditar.paquete_id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      tipoid: paqueteAEditar.tipoid || paqueteAEditar.tipoid || '',
+      tipo_id: paqueteAEditar.tipo_id || paqueteAEditar.tipo_id || '',
       nombre: paqueteAEditar.nombre || paqueteAEditar.Nombre || '',
-      diasestadia: paqueteAEditar.diasestadia || paqueteAEditar.diasestadia || '',
+      dias_estadia: paqueteAEditar.dias_estadia || paqueteAEditar.dias_estadia || '',
       descripcion: paqueteAEditar.descripcion || paqueteAEditar.descripcion || ''
     },
     urlParams,
@@ -62,9 +62,9 @@ export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input 
           type="number" 
-          name="tipoid" 
+          name="tipo_id" 
           placeholder="Tipo de paquete" 
-          value={formData.tipoid} 
+          value={formData.tipo_id} 
           onChange={handleChange} 
           required 
         />
@@ -78,9 +78,9 @@ export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar
         />
         <input 
           type="number" 
-          name="diasestadia" 
+          name="dias_estadia" 
           placeholder="Días de estadía" 
-          value={formData.diasestadia} 
+          value={formData.dias_estadia} 
           onChange={handleChange} 
           required 
         />

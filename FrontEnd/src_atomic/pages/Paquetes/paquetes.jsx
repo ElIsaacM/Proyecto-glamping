@@ -54,7 +54,7 @@ function Paquetes() {
   const eliminarPaquete = (paquete) => {
     deleteUtils.eliminarRegistro(
       'packages',
-      paquete.paqueteid,
+      paquete.paquete_id,
       paquete.nombre,
       () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`)
     );

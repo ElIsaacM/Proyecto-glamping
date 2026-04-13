@@ -64,7 +64,7 @@ function Servicios() {
   const eliminarServicio = (servicio) => {
     deleteUtils.eliminarRegistro(
       'services',
-      servicio.servicioid,
+      servicio.servicio_id,
       servicio.nombre,
       handleFetchData
     );
@@ -73,7 +73,7 @@ function Servicios() {
   const activarServicio = (servicio) => {
     activateUtils.activarRegistro(
       'services',
-      servicio.servicioid,
+      servicio.servicio_id,
       servicio.nombre,
       handleFetchData
     );

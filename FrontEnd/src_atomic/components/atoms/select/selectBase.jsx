@@ -27,13 +27,14 @@ const Select = styled.select`
   font-size: 14px;
 `;
 
-function SelectBase({ options, value, onChange }) {
+function SelectBase({ options, value, onChange, name, required, valueKey = "nombre", nameKey = "nombre" }) {
   return (
     <SelectCont>
-      <Select value={value} onChange={onChange}>
+      <Select name={name} value={value} onChange={onChange} required={required}>
+        {/* Agregamos una opción por defecto si no viene preseleccionada, o usamos hidden */}
         {options.map((item, i) => (
-          <option key={i} value={item.nombre} hidden={item.selected === 'selected' && i === 0}>
-            {item.nombre}
+          <option key={i} value={item[valueKey]} hidden={item.selected === 'selected' && i === 0}>
+            {item[nameKey]}
           </option>
         ))}
       </Select>

@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Paginacion from "../molecules/paginacion";
 
+import { formatCurrency, formatDate } from "../../utils/formattersUtil";
+
 const TableWrapper = styled.div`
   width: 100%;
   margin-top: 30px;
@@ -76,7 +78,8 @@ function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions 
     return <p style={{ marginTop: '20px', color: '#6b7280' }}>No hay datos para mostrar</p>;
   }
 
-  const columnas = Object.keys(data[0]);
+  // Se filtran todas las columnas que terminen en _id
+  const columnas = Object.keys(data[0]).filter(col => !col.endsWith('_id'));
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -101,7 +104,23 @@ function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions 
             {currentItems.map((fila, i) => (
               <tr key={i}>
                 {columnas.map((col, j) => (
-                  <td key={j}>{fila[col] === null ? 'N / A' : fila[col]}</td>
+                  <td key={j}>
+                    {(() => {
+                      const valor = fila[col];
+                      const columnasMoneda = ["sueldo", "total_pagado", "total_restante", "total", "subtotal", "precio"];
+                      const columnasFecha = ["actualizacion", "fecha", "fecha_mantenimiento", "fecha_registro", "llegada", "salida"];
+
+                      if (columnasMoneda.includes(col)) {
+                        return (valor !== null && valor !== undefined) ? formatCurrency(valor) : "$ 0";
+                      }
+
+                      if (columnasFecha.includes(col)) {
+                        return (valor !== null && valor !== undefined) ? formatDate(valor) : "N / A";
+                      }
+
+                      return (valor === null || valor === undefined) ? 'N / A' : valor;
+                    })()}
+                  </td>
                 ))}
                 {(!hideActions && (acciones || onEdit || onDelete || onActive)) && (
                   <td className="acciones">

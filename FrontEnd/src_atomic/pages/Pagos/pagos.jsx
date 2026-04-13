@@ -1,15 +1,16 @@
 import styled from "styled-components";
-import {useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
-import Plantilla from "../plantilla";
-import Buscador from "../../components/molecules/buscador";
-import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
-import LinearCard from "../../components/molecules/cards/linearCard";
-import TablaGeneral from "../../components/organisms/tabla";
-import { pagosCardData } from "./componentsData/pagosData";
+import { useFilters } from "../../hooks/useFilters";
 
+import Plantilla from "../plantilla";
+import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
+import TablaGeneral from "../../components/organisms/tabla";
 import ModalAgregar from "./modales/modalAgregar";
+
+import PagosCard from "./componentsData/pagosCards";
+import Buscador, { pagosFilterConfig } from "./componentsData/pagosSearch";
 
 const ModulosExtra = styled.div`
   display: flex;
@@ -49,8 +50,18 @@ const TablaFactura = styled.div`
 
 function Pagos() {
   const [modalAbierto, setModalAbierto] = useState(false)
-
   const { data, loading, error, fetchData } = useFetch();
+
+  const [pagos, setPagos] = useState(null);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(data, pagos, pagosFilterConfig);
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
+  const handleFetchData = () => {
+    setPagos(null); // Clear search to show updated table
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments`);
+    fetchFilters();
+    setRefreshStatsTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments`);
@@ -58,22 +69,22 @@ function Pagos() {
 
   return (
     <Plantilla modulo={'Pagos'}>
-      <LinearCard data={pagosCardData} />
+      <PagosCard refreshTrigger={refreshStatsTrigger} />
       <div>
         <ModulosExtra>
           <button className="module-button"
             onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments`)}
           >Pagos</button>
           <button className="module-button"
-            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)}
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/refounds`)}
           >reembolsos</button>
           <button className="module-button"
-            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/services`)}
+            onClick={() => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/invoices`)}
           >facturas</button>
         </ModulosExtra>
-        
+
         <Botones>
-          <Buscador placeholder={'Buscar fecha'} />
+          <Buscador onResult={setPagos} onFilterChange={setFilterMode} />
           <BotonAgregar
             modulo={'Agregar pago'}
             color={1}
@@ -83,13 +94,13 @@ function Pagos() {
 
         {loading && <p style={{ marginTop: '20px' }}>Cargando productos...</p>}
         {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
-        {data && <TablaGeneral data={data} />}
+        {displayData && <TablaGeneral data={displayData} />}
       </div>
 
       {modalAbierto && (
         <ModalAgregar
           setModalAbierto={setModalAbierto}
-          fetchData={fetchData}
+          fetchData={handleFetchData}
         />
       )}
     </Plantilla>

@@ -44,7 +44,7 @@ function Cabanas() {
   const eliminarCabana = async (cabana) => {
     deleteUtils.eliminarRegistro(
       'cabins',
-      cabana.cabanaid,
+      cabana.cabana_id,
       cabana.nombre,
       handleFetchData
     );

@@ -1,6 +1,8 @@
 import ModalPlantilla from "../../../components/organisms/Modales/modalPlantilla";
 import { useForm } from "../../../hooks/useForm";
 import styled from "styled-components";
+import SelectBase from "../../../components/atoms/select/selectBase";
+import { useState, useEffect } from "react";
 
 const Form = styled.form`
   display: flex;
@@ -39,18 +41,36 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/users/${usuarioAEditar.usuarioid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/users/${usuarioAEditar.usuario_id || usuarioAEditar.id}`;
+
+  const [roles, setRoles] = useState([]);
+  const [identificaciones, setIdentificaciones] = useState([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`)
+      .then(res => res.json())
+      .then(data => {
+        // Añadir opción por defecto al inicio
+        setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
+      })
+      .catch(err => console.error("Error fetching roles", err));
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/identificaciones`)
+      .then(res => res.json())
+      .then(data => {
+        setIdentificaciones([{ identificacion_id: "", tipo: "Tipo de identificación" }, ...data]);
+      })
+      .catch(err => console.error("Error fetching identificaciones", err));
+  }, []);
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      rolid: usuarioAEditar.rolid || usuarioAEditar.rolid || '',
-      identificacionid: usuarioAEditar.identificacionid || usuarioAEditar.identificacionid || '',
-      nombre: usuarioAEditar.nombre || usuarioAEditar.Nombre || '',
-      contacto: usuarioAEditar.contacto || usuarioAEditar.contacto || '',
-      sueldo: usuarioAEditar.sueldo || usuarioAEditar.sueldo || '',
-      numeroidentificacion: usuarioAEditar.numeroidentificacion || usuarioAEditar.numeroidentificacion || '',
-      password: usuarioAEditar.password || usuarioAEditar.password || '',
-      confirmPassword: usuarioAEditar.password || usuarioAEditar.password || '',
+      rol_id: usuarioAEditar.rol_id ?? '',
+      identificacion_id: usuarioAEditar.identificacion_id ?? '',
+      nombre: usuarioAEditar.usuario || '',
+      contacto: usuarioAEditar.contacto || '',
+      sueldo: usuarioAEditar.sueldo || '',
+      numero_identificacion: usuarioAEditar["# Identificacion"] || '',
     },
     urlParams,
     () => {
@@ -63,32 +83,30 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
-
     handleSubmit(e, () => setModalAbierto(false));
+    console.log(usuarioAEditar);
   }
 
   return (
     <ModalPlantilla modulo="editar usuario" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={handlePasswordSubmit}>
-        <input
-          type="number"
-          name="rolid"
-          placeholder="Rol"
-          value={formData.rolid}
+        <SelectBase
+          name="rol_id"
+          value={formData.rol_id}
           onChange={handleChange}
-          required
+          required={false}
+          options={roles}
+          valueKey="rol_id"
+          nameKey="nombre"
         />
-        <input
-          type="number"
-          name="identificacionid"
-          placeholder="Identificación"
-          value={formData.identificacionid}
+        <SelectBase
+          name="identificacion_id"
+          value={formData.identificacion_id}
           onChange={handleChange}
-          required
+          required={false}
+          options={identificaciones}
+          valueKey="identificacion_id"
+          nameKey="tipo"
         />
         <input
           type="text"
@@ -96,15 +114,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
           placeholder="Nombre del usuario"
           value={formData.nombre}
           onChange={handleChange}
-          required
         />
         <input
-          type="number"
+          type="text"
           name="contacto"
           placeholder="Contacto"
           value={formData.contacto}
           onChange={handleChange}
-          required
         />
         <input
           type="number"
@@ -112,31 +128,13 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
           placeholder="Sueldo"
           value={formData.sueldo}
           onChange={handleChange}
-          required
         />
         <input
-          type="number"
-          name="numeroidentificacion"
+          type="text"
+          name="numero_identificacion"
           placeholder="Número de identificación"
-          value={formData.numeroidentificacion}
+          value={formData.numero_identificacion}
           onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirmar contraseña"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
         />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Actualizando...' : 'Actualizar Usuario'}

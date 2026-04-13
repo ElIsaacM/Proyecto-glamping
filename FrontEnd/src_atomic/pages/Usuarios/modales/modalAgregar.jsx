@@ -1,6 +1,8 @@
 import ModalPlantilla from "../../../components/organisms/Modales/modalPlantilla";
 import { useForm } from "../../../hooks/useForm";
 import styled from "styled-components";
+import SelectBase from "../../../components/atoms/select/selectBase";
+import { useState, useEffect } from "react";
 
 const Form = styled.form`
   display: flex;
@@ -38,8 +40,36 @@ const Form = styled.form`
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   // Agregar capacidad personas
+
+  const [roles, setRoles] = useState([]);
+  const [identificaciones, setIdentificaciones] = useState([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`)
+      .then(res => res.json())
+      .then(data => {
+        // Añadir opción por defecto al inicio
+        setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
+      })
+      .catch(err => console.error("Error fetching roles", err));
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/identificaciones`)
+      .then(res => res.json())
+      .then(data => {
+        setIdentificaciones([{ identificacion_id: "", tipo: "Tipo de identificación" }, ...data]);
+      })
+      .catch(err => console.error("Error fetching identificaciones", err));
+  }, []);
+
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { rolid: '', identificacionid: '', nombre: '', contacto: '', sueldo: '', numeroidentificacion: '', email: '', contrasena: '', confirmPassword: '' },
+    { 
+      rol_id: '', 
+      identificacion_id: '', 
+      nombre: '', 
+      contacto: '', 
+      sueldo: '', 
+      numero_identificacion: '' 
+    },
     `${import.meta.env.VITE_API_BASE_URL}/api/users`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/users`);
@@ -47,34 +77,26 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
     }
   );
 
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    if (formData.contrasena !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
-
-    handleSubmit(e, () => setModalAbierto(false));
-  }
-
   return (
     <ModalPlantilla modulo="usuarios" onClose={() => setModalAbierto(false)}>
-      <Form onSubmit={handlePasswordSubmit}>
-        <input 
-          type="number" 
-          name="rolid" 
-          placeholder="Rol" 
-          value={formData.rolid} 
-          onChange={handleChange} 
-          required 
+      <Form onSubmit={handleSubmit}>
+        <SelectBase
+          name="rol_id"
+          value={formData.rol_id}
+          onChange={handleChange}
+          required={false}
+          options={roles}
+          valueKey="rol_id"
+          nameKey="nombre"
         />
-        <input 
-          type="number" 
-          name="identificacionid" 
-          placeholder="Identificación" 
-          value={formData.identificacionid} 
-          onChange={handleChange} 
-          required 
+        <SelectBase
+          name="identificacion_id"
+          value={formData.identificacion_id}
+          onChange={handleChange}
+          required={false}
+          options={identificaciones}
+          valueKey="identificacion_id"
+          nameKey="tipo"
         />
         <input 
           type="text" 
@@ -102,33 +124,9 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
         />
         <input 
           type="number" 
-          name="numeroidentificacion" 
+          name="numero_identificacion" 
           placeholder="Número de identificación" 
-          value={formData.numeroidentificacion} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="password" 
-          name="contrasena" 
-          placeholder="Contraseña" 
-          value={formData.contrasena} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="password" 
-          name="confirmPassword" 
-          placeholder="Confirmar contraseña" 
-          value={formData.confirmPassword} 
+          value={formData.numero_identificacion} 
           onChange={handleChange} 
           required 
         />

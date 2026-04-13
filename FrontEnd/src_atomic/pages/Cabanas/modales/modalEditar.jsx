@@ -39,12 +39,12 @@ export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar 
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.cabanaid}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.cabana_id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
       nombre: cabanaAEditar.nombre || cabanaAEditar.Nombre || '',
-      precionoche: cabanaAEditar.precionoche || cabanaAEditar.precionoche || '',
+      precio_noche: cabanaAEditar.precio_noche || cabanaAEditar.precio_noche || '',
       descripcion: cabanaAEditar.descripcion || cabanaAEditar.descripcion || ''
     },
     urlParams,
@@ -70,9 +70,9 @@ export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar 
         <input 
           type="number" 
           step="0.01" 
-          name="precionoche" 
+          name="precio_noche" 
           placeholder="Precio por noche" 
-          value={formData.precionoche} 
+          value={formData.precio_noche} 
           onChange={handleChange} 
           required 
         />

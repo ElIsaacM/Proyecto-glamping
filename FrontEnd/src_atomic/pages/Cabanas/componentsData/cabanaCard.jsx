@@ -4,6 +4,8 @@ import SquareCard from '../../../components/molecules/cards/squareCard';
 import LinearGraph from '../../../components/organisms/graphs/linearGraph';
 import { useFetch } from '../../../hooks/fetchConnect';
 
+import { formatCurrency } from '../../../utils/formattersUtil';
+
 const CardsCont = styled.div`
   margin: 50px 0;
   display: grid;
@@ -36,7 +38,7 @@ function CabanasCard({ refreshTrigger }) {
     {
       bgColor: '',
       texto: 'Ganancias',
-      titulo: data?.most_reserved ? `$${data.most_reserved['Ingresos generados']}` : '$0',
+      titulo: data?.most_reserved ? formatCurrency(data.most_reserved['Ingresos generados']) : '$0',
     },
     {
       bgColor: 'verde',

@@ -85,6 +85,7 @@ function Usuarios() {
       {loading && <p style={{ marginTop: '20px' }}>Cargando usuarios...</p>}
       {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
       {displayData && (
+        console.log(displayData),
         <TablaGeneral
           data={displayData}
           onEdit={editarUsuario}

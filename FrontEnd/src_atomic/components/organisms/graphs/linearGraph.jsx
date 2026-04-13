@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatCurrency } from "../../../utils/formattersUtil";
 
 const ContGraph = styled.div`
   width: 100%;
@@ -29,6 +30,7 @@ const ContGraph = styled.div`
 `;
 
 function LinearGraph({ data, xKey = 'fecha', yKey = 'total', title = "Ingresos a lo largo del tiempo", color = "#8884d8" }) {
+  
   if (!data || data.length === 0) {
     return (
       <ContGraph>
@@ -69,7 +71,7 @@ function LinearGraph({ data, xKey = 'fecha', yKey = 'total', title = "Ingresos a
           />
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
           <Tooltip 
-            formatter={(value) => [`$${value}`, 'Ingresos']}
+            formatter={(value) => [`${formatCurrency(value)}`, 'Ingresos']}
             labelStyle={{ color: '#333', fontWeight: 'bold' }}
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
           />

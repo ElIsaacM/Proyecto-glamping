@@ -27,10 +27,19 @@ export const useForm = (initialState, url, onSuccess, method = 'POST') => {
   const handleSubmit = async (e, cerrarModal) => {
     e.preventDefault();
     try {
+      // Filtrar datos para no enviar valores vacíos en campos que deberían ser enteros
+      const cleanedData = { ...formData };
+      // Convertir strings vacíos a null para campos de ID que no sean obligatorios
+      Object.keys(cleanedData).forEach(key => {
+        if (key.includes('_id') && cleanedData[key] === '') {
+          cleanedData[key] = null;
+        }
+      });
+
       // Hacemos el request usando el método especificado (POST por defecto)
       await postData(url, {
         method: method,
-        body: JSON.stringify(formData)
+        body: JSON.stringify(cleanedData)
       });
 
       // Limpiar formulario tras éxito solo si es POST (en PUT usualmente se mantiene o se cierra modal)

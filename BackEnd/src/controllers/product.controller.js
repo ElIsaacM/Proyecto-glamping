@@ -5,10 +5,6 @@ export const getProducts = async (req, res) => {
   try {
     const result = await pool.query(product.getProducts);
 
-    if (result.rows.length === 0) {
-      throw new Error("Product not found!");
-    }
-
     res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({
@@ -41,14 +37,13 @@ export const createProduct = async (req, res) => {
     const { 
       nombre, 
       tipo, 
-      stock, 
-      precioventa, 
+      precio, 
       descripcion
     } = req.body;
 
     const result = await pool.query(
       product.createProduct,
-      [nombre, tipo, stock, precioventa, descripcion]
+      [nombre, tipo, precio, descripcion]
     )
 
     res.status(200).json(result.rows[0]);
@@ -67,14 +62,13 @@ export const updateProduct = async (req, res) => {
     const { 
       nombre, 
       tipo, 
-      stock, 
-      precioventa, 
+      precio, 
       descripcion 
     } = req.body;
 
     const result = await pool.query(
       product.updateProduct,
-      [nombre, tipo, stock, precioventa, descripcion, id]
+      [nombre, tipo, precio, descripcion, id]
     )
 
     res.status(200).json({
@@ -90,28 +84,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const sellProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { quantity } = req.body;
-
-    const result = await pool.query(
-      product.sellProduct,
-      [quantity, id]
-    );
-
-    res.status(200).json({
-      message: "producto vendido",
-      productoId: id,
-      stock: result.rows[0].stock,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error al vender producto",
-      error: error.message,
-    });
-  }
-};
 
 export const deleteProduct = async (req, res) => {
   try {

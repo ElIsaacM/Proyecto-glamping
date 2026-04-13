@@ -1,6 +1,7 @@
 import LinearCard from "../../../components/molecules/cards/linearCard";
 import { useFetch } from "../../../hooks/fetchConnect";
 import { useEffect } from "react";
+import { formatCurrency } from "../../../utils/formattersUtil";
 
 export default function UsuariosCard({ refreshTrigger }) {
   const { data, loading, error, fetchData } = useFetch();
@@ -35,7 +36,7 @@ export default function UsuariosCard({ refreshTrigger }) {
       bgColor: 'verde',
       colorTitulo: '',
       texto: 'Nomina mensual',
-      titulo: data?.total_payroll,
+      titulo: formatCurrency(data?.total_payroll),
       icon: 'bi bi-cash-stack',
     },
   ];
@@ -44,9 +45,9 @@ export default function UsuariosCard({ refreshTrigger }) {
     <>
       {loading && <p>Cargando estadísticas...</p>}
       {error && <p>Error al cargar datos</p>}
-      
-      <LinearCard 
-        data={usuariosCardData} 
+
+      <LinearCard
+        data={usuariosCardData}
       />
     </>
   );

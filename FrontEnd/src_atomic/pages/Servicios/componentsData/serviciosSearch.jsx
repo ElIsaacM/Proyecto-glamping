@@ -9,11 +9,11 @@ export const serviceFilterConfig = {
     },
     "Mas largos": {
       cachekey: 'longer_services',
-      localFilter: (arr) => [...arr].sort((a,b) => b.duracionminutos - a.duracionminutos)
+      localFilter: (arr) => [...arr].sort((a,b) => b.duracion_minutos - a.duracion_minutos)
     },
     "Mas cortos": {
       cachekey: 'shorter_services',
-      localFilter: (arr) => [...arr].sort((a,b) => a.duracionminutos - b.duracionminutos)
+      localFilter: (arr) => [...arr].sort((a,b) => a.duracion_minutos - b.duracion_minutos)
     },
     "Mas caros": {
       cachekey: 'expensive_services',

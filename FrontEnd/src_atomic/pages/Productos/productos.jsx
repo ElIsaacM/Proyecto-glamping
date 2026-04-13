@@ -52,7 +52,7 @@ function Productos() {
   const eliminarProducto = (producto) => {
     deleteUtils.eliminarRegistro(
       'products',
-      producto.productoid,
+      producto.producto_id,
       producto.nombre,
       () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)
     );

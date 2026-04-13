@@ -17,7 +17,7 @@ export const userFilterConfig = {
     },
     "Administradores": {
       cacheKey: 'admin_users',
-      localFilter: (arr) => arr.filter(u => u.rolid == 1)
+      localFilter: (arr) => arr.filter(u => u.rol_id == 1)
     }
   }
 };
