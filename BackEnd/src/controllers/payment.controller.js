@@ -8,7 +8,16 @@ export const getPayments = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
+
+export const getPaymentByInvoice = async (req, res) => {
+  try {
+    const result = await pool.query(payment.getPaymentByInvoice);
+    res.json(result.rows[0])
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+};
 
 export const createPaymentManually = async (req, res) => {
   try {
@@ -29,4 +38,12 @@ export const createPaymentManually = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
+
+// export const createPaymentWithApi = async (req, res) => {
+//   try {
+    
+//   } catch (error) {
+//     res.json(500).json({message: error.message})
+//   }
+// }

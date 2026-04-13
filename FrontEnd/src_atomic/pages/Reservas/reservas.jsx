@@ -41,8 +41,6 @@ function Reservas() {
 
   return (
     <Plantilla modulo={"Reservas"}>
-      {({ abrirModal, cerrarModal, modulo }) => (
-        <>
           <CardsCont>
             <LinearGraph />
             <SquareCard squareData={reservasCardData} />
@@ -54,8 +52,6 @@ function Reservas() {
           {loading && <p style={{marginTop: '20px'}}>Cargando reservas...</p>}
           {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
           {data && <TablaGeneral data={data} />}
-        </>
-      )}
     </Plantilla>
   );
 }
