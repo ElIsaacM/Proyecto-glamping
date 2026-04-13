@@ -2,18 +2,22 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
+import { activateUtils } from "../../utils/activateUtils";
 
 import Plantilla from "../plantilla";
-import ProductoGraph from "../../components/organisms/graphs/productoGraph";
-import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
-import RectangleCard from "../../components/molecules/cards/rectangleCard";
-import { productosCardData } from "./componentsData/productosData";
 
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
+
+import ProductosCards from "./componentsData/productosCards";
+
+import ProductosSearch, {
+  productosFilterConfig,
+} from "./componentsData/productosSearch";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -42,8 +46,22 @@ function Productos() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [productoAEditar, setProductoAEditar] = useState(null);
-
   const { data, loading, error, fetchData } = useFetch();
+
+  const [productos, setProductos] = useState(null);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
+    data,
+    productos,
+    productosFilterConfig,
+  );
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
+  const handleFetchData = () => {
+    setProductos(null);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
+    fetchFilters();
+    setRefreshStatsTrigger((prev) => prev + 1);
+  };
 
   useEffect(() => {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
@@ -51,12 +69,21 @@ function Productos() {
 
   const eliminarProducto = (producto) => {
     deleteUtils.eliminarRegistro(
-      'products',
-      producto.producto_id,
-      producto.nombre,
-      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`)
+      "products",
+      producto.id,
+      producto.producto,
+      handleFetchData,
     );
-  }
+  };
+
+  const activarProducto = (producto) => {
+    activateUtils.activarRegistro(
+      "products",
+      producto.id,
+      producto.producto,
+      handleFetchData,
+    );
+  };
 
   const editarProducto = (producto) => {
     setProductoAEditar(producto);
@@ -64,33 +91,39 @@ function Productos() {
   };
 
   return (
-    <Plantilla modulo={'Productos'}>
+    <Plantilla modulo={"Productos"}>
       <CardsCont>
-        <RectangleCard rectangleData={productosCardData} />
-        <ProductoGraph />
+        <ProductosCards refreshTrigger={refreshStatsTrigger} />
       </CardsCont>
 
-      <div>
-        <Botones>
-          <Buscador placeholder={'Buscar producto'} />
-          <BotonAgregar
-            modulo={'Agregar producto'}
-            color={1}
-            onClick={() => setModalAbierto(true)}
-          />
-        </Botones>
+      <Botones>
+        <ProductosSearch
+          onResult={setProductos}
+          onFilterChange={setFilterMode}
+        />
+        <BotonAgregar
+          modulo={"Agregar producto"}
+          color={1}
+          onClick={() => setModalAbierto(true)}
+        />
+      </Botones>
 
-        {loading && <p style={{ marginTop: '20px' }}>Cargando productos...</p>}
-        {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
-        {data && <TablaGeneral data={data} onEdit={editarProducto} onDelete={eliminarProducto} />}
-      </div>
+      {loading && <p style={{ marginTop: "20px" }}>Cargando productos...</p>}
+      {error && (
+        <p style={{ marginTop: "20px", color: "red" }}>Error: {error}</p>
+      )}
+      {displayData && (
+        <TablaGeneral
+          data={displayData}
+          onEdit={editarProducto}
+          onDelete={eliminarProducto}
+          onActive={activarProducto}
+        />
+      )}
 
       {/* 4. Renderizamos el Modal al final, condicionado al booleano */}
       {modalAbierto && (
-        <ModalAgregar
-          setModalAbierto={setModalAbierto}
-          fetchData={fetchData}
-        />
+        <ModalAgregar setModalAbierto={setModalAbierto} fetchData={fetchData} />
       )}
 
       {/* Renderizamos modulo de edición */}

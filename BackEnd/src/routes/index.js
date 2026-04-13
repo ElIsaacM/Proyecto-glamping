@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import productRouter from './product.routes.js';
 import cabinRouter from './cabin.routes.js';
+import cabinDamageRouter from './cabinDamage.routes.js';
 import clientRouter from './client.routes.js';
 import reservationRouter from './reservation.routes.js';
 import paymentRouter from './payment.routes.js';
@@ -16,6 +17,7 @@ const router = Router();
 
 router.use('/products', productRouter);
 router.use('/cabins', cabinRouter);
+router.use('/cabinDamage', cabinDamageRouter);
 router.use('/clients', clientRouter);
 router.use('/reservations', reservationRouter);
 router.use('/payments', paymentRouter);

@@ -55,6 +55,21 @@ export const deleteCabin = async (req, res) => {
   }
 }
 
+export const activateCabin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      cabin.activateCabin,
+      [id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.stats(500).json({error: error.message})
+  }
+};
+
 export const getCabinStats = async (req, res) => {
   try {
     const [stats, total, graph] = await Promise.all([
@@ -70,5 +85,13 @@ export const getCabinStats = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const cabinFilters = async (req, res) => {
+  try {
+
+  } catch (error) {
+    res.stats(500).json({error: error.message})
   }
 }

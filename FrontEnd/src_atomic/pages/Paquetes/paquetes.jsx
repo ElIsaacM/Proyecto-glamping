@@ -2,19 +2,21 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
+import { activateUtils } from "../../utils/activateUtils";
 
 import Plantilla from "../plantilla";
-import PaqueteGraph from "../../components/organisms/graphs/paqueteGraph";
-import Buscador from "../../components/molecules/buscador";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
-import ModalPlantilla from "../../components/organisms/Modales/modalPlantilla";
 import TablaGeneral from "../../components/organisms/tabla";
-import RectangleCard from "../../components/molecules/cards/rectangleCard";
-import { paquetesCardData, paquetesTableData } from "./componentsData/paquetesData";
 
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
+
+import PaquetesCards from "./componentsData/paquetesCards";
+import PaquetesSearch, {
+  paquetesFilterConfig,
+} from "./componentsData/paquetesSearch";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -43,64 +45,92 @@ function Paquetes() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [paqueteAEditar, setPaqueteAEditar] = useState(null);
-
   const { data, loading, error, fetchData } = useFetch();
+
+  const [paquetes, setPaquetes] = useState(null);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
+    data,
+    paquetes,
+    paquetesFilterConfig,
+  );
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
+  const handleFetchData = () => {
+    setPaquetes(null);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
+    fetchFilters();
+    setRefreshStatsTrigger((prev) => prev + 1);
+  };
 
   useEffect(() => {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
   }, [fetchData]);
 
-
   const eliminarPaquete = (paquete) => {
     deleteUtils.eliminarRegistro(
       'packages',
-      paquete.paquete_id,
+      paquete.id,
       paquete.nombre,
-      () => fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`)
+      handleFetchData,
     );
-  }
+  };
+
+  const activarPaquete = (paquete) => {
+    activateUtils.activarRegistro(
+      "packages",
+      paquete.id,
+      paquete.nombre,
+      handleFetchData,
+    );
+  };
 
   const editarPaquete = (paquete) => {
     setPaqueteAEditar(paquete);
     setModalEditarAbierto(true);
-  }
+  };
 
   return (
     <Plantilla modulo="Paquetes">
-          <CardsCont>
-            <RectangleCard rectangleData={paquetesCardData} />
-            <PaqueteGraph />
-          </CardsCont>
+      <CardsCont>
+        <PaquetesCards refreshTrigger={refreshStatsTrigger} />
+      </CardsCont>
 
-          <div>
-            <Botones>
-              <Buscador placeholder="Buscar paquete" />
-              <BotonAgregar
-                modulo="Agregar paquete"
-                color={1}
-                onClick={() => setModalAbierto(true)}
-              />
-            </Botones>
+      <Botones>
+        <PaquetesSearch onResult={setPaquetes} onFilterChange={setFilterMode} />
+        <BotonAgregar
+          modulo="Agregar paquete"
+          color={1}
+          onClick={() => setModalAbierto(true)}
+        />
+      </Botones>
 
-            {loading && <p style={{marginTop: '20px'}}>Cargando paquetes...</p>}
-            {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
-            {data && <TablaGeneral data={data} onEdit={editarPaquete} onDelete={eliminarPaquete} />}
-          </div>
+      {loading && <p style={{ marginTop: "20px" }}>Cargando paquetes...</p>}
+      {error && (
+        <p style={{ marginTop: "20px", color: "red" }}>Error: {error}</p>
+      )}
+      {displayData && (
+        <TablaGeneral
+          data={displayData}
+          onEdit={editarPaquete}
+          onDelete={eliminarPaquete}
+          onActive={activarPaquete}
+        />
+      )}
 
-          {modalAbierto && (
-            <ModalAgregar
-              setModalAbierto={setModalAbierto}
-              fetchData={fetchData}
-            />
-          )}
+      {modalAbierto && (
+        <ModalAgregar
+          setModalAbierto={setModalAbierto}
+          fetchData={handleFetchData}
+        />
+      )}
 
-          {modalEditarAbierto && paqueteAEditar && (
-            <ModalEditar
-              setModalAbierto={setModalEditarAbierto}
-              fetchData={fetchData}
-              paqueteAEditar={paqueteAEditar}
-            />
-          )}
+      {modalEditarAbierto && paqueteAEditar && (
+        <ModalEditar
+          setModalAbierto={setModalEditarAbierto}
+          fetchData={handleFetchData}
+          paqueteAEditar={paqueteAEditar}
+        />
+      )}
     </Plantilla>
   );
 }

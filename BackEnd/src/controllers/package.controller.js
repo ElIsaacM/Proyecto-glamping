@@ -1,5 +1,5 @@
 import pool from '../config/db.js'
-import { packages } from '../models/package.model.js'
+import { packages, packageStats, packageFilters as packageFiltersModel } from '../models/package.model.js'
 
 export const getPackages = async (req, res) => {
   try {
@@ -15,6 +15,7 @@ export const getPackages = async (req, res) => {
 export const getPackageByName = async (req, res) => {
   try {
     const { name } = req.body;
+    
     const result = await pool.query(
       packages.getPackageByName, 
       [name.trim()]
@@ -78,6 +79,7 @@ export const updatePackage = async (req, res) => {
 export const deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await pool.query(
       packages.deletePackage, 
       [id]
@@ -95,3 +97,56 @@ export const deletePackage = async (req, res) => {
     });
   }
 };
+
+export const activatePackage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query(
+      packages.activatePackage,
+      [id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+}
+
+export const getPackageStats = async (req, res) => {
+  try {
+    const [most_frecuent_package, least_frecuent_package, top_packages] = await Promise.all([
+      pool.query(packageStats.most_frecuent_package),
+      pool.query(packageStats.least_frecuent_package),
+      pool.query(packageStats.top_packages),
+    ])
+
+    res.json({
+      most_frecuent_package: most_frecuent_package.rows,
+      least_frecuent_package: least_frecuent_package.rows,
+      top_packages: top_packages.rows,
+    });
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const packageFilters = async (req, res) => {
+  try {
+    const [idle_packages, type_packages_ASC, longer_stay_packages, shorter_stay_packages] = await Promise.all([
+      pool.query(packageFiltersModel.idle_packages),
+      pool.query(packageFiltersModel.type_packages_ASC),
+      pool.query(packageFiltersModel.longer_stay_packages),
+      pool.query(packageFiltersModel.shorter_stay_packages),
+    ]);
+
+    res.json({
+      idle_packages: idle_packages.rows,
+      type_packages_ASC: type_packages_ASC.rows,
+      longer_stay_packages: longer_stay_packages.rows,
+      shorter_stay_packages: shorter_stay_packages.rows,
+    })
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}

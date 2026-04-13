@@ -1,19 +1,21 @@
 import SearchTemplate from "../../../components/templates/searchTemplate";
 
 export const userFilterConfig = {
-  endpoint: '/api/users/filters',
+  endpoint: "/api/users/filters",
   filters: {
     "Sueldo DESC": {
-      cacheKey: 'payroll_desc',
-      localFilter: (arr) => [...arr].sort((a, b) => parseFloat(b.sueldo) - parseFloat(a.sueldo))
+      cacheKey: "payroll_desc",
+      localFilter: (arr) =>
+        [...arr].sort((a, b) => parseFloat(b.sueldo) - parseFloat(a.sueldo)),
     },
     "Sueldo ASC": {
-      cacheKey: 'payroll_asc',
-      localFilter: (arr) => [...arr].sort((a, b) => parseFloat(a.sueldo) - parseFloat(b.sueldo))
+      cacheKey: "payroll_asc",
+      localFilter: (arr) =>
+        [...arr].sort((a, b) => parseFloat(a.sueldo) - parseFloat(b.sueldo)),
     },
-    "Inactivos": {
-      cacheKey: 'idle_status',
-      localFilter: (arr) => arr.filter(u => u.estado === 'Inactivo')
+    Inactivos: {
+      cacheKey: "idle_status",
+      localFilter: (arr) => arr.filter((u) => u.estado === "Inactivo"),
     },
     "Administradores": {
       cacheKey: 'admin_users',
@@ -22,19 +24,19 @@ export const userFilterConfig = {
   }
 };
 
-function Buscador({ onResult, onFilterChange }) {
-  const options = [
-    { nombre: 'Todos', selected: 'selected' },
-    { nombre: 'Sueldo DESC', selected: '' },
-    { nombre: 'Sueldo ASC', selected: '' },
-    { nombre: 'Inactivos', selected: '' },
-    { nombre: 'Administradores', selected: '' },
-  ];
+const options = [
+  { nombre: "Todos", selected: "selected" },
+  { nombre: "Sueldo DESC", selected: "" },
+  { nombre: "Sueldo ASC", selected: "" },
+  { nombre: "Inactivos", selected: "" },
+  { nombre: "Administradores", selected: "" },
+];
 
+function UsuariosSearch({ onResult, onFilterChange }) {
   return (
     <SearchTemplate
-      modulo={'users'}
-      placeholder={'Buscar usuario'}
+      modulo={"users"}
+      placeholder={"Buscar usuario"}
       onResult={onResult}
       onFilterChange={onFilterChange}
       options={options}
@@ -42,4 +44,4 @@ function Buscador({ onResult, onFilterChange }) {
   );
 }
 
-export default Buscador;
+export default UsuariosSearch;
