@@ -1,5 +1,5 @@
-export const refounds = {
-  getRefounds: `
+export const refunds = {
+  getRefunds: `
     SELECT
       * 
     FROM vista_reembolsos

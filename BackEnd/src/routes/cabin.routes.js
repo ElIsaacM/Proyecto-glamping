@@ -10,14 +10,21 @@ import {
   cabinFilters
 } from '../controllers/cabin.controller.js';
 
+import {
+  rulesCreateCabin,
+  rulesUpdateCabin,
+  rulesDeleteCabin,
+  rulesActivateCabin
+} from '../validators/cabin.rules.js';
+
 const router = Router();
 
 router.get('/stats', getCabinStats);
 router.get('/', getCabins);
-router.post('/', createCabin);
-router.put('/:id', updateCabin);
-router.delete('/delete/:id', deleteCabin);
-router.put('/activate/:id', activateCabin);
+router.post('/', rulesCreateCabin, createCabin);
+router.put('/:id', rulesUpdateCabin, updateCabin);
+router.delete('/delete/:id', rulesDeleteCabin, deleteCabin);
+router.put('/activate/:id', rulesActivateCabin, activateCabin);
 router.get('/stats', getCabinStats);
 router.get('/filters', cabinFilters);
 

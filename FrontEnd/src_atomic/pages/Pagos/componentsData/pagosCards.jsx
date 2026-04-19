@@ -14,18 +14,21 @@ export default function PagosCard({ refreshTrigger }) {
     {
       bgColor: '',
       texto: 'Pagos exitosos',
+      colorTitulo: '#28a745',
       titulo: data?.successful_payments ? data.successful_payments[0]["Pagos exitosos"] : '0',
       icon: 'bi bi-cash-stack',
     },
     {
       bgColor: '',
       texto: 'Pagos rechazados',
+      colorTitulo: '#ffc107',
       titulo: data?.rejected_payments ? data.rejected_payments[0]["Pagos rechazados"] : '0',
       icon: 'bi bi-cash-stack',
     },
     {
       bgColor: '',
       texto: 'Reembolsos pendientes',
+      colorTitulo: '#dc3545',
       titulo: data?.pending_refunds ? data.pending_refunds[0]["Reembolsos pendientes"] : '0',
       icon: 'bi bi-cash-stack',
     },
@@ -41,7 +44,7 @@ export default function PagosCard({ refreshTrigger }) {
     <>
       {loading && <p>Cargando estadísticas...</p>}
       {error && <p>Error al cargar datos</p>}
-
+      
       <LinearCard
         data={pagosCardData}
       />

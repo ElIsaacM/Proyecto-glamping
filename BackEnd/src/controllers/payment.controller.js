@@ -47,12 +47,10 @@ export const PaymentFilters = async (req, res) => {
     const [recent_payments, sucefull_payments] = await Promise.all([
       pool.query(paymentFilters.getRecentPayments),
       pool.query(paymentFilters.getSucefullyPayments),
-      // pool.query(paymentFilters.getRejectedPayments),
     ]);
     res.json({
       recent_payments: recent_payments.rows,
       sucefull_payments: sucefull_payments.rows,
-      // rejected_payments: rejected_payments.rows,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

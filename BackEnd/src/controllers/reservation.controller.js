@@ -1,7 +1,7 @@
 import { reservation } from "../models/reservation.model.js";
 import pool from "../config/db.js";
 
-export const getreservations = async (req, res) => {
+export const getReservations = async (req, res) => {
   try {
     const result = await pool.query(
       reservation.getReservations
@@ -13,7 +13,7 @@ export const getreservations = async (req, res) => {
   }
 };
 
-export const getreservationByClient = async (req, res) => {
+export const getReservationByClient = async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -31,6 +31,41 @@ export const getreservationByClient = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updateReservationByPayment = async (req, res) => {
+  try {
+    const { reserva_id } = req.body;
+
+    const result = await pool.query(reservation.updateReservationByPayment,
+      [reserva_id]
+    )
+    res.status(200).json({
+      message: "Reserva actualizada",
+      reserva_id: reserva_id,
+      data: result.rows[0]
+    })
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
+
+export const deleteReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(reservation.deleteReservation,
+      [id]
+    )
+
+    res.status(200).json({
+      message: "Reserva eliminada",
+      reservaId: id,
+      data: result.rows[0]
+    })
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
 
 export const activateReservation = async (req, res) => {
   try {
