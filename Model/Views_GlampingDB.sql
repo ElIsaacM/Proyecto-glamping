@@ -75,19 +75,17 @@ WHERE c.estado <> 'inactivo'
 	AND r.estado <> 'Cancelada'
 GROUP BY c.cabana_id, c.nombre;
 
-CREATE OR REPLACE VIEW vista_cabanas_revenue AS
+CREATE VIEW vista_cabanas_revenue AS
 SELECT
   TO_CHAR(f.fecha_factura, 'YYYY-MM-DD') AS fecha,
-  SUM(COALESCE(c.precio_noche, 0) * COALESCE(p.dias_estadia, 0)) AS total
+  SUM(f.total) AS total
 FROM facturas f
 JOIN reservas r ON f.reserva_id = r.reserva_id
 JOIN paquetes p ON r.paquete_id = p.paquete_id
 JOIN cabanas c ON p.cabana_id = c.cabana_id
-WHERE c.estado <> 'Inactivo'
-  AND r.estado = 'Pagada' -- Filtramos por el estado de la factura
+WHERE c.estado <> 'inactivo'
+  AND r.estado <> 'Cancelada'
 GROUP BY TO_CHAR(f.fecha_factura, 'YYYY-MM-DD');
-
-SELECT * FROM facturas
 
 -------------------------- Views daños y mantenimientos -----------------------------
 CREATE VIEW vista_danos_mantenimientos AS
@@ -106,18 +104,16 @@ JOIN cabanas c ON c.cabana_id = dm.cabana_id;
 CREATE OR REPLACE VIEW vista_usuarios AS
 SELECT 
 	u.usuario_id AS ID,
-	u.rol_id,
-    u.identificacion_id,
 	r.nombre AS Rol,
-	i.tipo AS Identificacion,
+	u.rol_id,
+	u.tipo_identificacion AS "Tipo Ident..",
 	u.numero_identificacion AS "# Identificacion",
 	u.nombre AS Usuario,
 	u.contacto AS Contacto,
 	u.sueldo AS Sueldo,
 	u.estado AS Estado
 FROM usuarios u 
-JOIN roles r ON u.rol_id = r.rol_id
-JOIN identificaciones i ON i.identificacion_id = u.identificacion_id;
+JOIN roles r ON u.rol_id = r.rol_id;
 
 CREATE VIEW vista_usuarios_stats AS
 SELECT 
@@ -213,17 +209,16 @@ JOIN paquetes pq ON pq.paquete_id = ppq.paquete_id
 JOIN productos p ON p.producto_id = ppq.producto_id;
 
 -------------------------- Views de clientes -----------------------------
-CREATE VIEW vista_clientes AS
+CREATE OR REPLACE VIEW vista_clientes AS
 SELECT
 	c.cliente_id AS ID,
-	i.tipo AS "Tipo ident..",
-	c.identificacion AS "# ident..",
+	c.tipo_identificacion AS "Tipo Ident..",
+	c.numero_identificacion AS "# Identificacion",
 	c.nombre AS cliente,
 	c.email,
 	c.contacto,
 	c.pais_residencia AS residencia
 FROM clientes c
-JOIN identificaciones i ON c.identificacion_id = i.identificacion_id;
 
 -------------------------- Views de reservas -----------------------------
 CREATE VIEW vista_reservas AS
@@ -283,7 +278,7 @@ SELECT
 FROM pagos;
 
 -------------------------- Views de reembolsos -----------------------------
-CREATE VIEW vista_reembolsos AS
+CREATE VIEW vista_reembolsos_factura AS
 SELECT 
     reembolso_id AS ID,
     factura_id AS Factura,
@@ -322,6 +317,19 @@ CREATE INDEX idx_danos_cabana_estado ON danos_mantenimientos (cabana_id, estado)
 
 -- 4. BÚSQUEDA Y CLIENTES
 CREATE INDEX idx_clientes_nombre_pattern ON clientes (nombre varchar_pattern_ops);
+
+-- Se usa en una actualizacion
+CREATE INDEX idx_reservas_pendientes_pago 
+ON reservas (llegada) 
+WHERE por_pagar <= 0 AND estado <> 'Pagado' AND estado <> 'Cancelado';
+
+-- Para acelerar el cálculo de ingresos por mes
+CREATE INDEX idx_pagos_fecha_ingreso ON pagos (fecha_pago) 
+WHERE estado <> 'Cancelado';
+
+-- Para acelerar el cálculo de reembolsos por mes
+CREATE INDEX idx_reembolsos_fecha ON reembolsos (fecha_reembolso);
+
 
 /*
 	Las tablas que mas datos van a contener son: 

@@ -17,6 +17,12 @@ const CardsCont = styled.div`
   }
 `;
 
+const GraphContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
 function CabanasCard({ refreshTrigger }) {
   const { data, fetchData } = useFetch();
 
@@ -49,7 +55,9 @@ function CabanasCard({ refreshTrigger }) {
 
   return (
     <CardsCont>
-      <LinearGraph data={data?.revenue_graph} />
+      <GraphContainer>
+        <LinearGraph data={data?.revenue_graph} xKey="cabana" title="Ganancias generadas por cabaña" />
+      </GraphContainer>
       <SquareCard squareData={stats} />
     </CardsCont>
   );

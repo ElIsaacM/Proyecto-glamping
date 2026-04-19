@@ -35,7 +35,7 @@ export default function PagosCard({ refreshTrigger }) {
     {
       bgColor: 'verde',
       texto: 'Ingresos',
-      titulo: formatCurrency(data?.revenue ? data.revenue[0].ganancia_total : 0),
+      titulo: formatCurrency(data?.revenue ? data.revenue[0]["Ingresos"] : 0),
       icon: 'bi bi-cash-stack',
     },
   ];

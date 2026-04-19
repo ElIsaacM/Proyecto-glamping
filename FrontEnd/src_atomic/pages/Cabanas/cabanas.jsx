@@ -4,7 +4,6 @@ import { useFetch } from "../../hooks/fetchConnect";
 
 import { deleteUtils } from "../../utils/deleteUtils";
 
-import Plantilla from "../plantilla";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
 import ModalAgregar from "./modales/modalAgregar";
@@ -56,7 +55,7 @@ function Cabanas() {
   }
 
   return (
-    <Plantilla modulo={"Cabanas"}>
+    <>
       <CabanasCard refreshTrigger={refreshStatsTrigger} />
 
       <Botones>
@@ -86,7 +85,7 @@ function Cabanas() {
           cabanaAEditar={cabanaAEditar}
         />
       )}
-    </Plantilla>
+    </>
   );
 }
 

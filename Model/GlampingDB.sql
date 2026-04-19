@@ -55,16 +55,11 @@ CREATE TABLE Roles (
     Nombre VARCHAR(50) DEFAULT 'Empleado'
 );
 
-CREATE TABLE Identificaciones (
-    Identificacion_ID SERIAL PRIMARY KEY,
-    Tipo VARCHAR(50) NOT NULL
-);
-
 CREATE TABLE Usuarios (
     Usuario_ID SERIAL PRIMARY KEY,
     Rol_ID INT NOT NULL,
-    Identificacion_ID INT NOT NULL,
-	Numero_Identificacion VARCHAR(100) UNIQUE NOT NULL, -- VARCHAR para hashes/encriptación
+    tipo_identificacion VARCHAR(10) NOT NULL,
+    numero_identificacion VARCHAR(255) NOT NULL UNIQUE,
     Nombre VARCHAR(50) NOT NULL,
     Contacto VARCHAR(100) UNIQUE, -- Espacio para encriptación
     Sueldo DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -76,7 +71,7 @@ CREATE TABLE Usuarios (
 CREATE TABLE Login (
     Login_ID SERIAL PRIMARY KEY,
     Usuario_ID INT,
-    Email VARCHAR(250) NOT NULL,
+    Email VARCHAR(250) NOT NULL UNIQUE,
     Contrasena VARCHAR(255) NOT NULL,
 	Estado VARCHAR(50) DEFAULT 'Activo'
 );
@@ -121,11 +116,11 @@ CREATE TABLE Productos_Por_Paquete (
 
 CREATE TABLE Clientes (
     Cliente_ID SERIAL PRIMARY KEY,
-	Identificacion_ID INT NOT NULL,
+    tipo_identificacion VARCHAR(10) NOT NULL,
+	numero_identificacion VARCHAR(255) NOT NULL UNIQUE,
     Nombre VARCHAR(100) NOT NULL,
     Email VARCHAR(255) NOT NULL,
     Contacto VARCHAR(100) NOT NULL,
-    Identificacion VARCHAR(255) NOT NULL UNIQUE,
     Pais_Residencia VARCHAR(100) NOT NULL
 );
 
@@ -169,7 +164,7 @@ CREATE TABLE Pagos (
 
 CREATE TABLE Reembolsos (
     Reembolso_ID SERIAL PRIMARY KEY,
-    Pago_ID INT NOT NULL,
+    Factura_ID INT NOT NULL UNIQUE,
     Fecha DATE DEFAULT CURRENT_DATE NOT NULL,
     Justificacion TEXT NOT NULL,
     Estado VARCHAR(50) NOT NULL,
@@ -209,3 +204,10 @@ ALTER TABLE Pagos
     ADD CONSTRAINT fk_Pagos_Metodos FOREIGN KEY (Metodo_ID) REFERENCES Metodos_Pago(Metodo_ID);
 
 ALTER TABLE Reembolsos ADD CONSTRAINT fk_Reembosos_Pagos FOREIGN KEY (Pago_ID) REFERENCES Pagos(Pago_ID);
+
+-- Restricciones de unicidad
+ALTER TABLE clientes 
+ADD CONSTRAINT unique_identificacion UNIQUE (tipo_identificacion, numero_identificacion);
+
+ALTER TABLE Usuarios 
+ADD CONSTRAINT unique_identificacion UNIQUE (tipo_identificacion, numero_identificacion);

@@ -7,6 +7,12 @@ export const packages = {
     WHERE estado = 'Activo'
     ORDER BY fecha DESC
   `,
+  getPackageById: `
+    SELECT
+      * 
+    FROM vista_paquetes
+    WHERE id = $1
+  `,
   getPackageByName: `
     SELECT
       * 
@@ -38,7 +44,7 @@ export const packages = {
   activatePackage: `
     UPDATE paquetes SET
       estado = 'Activo'
-    WHERE paqueteid = $1
+    WHERE paquete_id = $1
     RETURNING nombre
   `,
 };
@@ -101,5 +107,23 @@ export const packageStats = {
     FROM vista_paquetes_stats 
     ORDER BY veces_reservado DESC
     LIMIT 3
+  `,
+};
+
+export const packageProducts = {
+  getProducts: `
+    SELECT
+      * 
+    FROM vista_productos_por_paquete
+    WHERE paquete_id = $1
+  `,
+};
+
+export const packageServices = {
+  getServices: `
+    SELECT
+      * 
+    FROM vista_servicios_por_paquete
+    WHERE paquete_id = $1
   `,
 };

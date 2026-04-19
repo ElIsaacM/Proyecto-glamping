@@ -6,7 +6,6 @@ import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
 import { activateUtils } from "../../utils/activateUtils";
 
-import Plantilla from "../plantilla";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
 import ModalAgregar from "./modales/modalAgregar";
@@ -76,7 +75,7 @@ function Usuarios() {
   };
 
   return (
-    <Plantilla modulo={"Usuarios"}>
+    <>
       <UsuariosCard refreshTrigger={refreshStatsTrigger} />
       <Botones>
         <UsuariosSearch onResult={setUsuarios} onFilterChange={setFilterMode} />
@@ -92,7 +91,6 @@ function Usuarios() {
         <p style={{ marginTop: "20px", color: "red" }}>Error: {error}</p>
       )}
       {displayData && (
-        console.log(displayData),
         <TablaGeneral
           data={displayData}
           onEdit={editarUsuario}
@@ -115,7 +113,7 @@ function Usuarios() {
           usuarioAEditar={usuarioAEditar}
         />
       )}
-    </Plantilla>
+    </>
   );
 }
 

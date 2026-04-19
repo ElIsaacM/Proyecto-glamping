@@ -1,20 +1,20 @@
 import { Router } from "express";
 import {
     getreservations,
-    getreservationByClient,
-    
+    getReservationByInvoice,
     activateReservation,
-    getReservationStats,
-    reservationFilters
+    cancelReservation,
+    reservationFilters,
+    getReservationStats
 } from '../controllers/reservation.controller.js';
 
 const router = Router();
 
 router.get('/', getreservations);
-router.post('/search', getreservationByClient);
-
+router.post('/search', getReservationByInvoice);
 router.put('/activate/:id', activateReservation);
-router.get('/stats', getReservationStats);
+router.put('/delete/:id', cancelReservation);
 router.get('/filters', reservationFilters);
+router.get('/stats', getReservationStats);
 
 export default router;

@@ -3,6 +3,13 @@ import { useForm } from "../../../hooks/useForm";
 import styled from "styled-components";
 import SelectBase from "../../../components/atoms/select/selectBase";
 import { useState, useEffect } from "react";
+import { useFetch } from "../../../hooks/fetchConnect";
+
+import 'react-phone-number-input/style.css'; // Importante para ver las banderas
+import PhoneInput from 'react-phone-number-input';
+import es from 'react-phone-number-input/locale/es'; // Para nombres de países en español
+
+import { identificaciones } from "../../../config/tipos";
 
 const Form = styled.form`
   display: flex;
@@ -42,33 +49,26 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // Agregar capacidad personas
 
   const [roles, setRoles] = useState([]);
-  const [identificaciones, setIdentificaciones] = useState([]);
+  const { data, loading, error, fetchData: fetchRoles } = useFetch();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`)
-      .then(res => res.json())
-      .then(data => {
-        // Añadir opción por defecto al inicio
-        setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
-      })
-      .catch(err => console.error("Error fetching roles", err));
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/identificaciones`)
-      .then(res => res.json())
-      .then(data => {
-        setIdentificaciones([{ identificacion_id: "", tipo: "Tipo de identificación" }, ...data]);
-      })
-      .catch(err => console.error("Error fetching identificaciones", err));
+    fetchRoles(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`);
   }, []);
 
-  const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { 
-      rol_id: '', 
-      identificacion_id: '', 
-      nombre: '', 
-      contacto: '', 
-      sueldo: '', 
-      numero_identificacion: '' 
+  useEffect(() => {
+    if (data) {
+      setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
+    }
+  }, [data]);
+
+  const { formData, handleChange, handleSubmit, submitting, setFormData } = useForm(
+    {
+      rol_id: '',
+      tipo_identificacion: '',
+      numero_identificacion: '',
+      nombre: '',
+      contacto: '',
+      sueldo: '',
     },
     `${import.meta.env.VITE_API_BASE_URL}/api/users`,
     () => {
@@ -76,6 +76,13 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       setModalAbierto(false); // Cerramos el modal al tener éxito
     }
   );
+
+  const handlePhoneChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      contacto: value // Actualiza solo el campo contacto
+    }));
+  };
 
   return (
     <ModalPlantilla modulo="usuarios" onClose={() => setModalAbierto(false)}>
@@ -90,45 +97,48 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
           nameKey="nombre"
         />
         <SelectBase
-          name="identificacion_id"
-          value={formData.identificacion_id}
+          name="tipo_identificacion"
+          value={formData.tipo_identificacion}
           onChange={handleChange}
           required={false}
           options={identificaciones}
           valueKey="identificacion_id"
           nameKey="tipo"
         />
-        <input 
-          type="text" 
-          name="nombre" 
-          placeholder="Nombre del usuario" 
-          value={formData.nombre} 
-          onChange={handleChange} 
-          required 
+        <input
+          type="text"
+          name="numero_identificacion"
+          placeholder="Número de identificación"
+          value={formData.numero_identificacion}
+          onChange={handleChange}
+          required
         />
-        <input 
-          type="number" 
-          name="contacto" 
-          placeholder="Contacto" 
-          value={formData.contacto} 
-          onChange={handleChange} 
-          required 
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Nombre del usuario"
+          value={formData.nombre}
+          onChange={handleChange}
+          required
         />
-        <input 
-          type="number" 
-          name="sueldo" 
-          placeholder="Sueldo" 
-          value={formData.sueldo} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="number" 
-          name="numero_identificacion" 
-          placeholder="Número de identificación" 
-          value={formData.numero_identificacion} 
-          onChange={handleChange} 
-          required 
+        <div className="phone-input-container">
+          <PhoneInput
+            international
+            defaultCountry="CO"
+            labels={es}
+            placeholder="Número de contacto"
+            value={formData.contacto}
+            onChange={handlePhoneChange}
+            required
+          />
+        </div>
+        <input
+          type="number"
+          name="sueldo"
+          placeholder="Sueldo"
+          value={formData.sueldo}
+          onChange={handleChange}
+          required
         />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Usuario'}

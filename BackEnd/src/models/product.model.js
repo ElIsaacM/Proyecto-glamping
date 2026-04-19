@@ -37,7 +37,7 @@ export const product = {
   activateProduct: `
     UPDATE Productos 
     SET estado = 'Activo' 
-    WHERE productoid = $1 
+    WHERE producto_id = $1 
     RETURNING nombre
     `,
 };

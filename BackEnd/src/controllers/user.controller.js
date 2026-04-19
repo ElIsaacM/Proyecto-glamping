@@ -29,20 +29,20 @@ export const createUser = async (req, res) => {
   try {
     const {
       rol_id,
-      identificacion_id,
+      tipo_identificacion,
+      numero_identificacion,
       nombre,
       contacto,
       sueldo,
-      numero_identificacion,
     } = req.body;
 
     const result = await pool.query(user.createUser, [
       rol_id,
-      identificacion_id,
+      tipo_identificacion,
+      numero_identificacion,
       nombre,
       contacto,
       sueldo,
-      numero_identificacion,
     ]);
 
     res.status(201).json(result.rows[0]);
@@ -56,20 +56,20 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const {
       rol_id,
-      identificacion_id,
+      tipo_identificacion,
+      numero_identificacion,
       nombre,
       contacto,
       sueldo,
-      numero_identificacion,
     } = req.body;
 
     const result = await pool.query(user.updateUser, [
       rol_id,
-      identificacion_id,
+      tipo_identificacion,
+      numero_identificacion,
       nombre,
       contacto,
       sueldo,
-      numero_identificacion,
       id,
     ]);
 

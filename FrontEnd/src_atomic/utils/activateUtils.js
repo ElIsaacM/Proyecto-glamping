@@ -6,7 +6,10 @@ export const activateUtils = {
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/activate/${id}`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
       if (!res.ok) {

@@ -13,18 +13,18 @@ export const user = {
     WHERE usuario ILIKE '%' || $1 || '%'
   `,
   createUser: `
-    INSERT INTO usuarios (rol_id, identificacion_id, nombre, contacto, sueldo, numero_identificacion, fecha_agregado)
+    INSERT INTO usuarios (rol_id, tipo_identificacion, numero_identificacion, nombre, contacto, sueldo, fecha_agregado)
     VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
     RETURNING usuario_id, nombre, rol_id
   `,
   updateUser: `
     UPDATE Usuarios SET
       rol_id = COALESCE(NULLIF($1::text, '')::integer, rol_id),
-      identificacion_id = COALESCE(NULLIF($2::text, '')::integer, identificacion_id),
-      nombre = COALESCE(NULLIF($3, ''), nombre),
-      contacto = COALESCE(NULLIF($4, ''), contacto),
-      sueldo = COALESCE(NULLIF($5::text, '')::numeric, sueldo),
-      numero_identificacion = COALESCE(NULLIF($6, ''), numero_identificacion)
+      tipo_identificacion = COALESCE(NULLIF($2, ''), tipo_identificacion),
+      numero_identificacion = COALESCE(NULLIF($3, ''), numero_identificacion),
+      nombre = COALESCE(NULLIF($4, ''), nombre),
+      contacto = COALESCE(NULLIF($5, ''), contacto),
+      sueldo = COALESCE(NULLIF($6::text, '')::numeric, sueldo)
     WHERE usuario_id = $7
     RETURNING nombre, rol_id
   `,

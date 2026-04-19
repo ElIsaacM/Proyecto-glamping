@@ -31,7 +31,14 @@ export const getserviceByName = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const { nombre, encargado, duracion_minutos, precio, descripcion } = req.body;
+    const { 
+      nombre, 
+      encargado, 
+      duracion_minutos, 
+      precio, 
+      descripcion 
+    } = req.body;
+    
     const result = await pool.query(
       service.createService, 
       [nombre, encargado, duracion_minutos, precio, descripcion]

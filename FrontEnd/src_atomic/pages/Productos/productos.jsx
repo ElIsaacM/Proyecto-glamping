@@ -6,7 +6,6 @@ import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
 import { activateUtils } from "../../utils/activateUtils";
 
-import Plantilla from "../plantilla";
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
 
@@ -91,7 +90,7 @@ function Productos() {
   };
 
   return (
-    <Plantilla modulo={"Productos"}>
+    <>
       <CardsCont>
         <ProductosCards refreshTrigger={refreshStatsTrigger} />
       </CardsCont>
@@ -134,7 +133,7 @@ function Productos() {
           productoAEditar={productoAEditar}
         />
       )}
-    </Plantilla>
+    </>
   );
 }
 

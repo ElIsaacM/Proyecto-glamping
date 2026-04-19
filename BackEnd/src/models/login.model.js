@@ -1,18 +1,20 @@
 export const login = {
   login: `
     SELECT
-      login_id,
-      email,
-      contrasena      
-    FROM login
-    WHERE email = $1 AND contrasena = $2
+      l.login_id,
+      l.usuario_id,
+      l.email,
+      l.contrasena,
+      u.nombre AS usuario_nombre,
+      r.nombre AS rol_nombre
+    FROM login l
+    JOIN usuarios u ON l.usuario_id = u.usuario_id
+    JOIN roles r ON u.rol_id = r.rol_id
+    WHERE l.email = $1
   `,
   createLogin: `
     INSERT INTO login (usuario_id, email, contrasena)
     VALUES ($1, $2, $3)
-    WHERE EXISTS (
-      SELECT 1 FROM usuarios WHERE numero_identificacion = $1
-    )
     RETURNING email
   `,
   restoreLogin: `
@@ -31,5 +33,16 @@ export const login = {
     SET estado = 'Inactivo'
     WHERE email = $1
     RETURNING email
+  `
+}
+
+export const selectUser = {
+  selectUser: `
+    SELECT
+      usuario_id
+    FROM usuarios
+    WHERE tipo_identificacion = $1
+    AND numero_identificacion = $2
+    AND estado = 'Activo'
   `
 }

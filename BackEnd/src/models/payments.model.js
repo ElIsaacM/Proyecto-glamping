@@ -9,7 +9,7 @@ export const payment = {
     SELECT
       * 
     FROM vista_pagos
-    WHERE factura::text ILIKE '%' || $1 || '%'
+    WHERE factura = $1
   `,
   createPaymentManually: `
     INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
@@ -21,7 +21,10 @@ export const payment = {
       WHERE f.factura_id = $1 AND c.email = $5
     )
     AND EXISTS (SELECT 1 FROM metodos_pago WHERE metodo_id = $2)
-    RETURNING factura_id, total_pagado;
+    RETURNING 
+      factura_id, 
+      total_pagado,
+      (SELECT reserva_id FROM facturas WHERE factura_id = $1) AS reserva_id;
   `,
   createPaymentWithApi: `
     INSERT INTO pagos (factura_id, fecha_pago, metodo_id, estado, total_pagado)
@@ -78,6 +81,7 @@ export const paymentStats = {
       COUNT(id) AS "Pagos exitosos"
     FROM vista_pagos
     WHERE estado = 'Completado'
+      OR estado = 'Agregado Manual'
   `,
   getRejectedPayments: `
     SELECT 
@@ -93,7 +97,17 @@ export const paymentStats = {
   `,
   getRevenue: `
     SELECT 
-      Ganancia_total
+      saldo_neto_mes AS "Ingresos"
     FROM vista_pagos_stats
   `,
+  getRevenueGraph: `
+    SELECT 
+      TO_CHAR(fecha_pago, 'YYYY-MM-DD') AS fecha,
+      SUM(total_pagado) AS total
+    FROM pagos
+    WHERE estado IN ('Completado', 'Agregado Manual')
+    GROUP BY TO_CHAR(fecha_pago, 'YYYY-MM-DD')
+    ORDER BY fecha ASC
+    LIMIT 30;
+  `
 }
