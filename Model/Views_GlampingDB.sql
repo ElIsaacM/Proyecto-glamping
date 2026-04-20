@@ -272,10 +272,20 @@ FROM pagos p
 JOIN metodos_pago mp ON mp.metodo_id = p.metodo_id;
 
 CREATE VIEW vista_pagos_stats AS
-SELECT
-	SUM(total_pagado) AS Ganancia_total,
-	COUNT(*) AS Total_pagos
-FROM pagos;
+SELECT 
+    SUM(CASE WHEN tipo = 'pago' THEN monto ELSE 0 END) AS total_cobrado,
+    SUM(CASE WHEN tipo = 'reembolso' THEN monto ELSE 0 END) AS total_reembolsado,
+    SUM(CASE WHEN tipo = 'pago' THEN monto ELSE -monto END) AS saldo_neto_mes
+FROM (
+    SELECT fecha_pago AS fecha, total_pagado AS monto, 'pago' AS tipo 
+    FROM pagos 
+    WHERE estado != 'Cancelado'
+      AND fecha_pago >= DATE_TRUNC('month', CURRENT_DATE) -- Filtra antes del UNION
+    UNION ALL
+    SELECT fecha, monto, 'reembolso' AS tipo 
+    FROM reembolsos
+    WHERE fecha >= DATE_TRUNC('month', CURRENT_DATE) -- Filtra antes del UNION
+) AS reporte;
 
 -------------------------- Views de reembolsos -----------------------------
 CREATE VIEW vista_reembolsos_factura AS

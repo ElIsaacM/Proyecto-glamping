@@ -171,6 +171,14 @@ CREATE TABLE Reembolsos (
     Monto DECIMAL(10,2) NOT NULL
 );
 
+CREATE TABLE Notificaciones (
+    Notificacion_ID SERIAL PRIMARY KEY,
+    Titulo VARCHAR(50) NOT NULL,
+    Asunto VARCHAR(50) NOT NULL,
+    Mensaje TEXT NOT NULL,
+    Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
 -------------------------- FOREIGN KEYS -----------------------------
 ALTER TABLE Servicios_Por_Paquete 
     ADD CONSTRAINT fk_Servicio_Paquete FOREIGN KEY (Paquete_ID) REFERENCES Paquetes(Paquete_ID) ON UPDATE CASCADE,

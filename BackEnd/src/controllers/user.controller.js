@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { notification } from "../models/notification.model.js";
 import { user, userStats, userFilters as userFiltersModel } from "../models/user.model.js";
 
 export const getusers = async (req, res) => {
@@ -34,7 +35,11 @@ export const createUser = async (req, res) => {
       nombre,
       contacto,
       sueldo,
+
+      userName,
     } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(user.createUser, [
       rol_id,
@@ -45,8 +50,17 @@ export const createUser = async (req, res) => {
       sueldo,
     ]);
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Usuario",
+      `El usuario ${nombre} ha sido creado con rol ${rol_id}`,
+    ]);
+
+    await pool.query("COMMIT");
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };
@@ -61,7 +75,11 @@ export const updateUser = async (req, res) => {
       nombre,
       contacto,
       sueldo,
+
+      userName,
     } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(user.updateUser, [
       rol_id,
@@ -73,8 +91,17 @@ export const updateUser = async (req, res) => {
       id,
     ]);
 
-    res.json(result.rows[0]);
+    await pool.query(notification.createNotification, [
+      userName,
+      "Usuario",
+      `El usuario #${id} - ${nombre} ha sido actualizado rol ${rol_id}`,
+    ]);
+
+    await pool.query("COMMIT");
+
+    res.status(201).json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };

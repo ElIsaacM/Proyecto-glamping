@@ -97,13 +97,15 @@ export const updateReservationByPayment = {
 export const reservationStats = {
   getRevenueGraph: `
     SELECT 
-      TO_CHAR(f.fecha_factura, 'YYYY-MM') AS fecha,
-      SUM(f.total) AS total
-    FROM facturas f
+      TO_CHAR(pg.fecha_pago, 'YYYY-MM') AS fecha,
+      SUM(pg.total_pagado) AS total
+    FROM pagos pg
+    JOIN facturas f ON pg.factura_id = f.factura_id
     JOIN reservas r ON f.reserva_id = r.reserva_id
     WHERE r.estado <> 'Cancelada'
-      AND f.fecha_factura >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
-    GROUP BY TO_CHAR(f.fecha_factura, 'YYYY-MM')
+      AND pg.estado IN ('Completado', 'Agregado Manual')
+      AND pg.fecha_pago >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
+    GROUP BY TO_CHAR(pg.fecha_pago, 'YYYY-MM')
     ORDER BY fecha ASC;
   `
 }

@@ -24,7 +24,7 @@ export const getCabinDamageByName = async (req, res) => {
             [name.trim()]
         )
 
-        res.json(result.rows[0])
+        res.json(result.rows)
     } catch (error) {
         res.status(500).json({message: error.message})
     }

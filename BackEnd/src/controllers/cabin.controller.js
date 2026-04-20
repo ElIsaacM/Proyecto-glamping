@@ -10,6 +10,21 @@ export const getCabins = async (req, res) => {
   }
 }
 
+export const getCabinByName = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const result = await pool.query(
+      cabin.getCabinByName,
+      [name]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 export const createCabin = async (req, res) => {
   try {
     const { nombre, precio_noche, descripcion } = req.body;
@@ -87,11 +102,3 @@ export const getCabinStats = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-export const cabinFilters = async (req, res) => {
-  try {
-
-  } catch (error) {
-    res.stats(500).json({error: error.message})
-  }
-}
