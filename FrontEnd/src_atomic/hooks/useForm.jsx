@@ -25,33 +25,32 @@ export const useForm = (initialState, url, onSuccess, method = 'POST') => {
   };
 
   const handleSubmit = async (e, cerrarModal) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault(); // Verificación por si se llama manualmente
+
     try {
-      // Filtrar datos para no enviar valores vacíos en campos que deberían ser enteros
       const cleanedData = { ...formData };
-      // Convertir strings vacíos a null para campos de ID que no sean obligatorios
       Object.keys(cleanedData).forEach(key => {
         if (key.includes('_id') && cleanedData[key] === '') {
           cleanedData[key] = null;
         }
       });
 
-      // Hacemos el request usando el método especificado (POST por defecto)
-      await postData(url, {
+      // IMPORTANTE: postData debe lanzar un error si la respuesta no es 2xx
+      const response = await postData(url, {
         method: method,
         body: JSON.stringify(cleanedData)
       });
 
-      // Limpiar formulario tras éxito solo si es POST (en PUT usualmente se mantiene o se cierra modal)
+      // SI LLEGAMOS AQUÍ, ES QUE FUE EXITOSO (Status 200-299)
       if (method === 'POST') {
         setFormData(initialState);
       }
 
-      // Ocultar modal e invocar la acción de recarga local de datos
       if (cerrarModal) cerrarModal();
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(response); // Pasamos la respuesta (donde viene el TOKEN)
 
     } catch (err) {
+      // No hace falta hacer nada más, useFetch ya puso el error en 'submitError'
       console.error("Error al enviar formulario:", err);
     }
   };

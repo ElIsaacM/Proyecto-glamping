@@ -91,7 +91,7 @@ const CloseModal = styled.button`
   background: red;
 `;
 
-function ModalPlantilla({ modulo, volver, onClose, children, onConfirm }) {
+function ModalPlantilla({ modulo, titulo, volver, onClose, children, onConfirm }) {
   // const [confirmVisible, setConfirmVisible] = useState(false);
 
   // const handleAgregar = () => {
@@ -106,7 +106,7 @@ function ModalPlantilla({ modulo, volver, onClose, children, onConfirm }) {
   return (
     <Modal>
       <ModalCont>
-        <h3>Agregar {modulo}</h3>
+        <h3>{titulo ? titulo : `Agregar ${modulo}`}</h3>
 
         <Contenido>
           {children}

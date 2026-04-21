@@ -1,12 +1,23 @@
-import { invoice } from "../models/invoice.model.js";
 import pool from "../config/db.js";
+import { invoice } from '../models/invoice.model.js'
 
 export const getInvoices = async (req, res) => {
-  try {
-    const result = await pool.query(invoice.getInvoices);
+    try {
+        const result = await pool.query(invoice.getInvoices);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
 
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const getInvoicesByClient = async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        const result = await pool.query(invoice.getInvoicesByClient, [name]);
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}

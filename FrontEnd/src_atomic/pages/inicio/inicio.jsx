@@ -1,11 +1,12 @@
 import styled from "styled-components";
 
-import Plantilla from "../plantilla";
 import BotonDescargar from "../../components/atoms/buttons/botonDescargar";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { inicioCardData } from "./componentsData/inicioData";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
 import NotificacionInicio from "../../components/molecules/inicioNotificacion";
+import { useFetch } from "../../hooks/fetchConnect";
+import { useEffect } from "react";
 
 const FechaInforme = styled.div`
   display: flex;
@@ -32,21 +33,27 @@ const Novedades = styled.div`
 `;
 
 function Inicio() {
+  const { data, fetchData } = useFetch();
+
+  useEffect(() => {
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments/stats`);
+  }, [fetchData]);
+
   return (
-    <Plantilla modulo={'Inicio'}>
+    <>
       <FechaInforme>
         <h3>10 Agosto - 17 Agosto</h3>
         <BotonDescargar />
       </FechaInforme>
       <RectangleCard rectangleData={inicioCardData} />
       <GraphNovedades>
-        <LinearGraph />
+        <LinearGraph data={data?.revenue_graph} title="Ingresos acumulados por pagos" />
         <Novedades>
           <h3>Novedades</h3>
           <NotificacionInicio />
         </Novedades>
       </GraphNovedades>
-    </Plantilla>
+    </>
   );
 }
 

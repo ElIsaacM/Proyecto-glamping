@@ -1,46 +1,47 @@
-import { body, param } from 'express-validator';
+import {body, param} from 'express-validator';
 
 export const rulesCreatePackage = [
   body("tipo_id")
     .trim()
-    .notEmpty().withMessage("El id de tipo de paquete es requerido"),
+    .notEmpty().withMessage("El id del tipo es requerido")
+    .isNumeric().withMessage("El id del tipo debe ser un numero"),
   body("registrado_por_id")
     .trim()
-    .notEmpty().withMessage("El id del encargado de registrar es requerido")
-    .isNumeric().withMessage("El id debe ser un número"),
+    .notEmpty().withMessage("El id del usuario es requerido")
+    .isNumeric().withMessage("El id del usuario debe ser un numero"),
   body("nombre")
     .trim()
-    .notEmpty().withMessage("El nombre es requerido"),
+    .notEmpty().withMessage("El nombre es requerido")
+    .isLength({ min: 3 }).withMessage("El nombre debe tener al menos 3 caracteres"),
   body("dias_estadia")
     .trim()
     .notEmpty().withMessage("Los dias de estadia son requeridos")
-    .isNumeric().withMessage("Los dias deben ser valores numéricos")
+    .isNumeric().withMessage("Los dias de estadia deben ser un numero"),
+  body("descripcion")
+    .trim()
+    .notEmpty().withMessage("La descripcion es requerida")
+    .isLength({ min: 10 }).withMessage("La descripcion debe tener al menos 10 caracteres"),
 ];
 
 export const rulesUpdatePackage = [
   body("tipo_id")
     .trim()
-    .notEmpty().withMessage("El id de tipo de paquete es requerido"),
+    .notEmpty().withMessage("El id del tipo es requerido")
+    .isNumeric().withMessage("El id del tipo debe ser un numero"),
   body("nombre")
     .trim()
-    .notEmpty().withMessage("El nombre del paquete es requerido"),
+    .notEmpty().withMessage("El nombre es requerido")
+    .isLength({ min: 3 }).withMessage("El nombre debe tener al menos 3 caracteres"),
   body("dias_estadia")
     .trim()
     .notEmpty().withMessage("Los dias de estadia son requeridos")
-    .isNumeric().withMessage("Los dias deben ser valores numéricos"),
+    .isNumeric().withMessage("Los dias de estadia deben ser un numero"),
+  body("descripcion")
+    .trim()
+    .notEmpty().withMessage("La descripcion es requerida")
+    .isLength({ min: 10 }).withMessage("La descripcion debe tener al menos 10 caracteres"),
   param("id")
     .trim()
     .notEmpty().withMessage("El id del paquete es requerido")
-];
-
-export const rulesDeletePackage = [
-  param("id")
-    .trim()
-    .notEmpty().withMessage("El id del paquete es requerido")
-];
-
-export const rulesActivatePackage = [
-  param("id")
-    .trim()
-    .notEmpty().withMessage("El id del paquete es requerido")
+    .isNumeric().withMessage("El id del paquete debe ser un número")
 ];

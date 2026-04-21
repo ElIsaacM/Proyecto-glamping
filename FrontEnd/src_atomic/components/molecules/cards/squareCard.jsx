@@ -15,7 +15,6 @@ const Card = styled.button`
   height: 190px;
   border-radius: 5px;
   border: none;
-  cursor: pointer;
   padding: 20px;
   box-sizing: border-box;
 
@@ -27,12 +26,23 @@ const Card = styled.button`
 function SquareCard({ squareData }) {
   return(
     <CardsContainer>
-      {squareData.map((item, i) => (
-        <Card key={i} bgColor={item.bgColor}>
-          <p>{item.texto}</p>
-          <h4>{item.titulo}</h4>
-        </Card>
-      ))}
+      {squareData.map((item, i) => {
+        // Si tiene isButton, definimos el comportamiento de clic
+        const isButton = item.isButton === true;
+        
+        return (
+          <Card 
+            key={i} 
+            bgColor={item.bgColor}
+            onClick={isButton ? item.action : undefined}
+            style={{ cursor: isButton ? 'pointer' : 'default' }}
+          >
+            
+            <p>{item.texto}</p>
+            <h4>{item.titulo}</h4>
+          </Card>
+        );
+      })}
     </CardsContainer>
   );
 }

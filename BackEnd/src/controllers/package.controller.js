@@ -1,5 +1,11 @@
 import pool from '../config/db.js'
-import { packages, packageStats, packageFilters as packageFiltersModel } from '../models/package.model.js'
+import { 
+  packages, 
+  packageStats, 
+  packageFilters as packageFiltersModel, 
+  packageProducts, 
+  packageServices 
+} from '../models/package.model.js'
 
 export const getPackages = async (req, res) => {
   try {
@@ -11,6 +17,16 @@ export const getPackages = async (req, res) => {
     res.status(500).json({message: error.message})
   }
 };
+
+export const getPackageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(packages.getPackageById, [id]);
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+}
 
 export const getPackageByName = async (req, res) => {
   try {
@@ -146,6 +162,26 @@ export const packageFilters = async (req, res) => {
       longer_stay_packages: longer_stay_packages.rows,
       shorter_stay_packages: shorter_stay_packages.rows,
     })
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const getPackageProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(packageProducts.getProducts, [id]);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}
+
+export const getPackageServices = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(packageServices.getServices, [id]);
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({error: error.message});
   }

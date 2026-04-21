@@ -1,5 +1,7 @@
 import { payment, paymentFilters, paymentStats } from "../models/payments.model.js";
 import pool from "../config/db.js";
+import { updateReservationByPayment } from "../models/reservation.model.js";
+
 
 export const getPayments = async (req, res) => {
   try {
@@ -12,10 +14,10 @@ export const getPayments = async (req, res) => {
 
 export const getPaymentByInvoice = async (req, res) => {
   try {
-    const { invoice } = req.body;
+    const { name } = req.body;
 
-    const result = await pool.query(payment.getPaymentByInvoice, [invoice]);
-    res.json(result.rows[0]);
+    const result = await pool.query(payment.getPaymentByInvoice, [name.trim()]);
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -24,20 +26,36 @@ export const getPaymentByInvoice = async (req, res) => {
 export const createPaymentManually = async (req, res) => {
   try {
     const { factura_id, email, metodo_id, total_pagado } = req.body;
+    const estado = 'Agregado Manual';
 
-    const estado = 'Aceptado';
+    await pool.query('BEGIN');
 
     const result = await pool.query(
       payment.createPaymentManually,
       [factura_id, metodo_id, estado, total_pagado, email]
     )
-    
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Factura o correo del cliente no encontrado, o no coinciden." });
+      await pool.query('ROLLBACK');
+      return res.status(404).json({ message: "No se pudo procesar: Datos inválidos o no coinciden." });
     }
+
+    const reserva_id = result.rows[0].reserva_id;
+
+    await pool.query(
+      updateReservationByPayment.updateTotal,
+      [factura_id, reserva_id]
+    );
+
+    await pool.query(
+      updateReservationByPayment.updateStatus
+    );
+
+    await pool.query('COMMIT');
     
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query('ROLLBACK');
     res.status(500).json({ message: error.message });
   }
 }
@@ -59,17 +77,19 @@ export const PaymentFilters = async (req, res) => {
 
 export const getPaymentStats = async (req, res) => {
   try {
-    const [successful_payments, rejected_payments, pending_refunds, revenue] = await Promise.all([
+    const [successful_payments, rejected_payments, pending_refunds, revenue, revenue_graph] = await Promise.all([
       pool.query(paymentStats.getSuccessfulPayments),
       pool.query(paymentStats.getRejectedPayments),
       pool.query(paymentStats.getPendingRefunds),
       pool.query(paymentStats.getRevenue),
+      pool.query(paymentStats.getRevenueGraph),
     ]);
     res.json({
       successful_payments: successful_payments.rows,
       rejected_payments: rejected_payments.rows,
       pending_refunds: pending_refunds.rows,
       revenue: revenue.rows,
+      revenue_graph: revenue_graph.rows,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

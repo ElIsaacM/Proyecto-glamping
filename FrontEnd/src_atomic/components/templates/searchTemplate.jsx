@@ -57,11 +57,13 @@ function SearchTemplate({ modulo, placeholder, onResult, options, onFilterChange
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Buscar>
-      <SelectBase 
-        options={options} 
-        value={filter} 
-        onChange={handleFilterChange} 
-      />
+      {options && options.length > 0 && (
+        <SelectBase 
+          options={options} 
+          value={filter} 
+          onChange={handleFilterChange} 
+        />
+      )}
     </Buscador_Filtro>
   );
 }

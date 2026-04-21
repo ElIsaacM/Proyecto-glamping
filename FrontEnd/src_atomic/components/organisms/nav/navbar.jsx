@@ -1,5 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+
+import { modulos, userRole } from "../../../config/modulos";
 
 const NavBar = styled.nav`
   width: 80px;
@@ -14,7 +16,7 @@ const NavBar = styled.nav`
   justify-content: space-between;
   align-items: center;
 
-  h4{
+  h5, h4{
     display: none;
     margin: 0;
   }
@@ -34,7 +36,7 @@ const NavBar = styled.nav`
     width: 140px;
     align-items: start;
 
-    h4{
+    h5, h4{
       display: flex;
     }
   }
@@ -61,10 +63,28 @@ const Module = styled.button`
   background: none;
   color: white;
   cursor: pointer;
+  text-decoration: none;
+
+  &.active {
+    color: #40ff00ff;
+    background: #40723cff;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+
+    &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
 `;
 
-function NavBarGeneral({ modules }) {
-  const navigate = useNavigate();
+function Navbar() {
+  const currentUserRole = (localStorage.getItem('userRole') || "").toLowerCase();
+
+  const modulosDisponibles = modulos.filter(m =>
+    !m.roles || m.roles.includes(currentUserRole)
+  );
 
   return (
     <NavBar>
@@ -73,15 +93,28 @@ function NavBarGeneral({ modules }) {
           <img src="../../../../src_atomic/assets/Logo glamping.svg" alt="" />
         </div>
         <ModulesCont>
-          {modules.map((item, i) => (
-            <Module key={i} onClick={() => navigate(item.ruta)}>
+          {modulosDisponibles.map((item, i) => (
+            <Module
+              key={i}
+              as={NavLink}
+              to={item.ruta}
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
               <i className={item.icono}></i>
-              <h4>{item.nombre}</h4>
+              <h5>{item.nombre}</h5>
             </Module>
           ))}
         </ModulesCont>
       </div>
-      <Module>
+      <Module
+        onClick={() => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userName');
+        }}
+        as={NavLink}
+        to={'/'}
+      >
         <i className="bi bi-box-arrow-right"></i>
         <h4>Salir</h4>
       </Module>
@@ -89,4 +122,4 @@ function NavBarGeneral({ modules }) {
   );
 }
 
-export default NavBarGeneral;
+export default Navbar;

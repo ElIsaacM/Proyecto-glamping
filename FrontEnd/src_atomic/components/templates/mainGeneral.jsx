@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ObtenerHora from "../components/atoms/horaActual";
+import ObtenerHora from "../atoms/horaActual";
 
 const Main = styled.main`
   width: 100%;

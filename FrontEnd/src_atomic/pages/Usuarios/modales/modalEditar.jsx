@@ -3,6 +3,10 @@ import { useForm } from "../../../hooks/useForm";
 import styled from "styled-components";
 import SelectBase from "../../../components/atoms/select/selectBase";
 import { useState, useEffect } from "react";
+import { useFetch } from "../../../hooks/fetchConnect";
+
+import { Tooltip } from '../../../components/atoms/tooltip';
+import { identificaciones } from "../../../config/tipos";
 
 const Form = styled.form`
   display: flex;
@@ -43,42 +47,34 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
   const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/users/${usuarioAEditar.usuario_id || usuarioAEditar.id}`;
 
+  const { data, loading, error, fetchData: fetchRoles } = useFetch();
   const [roles, setRoles] = useState([]);
-  const [identificaciones, setIdentificaciones] = useState([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`)
-      .then(res => res.json())
-      .then(data => {
-        // Añadir opción por defecto al inicio
-        setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
-      })
-      .catch(err => console.error("Error fetching roles", err));
-
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/types/identificaciones`)
-      .then(res => res.json())
-      .then(data => {
-        setIdentificaciones([{ identificacion_id: "", tipo: "Tipo de identificación" }, ...data]);
-      })
-      .catch(err => console.error("Error fetching identificaciones", err));
+    fetchRoles(`${import.meta.env.VITE_API_BASE_URL}/api/types/roles`);
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setRoles([{ rol_id: "", nombre: "Seleccione un rol" }, ...data]);
+    }
+  }, [data]);
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
       rol_id: usuarioAEditar.rol_id ?? '',
-      identificacion_id: usuarioAEditar.identificacion_id ?? '',
+      tipo_identificacion: usuarioAEditar["Tipo Ident.."] || '',
+      numero_identificacion: usuarioAEditar["# Identificacion"] || '',
       nombre: usuarioAEditar.usuario || '',
       contacto: usuarioAEditar.contacto || '',
       sueldo: usuarioAEditar.sueldo || '',
-      numero_identificacion: usuarioAEditar["# Identificacion"] || '',
     },
     urlParams,
     () => {
-      // Callback OnSuccess
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/users`);
-      setModalAbierto(false); // Cerramos el modal al tener éxito
+      setModalAbierto(false);
     },
-    'PUT' // <--- Le decimos a nuestro custom hook que esto es una actualizacion
+    'PUT'
   );
 
   const handlePasswordSubmit = (e) => {
@@ -100,42 +96,50 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
           nameKey="nombre"
         />
         <SelectBase
-          name="identificacion_id"
-          value={formData.identificacion_id}
+          name="tipo_identificacion"
+          value={formData.tipo_identificacion}
           onChange={handleChange}
           required={false}
           options={identificaciones}
           valueKey="identificacion_id"
           nameKey="tipo"
         />
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre del usuario"
-          value={formData.nombre}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="contacto"
-          placeholder="Contacto"
-          value={formData.contacto}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
-          name="sueldo"
-          placeholder="Sueldo"
-          value={formData.sueldo}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="numero_identificacion"
-          placeholder="Número de identificación"
-          value={formData.numero_identificacion}
-          onChange={handleChange}
-        />
+        <Tooltip content="Número de identificación">
+          <input
+            type="text"
+            name="numero_identificacion"
+            placeholder="Número de identificación"
+            value={formData.numero_identificacion}
+            onChange={handleChange}
+          />
+        </Tooltip>
+        <Tooltip content="Nombre del usuario">
+          <input
+            type="text"
+            name="nombre"
+            placeholder="Nombre del usuario"
+            value={formData.nombre}
+            onChange={handleChange}
+          />
+        </Tooltip>
+        <Tooltip content="Número de contacto">
+          <input
+            type="text"
+            name="contacto"
+            placeholder="Contacto"
+            value={formData.contacto}
+            onChange={handleChange}
+          />
+        </Tooltip>
+        <Tooltip content="Sueldo mensual, ej. 2000000">
+          <input
+            type="number"
+            name="sueldo"
+            placeholder="Sueldo"
+            value={formData.sueldo}
+            onChange={handleChange}
+          />
+        </Tooltip>
         <button type="submit" disabled={submitting}>
           {submitting ? 'Actualizando...' : 'Actualizar Usuario'}
         </button>

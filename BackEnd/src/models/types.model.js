@@ -5,10 +5,4 @@ export const types = {
       nombre 
     FROM roles
   `,
-  getIdentificaciones: `
-    SELECT 
-      identificacion_id, 
-      tipo 
-    FROM identificaciones
-  `,
 }

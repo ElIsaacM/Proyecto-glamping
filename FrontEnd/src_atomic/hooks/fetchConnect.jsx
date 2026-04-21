@@ -18,17 +18,23 @@ export const useFetch = () => {
     setLoading(true);
     setError(null);
 
-    // Configuración por defecto para JSON
-    const defaultOptions = {
+    const token = localStorage.getItem('token');
+
+    // Configuración por defecto para JSON combinando con custom headers
+    const mergedHeaders = {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      ...(options.headers || {})
+    };
+
+    const finalOptions = {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
       ...options,
+      headers: mergedHeaders,
     };
 
     try {
-      const response = await fetch(url, defaultOptions);
+      const response = await fetch(url, finalOptions);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

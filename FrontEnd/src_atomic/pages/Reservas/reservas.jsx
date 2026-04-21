@@ -2,12 +2,23 @@ import SquareCard from "../../components/molecules/cards/squareCard";
 import { reservasCardData } from "./componentsData/reservasData";
 import styled from "styled-components";
 
-import Plantilla from "../plantilla";
+import { useFilters } from "../../hooks/useFilters";
+import { deleteUtils } from "../../utils/deleteUtils";
+import { activateUtils } from "../../utils/activateUtils";
+
+import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
-import Buscador from "../../components/molecules/buscador";
 import TablaGeneral from "../../components/organisms/tabla";
 import { useFetch } from "../../hooks/fetchConnect";
 import { useState, useEffect } from "react";
+
+import 
+  ReservasSearch, 
+  { reservationFilterConfig } 
+from "./componentsData/reservasSearch";
+
+import ModalClientes from "./modales/modalClientes";
+import ModalPaquete from "./modales/modalPaquete";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -30,30 +41,107 @@ const Botones = styled.div`
   }
 `;
 
-
-
-function Reservas() {
+function Reservas({ modulo }) {
   const { data, loading, error, fetchData } = useFetch();
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
+  const [reservas, setReservas] = useState(null);
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
+    data,
+    reservas,
+    reservationFilterConfig
+  );
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+  const { data: statsData, fetchData: fetchStats } = useFetch();
+
+  const handleFetchData = () => {
+    setReservas(null);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/reservations`);
+    fetchFilters();
+    setRefreshStatsTrigger((prev) => prev + 1);
+  }
 
   useEffect(() => {
-    fetchData('http://localhost:3000/api/reservations');
-  }, [fetchData]);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/reservations`);
+    fetchStats(`${import.meta.env.VITE_API_BASE_URL}/api/reservations/stats`);
+  }, [fetchData, fetchStats, refreshStatsTrigger]);
+
+  const handleClientClick = (fila) => {
+    setSelectedClient(fila);
+  };
+
+  const handlePackageClick = (fila) => {
+    setSelectedPackage(fila);
+  };
+
+  const closeMenu = () => {
+    setSelectedClient(null);
+    setSelectedPackage(null);
+  };
+
+  const eliminarReserva = (reserva) => {
+    deleteUtils.eliminarRegistro(
+      "reservations",
+      reserva.id,
+      "reserva de: " + reserva.cliente,
+      handleFetchData,
+    );
+  };
+
+  const activarReserva = (reserva) => {
+    activateUtils.activarRegistro(
+      "reservations",
+      reserva.id,
+      "reserva de: " + reserva.cliente,
+      handleFetchData,
+    );
+  };
+
+  const onColumnClickHandlers = {
+    cliente: handleClientClick,
+    paquete: handlePackageClick
+  };
 
   return (
-    <Plantilla modulo={"Reservas"}>
+    <>
+      <CardsCont>
+        <LinearGraph data={statsData?.revenue_graph} title="Ganancias por mes" />
+        <SquareCard squareData={reservasCardData} />
+      </CardsCont>
+      <Botones>
+        <ReservasSearch onResult={setReservas} onFilterChange={setFilterMode} />
+        <BotonAgregar
+          modulo={"Agregar reserva"}
+          color={1}
+        />
+      </Botones>
 
-          <CardsCont>
-            <LinearGraph />
-            <SquareCard squareData={reservasCardData} />
-          </CardsCont>
-          <Botones>
-            <Buscador placeholder={'Buscar fecha'} />
-          </Botones>
-          
-          {loading && <p style={{marginTop: '20px'}}>Cargando reservas...</p>}
-          {error && <p style={{marginTop: '20px', color: 'red'}}>Error: {error}</p>}
-          {data && <TablaGeneral data={data} />}
-    </Plantilla>
+      {loading && <p style={{ marginTop: '20px' }}>Cargando reservas...</p>}
+      {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
+      {displayData && (
+        <TablaGeneral
+          data={displayData}
+          onColumnClick={onColumnClickHandlers}
+          onActive={activarReserva}
+          onDelete={eliminarReserva}
+        />
+      )}
+
+      {selectedClient && (
+        <ModalClientes
+          id={selectedClient.cliente_id}
+          onClose={closeMenu}
+        />
+      )}
+
+      {selectedPackage && (
+        <ModalPaquete
+          id={selectedPackage.paquete_id}
+          onClose={closeMenu}
+        />
+      )}
+    </>
   );
 }
 

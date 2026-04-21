@@ -3,13 +3,13 @@ export const reservation = {
     SELECT
       *
     FROM vista_reservas
-    ORDER BY fecha DESC
+    ORDER BY id DESC
   `,
-  getReservationByClient: `
+  getReservationByInvoice: `
     SELECT
       *
     FROM vista_reservas
-    WHERE cliente ILIKE '%' || $1 || '%'
+    WHERE factura_id = $1
     ORDER BY fecha DESC
   `,
   createReservation: `
@@ -21,26 +21,89 @@ export const reservation = {
   updateReservation: `
     -- Por resolver, se debe evitar duplicados en fecha 
   `,
-  updateReservationByPayment: `
-    WITH calculo_saldos AS (
-      SELECT 
-          f.reserva_id,
-          f.total - COALESCE(SUM(p.total_pagado), 0) AS nuevo_saldo
-      FROM facturas f
-      LEFT JOIN pagos p ON f.factura_id = p.factura_id AND p.estado = 'Completado'
-      WHERE f.reserva_id = $1
-      GROUP BY f.reserva_id, f.total
-    )
-    UPDATE reservas r
-    SET por_pagar = cs.nuevo_saldo
-    FROM calculo_saldos cs
-    WHERE r.reserva_id = $1 
-    AND r.reserva_id = cs.reserva_id;
-  `,
   deleteReservation: `
     UPDATE reservas
     SET estado = 'Cancelado'
     WHERE reserva_id = $1
     RETURNING reserva_id
   `,
+  activateReservation: `
+    UPDATE reservas
+    SET estado = 'Confirmado'
+    WHERE reserva_id = $1
+    RETURNING reserva_id
+  `,
+  cancelReservation: `
+    UPDATE reservas
+    SET estado = 'Cancelado'
+    WHERE reserva_id = $1
+    RETURNING reserva_id
+  `
+}
+
+export const reservationFilters = {
+  incomingReservations: `
+    SELECT
+      *
+    FROM vista_reservas
+    WHERE llegada = CURRENT_DATE
+      AND estado <> 'Cancelado'
+    ORDER BY fecha DESC
+  `,
+  paidReservations: `
+    SELECT
+      *
+    FROM vista_reservas
+    WHERE estado = 'Pagado'
+    ORDER BY fecha DESC
+  `,
+  confirmedReservations: `
+    SELECT
+      *
+    FROM vista_reservas
+    WHERE estado = 'Confirmado'
+    ORDER BY fecha DESC
+  `,
+  canceledReservations: `
+    SELECT
+      *
+    FROM vista_reservas
+    WHERE estado = 'Cancelado'
+    ORDER BY fecha DESC
+  `,
+}
+
+export const updateReservationByPayment = {
+  updateTotal: `
+    UPDATE reservas
+    SET por_pagar = total - (
+      SELECT COALESCE(SUM(total_pagado), 0)
+      FROM pagos
+      WHERE factura_id = $1 
+        AND estado != 'Cancelado'
+    )
+    WHERE reserva_id = $2;
+  `,
+  updateStatus: `
+  UPDATE reservas
+  SET estado = 'Pagado'
+  WHERE por_pagar <= 0
+    AND llegada > CURRENT_DATE
+    AND estado <> 'Pagado'
+    AND estado <> 'Cancelado'
+`,
+}
+
+export const reservationStats = {
+  getRevenueGraph: `
+    SELECT 
+      TO_CHAR(f.fecha_factura, 'YYYY-MM') AS fecha,
+      SUM(f.total) AS total
+    FROM facturas f
+    JOIN reservas r ON f.reserva_id = r.reserva_id
+    WHERE r.estado <> 'Cancelada'
+      AND f.fecha_factura >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
+    GROUP BY TO_CHAR(f.fecha_factura, 'YYYY-MM')
+    ORDER BY fecha ASC;
+  `
 }

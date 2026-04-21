@@ -1,4 +1,4 @@
-export const deleteUtils = {
+export const deleteUtils = {  
   eliminarRegistro: async (modulo, id, nombre, onUpdate) => {
     if (!window.confirm(
       `¿Estás seguro de desactivar/eliminar "${nombre}"?`
@@ -6,7 +6,10 @@ export const deleteUtils = {
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/delete/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
       if (!res.ok) {

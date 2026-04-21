@@ -1,29 +1,26 @@
 import { Router } from "express";
 import {
-    getReservations,
-    getReservationByClient,
-    updateReservationByPayment,
-    deleteReservation,
+    getreservations,
+    getReservationByInvoice,
     activateReservation,
-    getReservationStats,
+    cancelReservation,
     reservationFilters,
+    getReservationStats
 } from '../controllers/reservation.controller.js';
 
+import { validateRules } from "../middleware/validate.middleware.js";
 import {
     rulesCreateReservation,
-    rulesUpdateReservation,
-    rulesUpdateReservationByPayment,
-    rulesDeleteReservation
+    rulesUpdateReservation
 } from '../validators/reservation.rules.js'
 
 const router = Router();
 
-router.get('/', getReservations);
-router.post('/search', getReservationByClient);
-router.put('/', rulesUpdateReservationByPayment, updateReservationByPayment)
-router.delete('/delete/:id', rulesDeleteReservation, deleteReservation)
+router.get('/', getreservations);
+router.post('/search', getReservationByInvoice);
 router.put('/activate/:id', activateReservation);
-router.get('/stats', getReservationStats);
+router.put('/delete/:id', cancelReservation);
 router.get('/filters', reservationFilters);
+router.get('/stats', getReservationStats);
 
 export default router;

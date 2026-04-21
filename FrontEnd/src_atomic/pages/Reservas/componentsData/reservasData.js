@@ -2,22 +2,28 @@ export const reservasCardData = [
     {
         bgColor: '',
         texto: 'ver productos', // debe pedir la id de la reserva
+        isButton: true,
+        action: () => console.log('ver productos'),
         titulo: '',
     },
     {
         bgColor: '',
         texto: 'Ver servicios', // debe pedir la id de la reserva
+        isButton: true,
+        action: () => console.log('ver servicios'),
         titulo: '',
     },
     {
         bgColor: '',
-        texto: 'Ganancia del mes',
-        titulo: '1.400M',
+        texto: 'Ver clientes',
+        isButton: true,
+        action: () => console.log('ver clientes'),
+        titulo: '',
     },
     {
         bgColor: 'verde',
-        texto: 'Ver cliente', // debe pedir la id de la reserva
-        titulo: '',
+        texto: 'Ganancia del mes', // debe pedir la id de la reserva
+        titulo: '1.400M',
     },
 ];
 

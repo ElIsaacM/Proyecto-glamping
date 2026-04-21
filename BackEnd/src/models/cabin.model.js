@@ -65,8 +65,15 @@ export const cabinStats = {
     WHERE c.estado <> 'inactivo'
   `,
   get_graph_revenue: `
-    SELECT * FROM vista_cabanas_revenue
-    ORDER BY fecha ASC
-    LIMIT 30
+    SELECT
+      c.nombre AS cabana,
+      COALESCE(SUM(f.total), 0) AS total
+    FROM cabanas c
+    LEFT JOIN paquetes p ON c.cabana_id = p.cabana_id
+    LEFT JOIN reservas r ON p.paquete_id = r.paquete_id AND r.estado <> 'Cancelada'
+    LEFT JOIN facturas f ON r.reserva_id = f.reserva_id
+    WHERE c.estado <> 'inactivo'
+    GROUP BY c.cabana_id, c.nombre
+    ORDER BY total DESC;
   `
 }

@@ -66,7 +66,7 @@ const Table = styled.table`
   }
 `;
 
-function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions }) {
+function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions, onColumnClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // Adjust rows per page for better view
 
@@ -110,15 +110,35 @@ function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions 
                       const columnasMoneda = ["sueldo", "total_pagado", "total_restante", "total", "subtotal", "precio"];
                       const columnasFecha = ["actualizacion", "fecha", "fecha_mantenimiento", "fecha_registro", "llegada", "salida"];
 
+                      let formattedValue = valor;
                       if (columnasMoneda.includes(col)) {
-                        return (valor !== null && valor !== undefined) ? formatCurrency(valor) : "$ 0";
+                        formattedValue = (valor !== null && valor !== undefined) ? formatCurrency(valor) : "$ 0";
+                      } else if (columnasFecha.includes(col)) {
+                        formattedValue = (valor !== null && valor !== undefined) ? formatDate(valor) : "N / A";
+                      } else {
+                        formattedValue = (valor === null || valor === undefined) ? 'N / A' : valor;
                       }
 
-                      if (columnasFecha.includes(col)) {
-                        return (valor !== null && valor !== undefined) ? formatDate(valor) : "N / A";
+                      if (onColumnClick && onColumnClick[col]) {
+                        return (
+                          <button
+                            onClick={() => onColumnClick[col](fila)}
+                            style={{ 
+                              background: '#28a745', 
+                              color: 'white', 
+                              border: 'none', 
+                              padding: '5px 10px', 
+                              borderRadius: '5px', 
+                              cursor: 'pointer',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {formattedValue}
+                          </button>
+                        );
                       }
 
-                      return (valor === null || valor === undefined) ? 'N / A' : valor;
+                      return formattedValue;
                     })()}
                   </td>
                 ))}

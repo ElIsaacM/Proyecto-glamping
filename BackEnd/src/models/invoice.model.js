@@ -5,11 +5,17 @@ export const invoice = {
     FROM vista_facturas
     ORDER BY fecha DESC
   `,
+  getInvoiceByReservation: `
+    SELECT
+      * 
+    FROM vista_facturas
+    WHERE reserva_id = $1
+  `,
   getInvoicesByClient: `
     SELECT
       * 
     FROM vista_facturas
-    WHERE cliente = $1
+    WHERE cliente ILIKE '%' || $1 || '%'
   `,
   createInvoice: `
     INSERT INTO facturas (reserva_id, fecha_factura, subtotal, descuento, total, total_restante)

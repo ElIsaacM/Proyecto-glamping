@@ -9,12 +9,3 @@ export const getRoles = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-export const getIdentificaciones = async (req, res) => {
-  try {
-    const result = await pool.query(types.getIdentificaciones);
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};

@@ -11,21 +11,20 @@ import {
   productFilters
 } from '../controllers/product.controller.js';
 
+import { validateRules } from "../middleware/validate.middleware.js";
 import {
   rulesCreateProduct,
   rulesUpdateProduct,
-  rulesDeleteProduct,
-  rulesActivateProduct
 } from '../validators/product.rules.js'
 
 const router = Router();
 
 router.get('/', getProducts);
 router.post('/search', getProductByName);
-router.post('/', rulesCreateProduct, createProduct);
-router.put('/:id', rulesUpdateProduct, updateProduct);
-router.delete('/delete/:id', rulesDeleteProduct, deleteProduct);
-router.put('/activate/:id', rulesActivateProduct, activateProduct);
+router.post('/', rulesCreateProduct, validateRules, createProduct);
+router.put('/:id', rulesUpdateProduct, validateRules, updateProduct);
+router.delete('/delete/:id', deleteProduct);
+router.put('/activate/:id', activateProduct);
 router.get('/stats', getProductStats);
 router.get('/filters', productFilters);
 

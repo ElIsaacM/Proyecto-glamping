@@ -10,21 +10,20 @@ import {
     getServiceStats
 } from '../controllers/service.controller.js';
 
+import { validateRules } from "../middleware/validate.middleware.js";
 import {
     rulesCreateService,
-    rulesUpdateService,
-    rulesDeleteService,
-    rulesActivateService
-} from '../validators/services.rules.js'
+    rulesUpdateService
+} from '../validators/service.rules.js'
 
 const router = Router();
 
 router.get('/', getservices);
 router.post('/search', getserviceByName);
-router.post('/', rulesCreateService, createService);
-router.put('/:id', rulesUpdateService, updateService);
-router.delete('/delete/:id', rulesDeleteService, deleteService);
-router.put('/activate/:id', rulesActivateService, activateService);
+router.post('/', rulesCreateService, validateRules, createService);
+router.put('/:id', rulesUpdateService, validateRules, updateService);
+router.delete('/delete/:id', deleteService);
+router.put('/activate/:id', activateService);
 router.get('/filters', getServiceFilters);
 router.get('/stats', getServiceStats);
 
