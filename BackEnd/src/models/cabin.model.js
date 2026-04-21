@@ -1,27 +1,15 @@
 export const cabin = {
   getCabins: `
     SELECT 
-      cabana_id,
-      nombre,
-      precio_noche,
-      fecha_registro,
-      descripcion,
-      fecha_mantenimiento,
-      estado
-    FROM Cabanas
+      *
+    FROM vista_cabanas
     WHERE estado <> 'inactivo'
-    ORDER BY fecha_registro DESC
+    ORDER BY actualizacion DESC
   `,
   getCabinByName: `
     SELECT 
-      cabana_id,
-      nombre,
-      precio_noche,
-      fecha_registro,
-      descripcion,
-      fecha_mantenimiento,
-      estado
-    FROM Cabanas
+      *
+    FROM vista_cabanas
     WHERE 
       estado <> 'inactivo'
       AND nombre ILIKE '%' || $1 || '%'
@@ -48,13 +36,19 @@ export const cabin = {
   `,
 }
 
-export const cabinFilters = {
-  
-}
-
 export const cabinStats = {
   get_stats: `
-    SELECT * FROM vista_cabanas_stats
+    SELECT
+        c.nombre AS "Cabaña",
+        COUNT(DISTINCT r.reserva_id) AS "Veces reservada",
+        COALESCE(SUM(pg.total_pagado), 0) AS "Ingresos generados"  
+    FROM cabanas c  
+    LEFT JOIN paquetes p ON c.cabana_id = p.cabana_id
+    LEFT JOIN reservas r ON p.paquete_id = r.paquete_id AND r.estado <> 'Cancelada'
+    LEFT JOIN facturas f ON r.reserva_id = f.reserva_id
+    LEFT JOIN pagos pg ON f.factura_id = pg.factura_id AND pg.estado IN ('Completado', 'Agregado Manual')
+    WHERE c.estado <> 'inactivo'
+    GROUP BY c.cabana_id, c.nombre
     ORDER BY "Veces reservada" DESC
     LIMIT 1
   `,
@@ -67,11 +61,12 @@ export const cabinStats = {
   get_graph_revenue: `
     SELECT
       c.nombre AS cabana,
-      COALESCE(SUM(f.total), 0) AS total
+      COALESCE(SUM(pg.total_pagado), 0) AS total
     FROM cabanas c
     LEFT JOIN paquetes p ON c.cabana_id = p.cabana_id
     LEFT JOIN reservas r ON p.paquete_id = r.paquete_id AND r.estado <> 'Cancelada'
     LEFT JOIN facturas f ON r.reserva_id = f.reserva_id
+    LEFT JOIN pagos pg ON f.factura_id = pg.factura_id AND pg.estado IN ('Completado', 'Agregado Manual')
     WHERE c.estado <> 'inactivo'
     GROUP BY c.cabana_id, c.nombre
     ORDER BY total DESC;

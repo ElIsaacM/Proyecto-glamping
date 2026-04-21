@@ -4,7 +4,7 @@ import BotonDescargar from "../../components/atoms/buttons/botonDescargar";
 import RectangleCard from "../../components/molecules/cards/rectangleCard";
 import { inicioCardData } from "./componentsData/inicioData";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
-import NotificacionInicio from "../../components/molecules/inicioNotificacion";
+import NotificacionInicio from "./componentsData/inicioNotificacion";
 import { useFetch } from "../../hooks/fetchConnect";
 import { useEffect } from "react";
 

@@ -17,7 +17,7 @@ export const packages = {
     SELECT
       * 
     FROM vista_paquetes
-    WHERE tipo ILIKE '%' || $1 || '%'
+    WHERE nombre ILIKE '%' || $1 || '%'
   `,
   // Un paquete debe incluir (servicios, productos, cabañas)
   createPackage: `

@@ -52,7 +52,7 @@ export const createPaymentManually = async (req, res) => {
     );
 
     await pool.query('COMMIT');
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     await pool.query('ROLLBACK');

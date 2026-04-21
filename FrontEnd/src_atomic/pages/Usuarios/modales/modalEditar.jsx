@@ -68,6 +68,7 @@ export default function ModalEditar({ setModalAbierto, fetchData, usuarioAEditar
       nombre: usuarioAEditar.usuario || '',
       contacto: usuarioAEditar.contacto || '',
       sueldo: usuarioAEditar.sueldo || '',
+      userName: localStorage.getItem("userName") || '', 
     },
     urlParams,
     () => {

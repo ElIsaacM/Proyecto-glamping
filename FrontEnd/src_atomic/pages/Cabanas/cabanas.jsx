@@ -2,7 +2,9 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetchConnect";
 
+import { useFilters } from "../../hooks/useFilters";
 import { deleteUtils } from "../../utils/deleteUtils";
+import { activateUtils } from "../../utils/activateUtils";
 
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
@@ -10,7 +12,7 @@ import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
 import CabanasCard from "./componentsData/cabanaCard";
-import Buscador from "../../components/molecules/buscador";
+import Buscador from "./componentsData/cabinSearch";
 
 const Botones = styled.div`
   display: flex;
@@ -22,35 +24,80 @@ const Botones = styled.div`
   }
 `;
 
+const ModulosExtra = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  button {
+    padding: 10px;
+    background-color: #eeeeeeff;
+    color: #363636;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    &:hover {
+      background-color: #d9d9d9ff;
+    }
+    &.active {
+      background-color: #43523A;
+      color: white;
+    }
+  }
+`;
+
 function Cabanas() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
-  const [cabanaAEditar, setCabanaAEditar] = useState(null);
+  const [registroAEditar, setRegistroAEditar] = useState(null);
+
+  const [cabanas, setCabanas] = useState(null);
+  const [activeTab, setActiveTab] = useState('cabins');
+
+  const { data, loading, error, fetchData } = useFetch();
+  const { displayData } = useFilters(
+    data,
+    cabanas,
+  );
 
   const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
 
-  const { data, loading, error, fetchData } = useFetch();
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCabanas(null);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/${tab}`);
+  };
 
   const handleFetchData = () => {
-    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
+    handleTabChange(activeTab);
     setRefreshStatsTrigger(prev => prev + 1);
   };
 
   useEffect(() => {
-    handleFetchData();
-  }, []);
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
+  }, [fetchData]);
 
-  const eliminarCabana = async (cabana) => {
+  const eliminarRegistro = async (registro) => {
     deleteUtils.eliminarRegistro(
-      'cabins',
-      cabana.cabana_id,
-      cabana.nombre,
+      activeTab,
+      registro.id,
+      registro.nombre || registro.cabana,
       handleFetchData
     );
   }
 
-  const editarCabana = (cabana) => {
-    setCabanaAEditar(cabana);
+  const activarRegistro = async (registro) => {
+    activateUtils.activarRegistro(
+      activeTab,
+      registro.id,
+      registro.nombre || registro.cabana,
+      handleFetchData
+    );
+  }
+
+  const editarRegistro = (registro) => {
+    setRegistroAEditar(registro);
     setModalEditarAbierto(true);
   }
 
@@ -58,31 +105,57 @@ function Cabanas() {
     <>
       <CabanasCard refreshTrigger={refreshStatsTrigger} />
 
-      <Botones>
-        <Buscador placeholder={'Buscar cabana'} />
-        <BotonAgregar
-          modulo={'Agregar cabana'}
-          color={1}
-          onClick={() => setModalAbierto(true)}
-        />
-      </Botones>
+      <div>
+        <ModulosExtra>
+          <button
+            className={`module-button ${activeTab === 'cabins' ? 'active' : ''}`}
+            onClick={() => handleTabChange('cabins')}
+          >Cabanas</button>
 
-      {loading && <p style={{ marginTop: '20px' }}>Cargando cabañas...</p>}
-      {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
-      {data && <TablaGeneral data={data} onEdit={editarCabana} onDelete={eliminarCabana} />}
+          <button
+            className={`module-button ${activeTab === 'cabinDamage' ? 'active' : ''}`}
+            onClick={() => handleTabChange('cabinDamage')}
+          >Danos y mantenimientos</button>
+        </ModulosExtra>
 
-      {modalAbierto && (
+
+        <Botones>
+          <Buscador
+            activeTab={activeTab}
+            onResult={setCabanas}
+          />
+          <BotonAgregar
+            modulo={activeTab === 'cabins' ? 'Agregar cabana' : 'Agregar dano'}
+            color={1}
+            onClick={() => setModalAbierto(true)}
+          />
+        </Botones>
+
+        {loading && <p style={{ marginTop: '20px' }}>Cargando datos...</p>}
+        {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
+        {displayData && (
+          <TablaGeneral
+            data={displayData}
+            onEdit={editarRegistro} 
+            onDelete={eliminarRegistro}
+            onActive={activarRegistro}
+          />
+        )}
+
+      </div>
+
+      {modalAbierto && activeTab === 'cabins' && (
         <ModalAgregar
           setModalAbierto={setModalAbierto}
           fetchData={handleFetchData}
         />
       )}
 
-      {modalEditarAbierto && cabanaAEditar && (
+      {modalEditarAbierto && activeTab === 'cabins' && registroAEditar && (
         <ModalEditar
           setModalAbierto={setModalEditarAbierto}
           fetchData={handleFetchData}
-          cabanaAEditar={cabanaAEditar}
+          cabanaAEditar={registroAEditar}
         />
       )}
     </>

@@ -122,14 +122,17 @@ function Productos() {
 
       {/* 4. Renderizamos el Modal al final, condicionado al booleano */}
       {modalAbierto && (
-        <ModalAgregar setModalAbierto={setModalAbierto} fetchData={fetchData} />
+        <ModalAgregar 
+          setModalAbierto={setModalAbierto}
+          fetchData={handleFetchData}
+        />
       )}
 
       {/* Renderizamos modulo de edición */}
       {modalEditarAbierto && productoAEditar && (
         <ModalEditar
           setModalAbierto={setModalEditarAbierto}
-          fetchData={fetchData}
+          fetchData={handleFetchData}
           productoAEditar={productoAEditar}
         />
       )}

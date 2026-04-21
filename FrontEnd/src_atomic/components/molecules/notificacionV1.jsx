@@ -43,20 +43,20 @@ const Boton = styled.button`
 `;
 
 function NotificacionV1({ data }) {
-  return(
+  return (
     <NotificacionesCont>
-      {data.map((item, i) => (
+      {data?.map((item, i) => (
         <Notificacion key={i}>
           <Titulo>
             <img src="../../src/assets/Logo glamping.svg" alt="" />
-            <h3>{item.titulo}</h3>
+            <h3>{item.creada_por}</h3>
           </Titulo>
           <div>
             <h4>{item.asunto}</h4>
-            <h5>{item.texto}</h5>
+            <h5>{item.mensaje}</h5>
           </div>
           <Opciones>
-            <Boton>Recuerdame luego</Boton>
+            <Boton>Eliminar</Boton>
             <Boton color={1}>Entendido</Boton>
           </Opciones>
         </Notificacion>

@@ -118,7 +118,11 @@ function Pagos() {
 
         {loading && <p style={{ marginTop: '20px' }}>Cargando...</p>}
         {error && <p style={{ marginTop: '20px', color: 'red' }}>Error: {error}</p>}
-        {displayData && <TablaGeneral data={displayData} />}
+        {displayData && (
+          <TablaGeneral 
+            data={displayData} 
+          />
+        )}
       </div>
 
       {modalAbierto && (
