@@ -10,7 +10,7 @@ import {
 import { validateRules } from "../middleware/validate.middleware.js";
 import {
   rulesCreatePaymentManually,
-  rulesCreatePaymentWithApi
+  rulesCreatePaymentByApi
 } from '../validators/payment.rules.js'
 
 const router = Router();
