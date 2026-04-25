@@ -109,14 +109,26 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       user.deleteUser, 
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Usuario",
+      `El usuario #${id} ha sido eliminado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };
@@ -124,14 +136,26 @@ export const deleteUser = async (req, res) => {
 export const activateUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       user.activateUser, 
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Usuario",
+      `El usuario #${id} ha sido activado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };

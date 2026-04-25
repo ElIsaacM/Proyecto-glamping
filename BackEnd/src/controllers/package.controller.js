@@ -1,4 +1,5 @@
 import pool from '../config/db.js'
+import { notification } from '../models/notification.model.js';
 import { 
   packages, 
   packageStats, 
@@ -46,16 +47,36 @@ export const getPackageByName = async (req, res) => {
 
 export const createPackage = async (req, res) => {
   try {
-    const { tipo_id, registrado_por_id, nombre, dias_estadia, descripcion } = req.body;
+    const {
+      tipo_id,
+      registrado_por_id,
+      nombre,
+      dias_estadia,
+      descripcion,
+
+      userName
+    } = req.body;
+    
+    await pool.query("BEGIN");
+
     const result = await pool.query(packages.createPackage,
       [tipo_id, registrado_por_id, nombre, dias_estadia, descripcion]
     );
     
+    await pool.query(notification.createNotification, [
+      userName,
+      "Paquetes",
+      `El paquete ${nombre} ha sido creado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.status(200).json({
       message: 'Paquete creado',
       data: result.rows[0]
     })
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: 'Error al crear paquete',
       error: error.message
@@ -71,13 +92,25 @@ export const updatePackage = async (req, res) => {
       tipo_id, 
       nombre, 
       dias_estadia, 
-      descripcion 
+      descripcion,
+
+      userName
     } = req.body;
     
+    await pool.query("BEGIN");
+
     const result = await pool.query(
       packages.updatePackage,
       [tipo_id, nombre, dias_estadia, descripcion, id]
     );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Paquete",
+      `El paquete #${id} - ${nombre} ha sido actualizado`
+    ]);
+
+    await pool.query("COMMIT");
 
     res.status(200).json({
       message: 'Paquete actualizado',
@@ -85,6 +118,7 @@ export const updatePackage = async (req, res) => {
       data: result.rows[0]
     })
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: 'Error al actualizar paquete',
       error: error.message
@@ -95,11 +129,22 @@ export const updatePackage = async (req, res) => {
 export const deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       packages.deletePackage, 
       [id]
     );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Paquete",
+      `El paquete #${id} ha sido eliminado`
+    ]);
+
+    await pool.query("COMMIT");
 
     res.status(200).json({
       message: 'Paquete eliminado',
@@ -107,6 +152,7 @@ export const deletePackage = async (req, res) => {
       data: result.rows[0]
     })
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: 'Error al eliminar paquete',
       error: error.message
@@ -117,14 +163,26 @@ export const deletePackage = async (req, res) => {
 export const activatePackage = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
     
+    await pool.query("BEGIN");
+
     const result = await pool.query(
       packages.activatePackage,
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Paquete",
+      `El paquete #${id} ha sido activado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({error: error.message})
   }
 }

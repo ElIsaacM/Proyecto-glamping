@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 import { cabinDamage } from '../models/cabinDamage.model.js';
+import { notification } from "../models/notification.model.js";
 
 export const getCabinsDamage = async (req, res) => {
     try {
@@ -38,8 +39,12 @@ export const createCabinDamage = async (req, res) => {
             estado,
             fechaRegistro,
             fechaarreglo,
-            responsable
+            responsable,
+
+            userName
         } = req.body;
+
+        await pool.query("BEGIN");
 
         const result = await pool.query(cabinDamage.createCabinDamage, [
             cabanaid,
@@ -50,8 +55,17 @@ export const createCabinDamage = async (req, res) => {
             responsable
         ]);
 
+        await pool.query(notification.createNotification, [
+            userName,
+            "Daño cabaña",
+            `El daño a la cabaña #${cabanaid} ha sido creado`
+        ]);
+
+        await pool.query("COMMIT");
+
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        await pool.query("ROLLBACK");
         res.status(500).json({message: error.message});
     }
 };
@@ -63,8 +77,12 @@ export const updateCabinDamage = async (req, res) => {
             estado,
             fechaarreglo,
             responsable,
-            cabanaid
+            cabanaid,
+
+            userName
         } = req.body;
+
+        await pool.query("BEGIN");
 
         const result = await pool.query(cabinDamage.updateCabinDamage, [
             descripcion,
@@ -74,8 +92,17 @@ export const updateCabinDamage = async (req, res) => {
             cabanaid
         ]);
 
+        await pool.query(notification.createNotification, [
+            userName,
+            "Daño cabaña",
+            `El daño a la cabaña ${cabanaid} ha sido actualizado`
+        ]);
+
+        await pool.query("COMMIT");
+
         res.json(result.rows[0]);
     } catch (error) {
+        await pool.query("ROLLBACK");
         res.status(500).json({message: error.message})
     }
 };
