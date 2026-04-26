@@ -1,12 +1,12 @@
 import styled from "styled-components";
+import { downloadPDF } from "../../utils/downloadUtils";
 
 import BotonDescargar from "../../components/atoms/buttons/botonDescargar";
-import RectangleCard from "../../components/molecules/cards/rectangleCard";
-import { inicioCardData } from "./componentsData/inicioData";
+import InicioCard from "./componentsData/inicioCard";
 import LinearGraph from "../../components/organisms/graphs/linearGraph";
 import NotificacionInicio from "./componentsData/inicioNotificacion";
 import { useFetch } from "../../hooks/fetchConnect";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const FechaInforme = styled.div`
   display: flex;
@@ -34,18 +34,29 @@ const Novedades = styled.div`
 
 function Inicio() {
   const { data, fetchData } = useFetch();
+  const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
+
+  const handleDownloadPDF = () => {
+    downloadPDF("dashboard-report", "Informe-mensual.pdf");
+  }
+
+  const handleFetchData = () => {
+    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments/stats`);
+    setRefreshStatsTrigger((prev) => prev + 1);
+  };
 
   useEffect(() => {
-    fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/payments/stats`);
+    handleFetchData();
   }, [fetchData]);
 
   return (
-    <>
+    <div id="dashboard-report" style={{ padding: '10px' }}>
       <FechaInforme>
         <h3>10 Agosto - 17 Agosto</h3>
-        <BotonDescargar />
+        <BotonDescargar onClick={handleDownloadPDF} />
       </FechaInforme>
-      <RectangleCard rectangleData={inicioCardData} />
+      <InicioCard refreshTrigger={refreshStatsTrigger} />
+      {console.log(data?.revenue_graph)}
       <GraphNovedades>
         <LinearGraph data={data?.revenue_graph} title="Ingresos acumulados por pagos" />
         <Novedades>
@@ -53,7 +64,7 @@ function Inicio() {
           <NotificacionInicio />
         </Novedades>
       </GraphNovedades>
-    </>
+    </div >
   );
 }
 

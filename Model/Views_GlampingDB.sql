@@ -11,17 +11,17 @@ SELECT
 	estado
 FROM Servicios;
 
-CREATE VIEW vista_servicios_stats AS
+CREATE OR REPLACE VIEW vista_servicios_stats AS
 SELECT
-    s.nombre AS sercicio,
+    s.nombre AS servicio,
     COUNT(s.servicio_id) AS veces_reservado,
     SUM(s.precio) AS ingresos_generados
 FROM servicios s
-JOIN servicios_Por_Paquete spq ON s.servicio_id = spq.servicio_id
-JOIN paquetes p ON spq.paquete_id = p.paquete_id
-JOIN reservas r ON r.paquete_id = p.paquete_id
-WHERE s.estado <> 'Activo' 
-  AND r.estado = 'Confirmada'
+LEFT JOIN servicios_Por_Paquete spq ON s.servicio_id = spq.servicio_id
+LEFT JOIN paquetes p ON spq.paquete_id = p.paquete_id
+LEFT JOIN reservas r ON r.paquete_id = p.paquete_id
+WHERE s.estado = 'Activo' 
+  AND r.estado IN ('Pagado', 'Completado')
 GROUP BY s.nombre, s.servicio_id;
 
 -------------------------- Views productos -----------------------------
@@ -42,7 +42,7 @@ SELECT
     COUNT(p.producto_id) AS veces_reservado,
     SUM(p.precio) AS ingresos_generados
 FROM productos p
-JOIN productos_por_paquete ppq ON p.producto_id = ppq.producto_id
+LEFT JOIN productos_por_paquete ppq ON p.producto_id = ppq.producto_id
 JOIN paquetes pq ON ppq.paquete_id = pq.paquete_id
 JOIN reservas r ON r.paquete_id = pq.paquete_id
 WHERE p.estado = 'Activo' 

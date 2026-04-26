@@ -52,7 +52,7 @@ export const createUser = async (req, res) => {
 
     await pool.query(notification.createNotification, [
       userName,
-      "Usuario",
+      "Usuario creado",
       `El usuario ${nombre} ha sido creado con rol ${rol_id}`,
     ]);
 
@@ -93,7 +93,7 @@ export const updateUser = async (req, res) => {
 
     await pool.query(notification.createNotification, [
       userName,
-      "Usuario",
+      "Usuario actualizado",
       `El usuario #${id} - ${nombre} ha sido actualizado rol ${rol_id}`,
     ]);
 
@@ -110,13 +110,30 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
+    await pool.query("BEGIN");
+
+    const userCheck = await pool.query(user.getUserById, [id]);
+
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
     const result = await pool.query(
       user.deleteUser, 
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      "Sistema",
+      "Usuario eliminado",
+      `El usuario ${userCheck.rows[0].nombre} ha sido eliminado`,
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };
@@ -125,13 +142,30 @@ export const activateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
+    await pool.query("BEGIN");
+
+    const userCheck = await pool.query(user.getUserById, [id]);
+
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
     const result = await pool.query(
       user.activateUser, 
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      "Sistema",
+      "Usuario activado",
+      `El usuario ${userCheck.rows[0].nombre} ha sido activado`,
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };

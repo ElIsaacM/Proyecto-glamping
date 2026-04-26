@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import { useState } from "react";
+
+import Notifications from "../organisms/notifications";
+
 import HeaderGeneral from "../organisms/headerGeneral";
 import Navbar from "../organisms/nav/navbar";
 import MainGeneral from "./mainGeneral";
@@ -18,9 +22,11 @@ const Right = styled.div`
   }
 `;
 
-function DashboardTemplate({ modulo }) {
+function DashboardTemplate({ modulo, children }) {
+  const [showNotifications, setShowNotifications] = useState(false);
+
   const token = localStorage.getItem('token');
-  
+
   if (!token) {
     return <Navigate to="/" replace />;
   }
@@ -29,9 +35,18 @@ function DashboardTemplate({ modulo }) {
     <Container>
       <Navbar />
       <Right>
-        <HeaderGeneral user={localStorage.getItem('userName') || 'Usuario'} />
+        <HeaderGeneral
+          user={localStorage.getItem('userName') || 'Usuario'}
+          onClick={() => setShowNotifications(true)}
+        />
+        {showNotifications && (
+          <Notifications
+            onClose={() => setShowNotifications(false)}
+            show={showNotifications}
+          />
+        )}
         <MainGeneral modulo={modulo} className="mainGeneral">
-          <Outlet />
+          {children || <Outlet />}
         </MainGeneral>
       </Right>
     </Container>

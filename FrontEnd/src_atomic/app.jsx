@@ -1,3 +1,4 @@
+import React, { cloneElement } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardTemplate from './components/templates/dashboardTemplate';
 import { modulos } from './config/modulos';
@@ -55,12 +56,18 @@ function App() {
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
-        <Route element={<ProtectedRoute><DashboardTemplate modulo={""}/></ProtectedRoute>} >
+        <Route>
           {modulos.map((modulo, i) => (
             <Route
               key={i}
               path={modulo.ruta}
-              element={<ProtectedRoute roles={modulo.roles}>{modulo.componente}</ProtectedRoute>}
+              element={
+                <ProtectedRoute roles={modulo.roles}>
+                  <DashboardTemplate modulo={modulo.nombre}>
+                    {cloneElement(modulo.componente, { modulo: modulo.nombre })}
+                  </DashboardTemplate>
+                </ProtectedRoute>
+              }
             />
           ))}
 

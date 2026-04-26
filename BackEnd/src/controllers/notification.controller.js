@@ -24,10 +24,10 @@ export const getLastNotifications = async (req, res) => {
 // Opciones reservadas para el administrador, se define en el front-end la lógica de quien elimina
 export const deleteNotification = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { notificacion_id } = req.params;
 
-    await pool.query(notification.deleteNotification, [id]);
-    
+    await pool.query(notification.deleteNotification, [notificacion_id]);
+
     res.json({ message: 'Notificación eliminada correctamente' });
   } catch (error) {
     console.log(error);
@@ -39,11 +39,16 @@ export const deleteAllNotifications = async (req, res) => {
   try {
     const userName = req.body.userName;
 
+    await pool.query("BEGIN");
+
     await pool.query(notification.deleteAllNotifications);
     await pool.query(notification.createNotification, [userName, "Notificaciones eliminadas", `Todas las notificaciones han sido eliminadas por ${userName}`]);
+    
+    await pool.query("COMMIT");
 
     res.json({ message: 'Notificaciones eliminadas correctamente' });
   } catch (error) {
+    await pool.query("ROLLBACK");
     console.log(error);
     res.status(500).json({ error: 'Error al eliminar las notificaciones' });
   }

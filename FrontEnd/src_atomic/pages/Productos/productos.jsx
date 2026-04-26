@@ -25,7 +25,7 @@ const CardsCont = styled.div`
   align-items: center;
   gap: 20px;
 
-  @media (max-width: 1300px) {
+  @media (max-width: 1350px) {
     grid-template-columns: repeat(1, 1fr);
   }
 `;

@@ -18,14 +18,14 @@ function PaquetesCards({ refreshTrigger }) {
       bgColor: 'verde',
       icono: 'bi bi-box-fill',
       titulo: 'Paquete mas vendido',
-      info: mostFrecuent ? mostFrecuent.paquete_nombre : 'N/A',
+      info: mostFrecuent ? mostFrecuent.paquete : 'N/A',
       texto: mostFrecuent ? `El paquete ha sido vendido ${mostFrecuent.veces_reservado} veces y ha generado $${mostFrecuent.ingresos_generados} en ingresos` : 'Sin datos',
     },
     {
       bgColor: '',
       icono: 'bi bi-box-fill',
       titulo: 'Paquete menos vendido',
-      info: leastFrecuent ? leastFrecuent.paquete_nombre : 'N/A',
+      info: leastFrecuent ? leastFrecuent.paquete : 'N/A',
       texto: leastFrecuent ? `El paquete ha sido vendido solo ${leastFrecuent.veces_reservado} veces y ha generado $${leastFrecuent.ingresos_generados} en ingresos` : 'Sin datos',
     }
   ];
@@ -34,7 +34,7 @@ function PaquetesCards({ refreshTrigger }) {
     {
       titulo: 'Top 3 paquetes',
       data: data?.top_packages?.map(item => ({
-        name: item.paquete_nombre,
+        name: item.paquete,
         value: parseInt(item.veces_reservado, 10),
         income: parseFloat(item.ingresos_generados).toFixed(2)
       })) || []
@@ -43,6 +43,7 @@ function PaquetesCards({ refreshTrigger }) {
 
   return (
     <>
+    {console.log(data)}
     {loading && <p>Cargando estadísticas...</p>}
     {error && <p>Error al cargar datos</p>}
     {data && (

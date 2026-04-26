@@ -69,7 +69,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       nombre: '',
       contacto: '',
       sueldo: '',
-      userName: localStorage.getItem("userName"),
+      userName: localStorage.getItem("userName") || '',
     },
     `${import.meta.env.VITE_API_BASE_URL}/api/users`,
     () => {

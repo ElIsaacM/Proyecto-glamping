@@ -43,7 +43,6 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       email: '',
       metodo_id: 1,
       total_pagado: '',
-      userName: localStorage.getItem("userName") || '', 
     },
     `${import.meta.env.VITE_API_BASE_URL}/api/payments`,
     () => {

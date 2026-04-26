@@ -80,30 +80,32 @@ export const paymentStats = {
     SELECT 
       COUNT(id) AS "Pagos exitosos"
     FROM vista_pagos
-    WHERE estado = 'Completado'
-      OR estado = 'Agregado Manual'
+    WHERE estado IN ('Completado', 'Agregado Manual')
+      AND fecha >= DATE_TRUNC('month', CURRENT_DATE)
   `,
   getRejectedPayments: `
     SELECT 
       COUNT(id) AS "Pagos rechazados"
     FROM vista_pagos
     WHERE estado = 'Rechazado'
+      AND fecha >= DATE_TRUNC('month', CURRENT_DATE)
   `,
   getPendingRefunds: `
     SELECT 
       COUNT(id) AS "Reembolsos pendientes"
     FROM vista_reembolsos
     WHERE estado = 'Pendiente'
+      AND fecha >= DATE_TRUNC('month', CURRENT_DATE)
   `,
   getRevenue: `
     SELECT 
-      saldo_neto_mes AS "Ingresos"
+      saldo_neto_mes::FLOAT AS "Ingresos"
     FROM vista_pagos_stats
   `,
   getRevenueGraph: `
     SELECT 
       TO_CHAR(fecha_pago, 'YYYY-MM-DD') AS fecha,
-      SUM(total_pagado) AS total
+      SUM(total_pagado)::FLOAT AS total
     FROM pagos
     WHERE estado IN ('Completado', 'Agregado Manual')
     GROUP BY TO_CHAR(fecha_pago, 'YYYY-MM-DD')

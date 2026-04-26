@@ -24,6 +24,15 @@ const Titulo = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  h3 {
+    font-size: 16px;
+  }
 `;
 
 const Opciones = styled.div`
@@ -42,13 +51,17 @@ const Boton = styled.button`
   color: ${(props) => props.color === 1 ? '#ffffff' : '#43523A'};
 `;
 
-function NotificacionV1({ data }) {
+function NotificacionV1({ data, handleDelete }) {
+  const handleEliminar = (notificacion_id) => {
+    handleDelete(notificacion_id);
+  }
+
   return (
     <NotificacionesCont>
       {data?.map((item, i) => (
         <Notificacion key={i}>
           <Titulo>
-            <img src="../../src/assets/Logo glamping.svg" alt="" />
+            <img src="images/Logo.svg" alt="" />
             <h3>{item.creada_por}</h3>
           </Titulo>
           <div>
@@ -56,8 +69,7 @@ function NotificacionV1({ data }) {
             <h5>{item.mensaje}</h5>
           </div>
           <Opciones>
-            <Boton>Eliminar</Boton>
-            <Boton color={1}>Entendido</Boton>
+            <Boton color={1} onClick={() => handleEliminar(item.id)}>Eliminar</Boton>
           </Opciones>
         </Notificacion>
       ))}

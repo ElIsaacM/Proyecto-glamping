@@ -8,7 +8,8 @@ export const deleteUtils = {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/delete/${id}`, {
         method: 'DELETE',
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          "Authorization": `Bearer ${localStorage.getItem('token')}`,
+          "ngrok-skip-browser-warning": "true"
         }
       });
 

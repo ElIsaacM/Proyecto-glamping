@@ -12,6 +12,12 @@ export const user = {
     FROM vista_usuarios
     WHERE usuario ILIKE '%' || $1 || '%'
   `,
+  getUserById: `
+    SELECT 
+      * 
+    FROM usuarios 
+    WHERE usuario_id = $1
+  `,
   createUser: `
     INSERT INTO usuarios (rol_id, tipo_identificacion, numero_identificacion, nombre, contacto, sueldo, fecha_agregado)
     VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)

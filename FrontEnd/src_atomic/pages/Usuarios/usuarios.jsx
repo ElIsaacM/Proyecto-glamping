@@ -8,6 +8,7 @@ import { activateUtils } from "../../utils/activateUtils";
 
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
 import TablaGeneral from "../../components/organisms/tabla";
+
 import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 

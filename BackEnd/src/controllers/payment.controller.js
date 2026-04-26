@@ -26,13 +26,12 @@ export const getPaymentByInvoice = async (req, res) => {
 export const createPaymentManually = async (req, res) => {
   try {
     const { factura_id, email, metodo_id, total_pagado } = req.body;
-    const estado = 'Agregado Manual';
 
     await pool.query('BEGIN');
 
     const result = await pool.query(
       payment.createPaymentManually,
-      [factura_id, metodo_id, estado, total_pagado, email]
+      [factura_id, metodo_id, 'Agregado Manual', total_pagado, email]
     )
 
     if (result.rows.length === 0) {
