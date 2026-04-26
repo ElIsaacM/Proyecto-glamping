@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { notification } from "../models/notification.model.js";
 import { product, productStats, productFilters as productFiltersModel } from "../models/product.model.js";
 
 export const getProducts = async (req, res) => {
@@ -38,16 +39,29 @@ export const createProduct = async (req, res) => {
       nombre, 
       tipo, 
       precio, 
-      descripcion
+      descripcion,
+
+      userName
     } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       product.createProduct,
       [nombre, tipo, precio, descripcion]
     )
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Producto",
+      `El producto ${nombre} ha sido creado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.status(200).json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: "Error al crear producto",
       error: error.message,
@@ -63,13 +77,25 @@ export const updateProduct = async (req, res) => {
       nombre, 
       tipo, 
       precio, 
-      descripcion 
+      descripcion,
+
+      userName
     } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       product.updateProduct,
       [nombre, tipo, precio, descripcion, id]
     )
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Productos",
+      `El producto #${id} - ${nombre} ha sido actualizado`
+    ]);
+
+    await pool.query("COMMIT");
 
     res.status(200).json({
       message: "Producto actualizado",
@@ -77,6 +103,7 @@ export const updateProduct = async (req, res) => {
       data: result.rows[0],
     });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: "Error al actualizar producto",
       error: error.message,
@@ -88,11 +115,22 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       product.deleteProduct,
       [id]
     )
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Productos",
+      `El producto #${id} ha sido eliminado`
+    ]);
+
+    await pool.query("COMMIT");
 
     res.status(200).json({
       message: "Producto eliminado",
@@ -100,6 +138,7 @@ export const deleteProduct = async (req, res) => {
       data: result.rows[0],
     });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: "Error al eliminar producto",
       error: error.message,
@@ -110,14 +149,26 @@ export const deleteProduct = async (req, res) => {
 export const activateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       product.activateProduct,
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Productos",
+      `El producto #${id} ha sido activado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({error: error.message})
   }
 };

@@ -8,6 +8,12 @@ import {
     getReservationStats
 } from '../controllers/reservation.controller.js';
 
+import { validateRules } from "../middleware/validate.middleware.js";
+import {
+    rulesCreateReservation,
+    rulesUpdateReservation
+} from '../validators/reservation.rules.js'
+
 const router = Router();
 
 router.get('/', getreservations);

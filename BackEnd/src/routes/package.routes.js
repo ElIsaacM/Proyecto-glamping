@@ -13,6 +13,12 @@ import {
     getPackageServices
 } from '../controllers/package.controller.js';
 
+import { validateRules } from "../middleware/validate.middleware.js";
+import {
+    rulesCreatePackage,
+    rulesUpdatePackage
+} from '../validators/package.rules.js'
+
 const router = Router();
 
 router.get('/', getPackages);

@@ -1,5 +1,6 @@
 import { cabin, cabinStats } from "../models/cabin.model.js";
 import pool from "../config/db.js";
+import { notification } from "../models/notification.model.js";
 
 export const getCabins = async (req, res) => {
   try {
@@ -27,30 +28,53 @@ export const getCabinByName = async (req, res) => {
 
 export const createCabin = async (req, res) => {
   try {
-    const { nombre, precio_noche, descripcion } = req.body;
+    const { nombre, precio_noche, descripcion, userName } = req.body;
 
-    const newCabin = await pool.query(
+    await pool.query("BEGIN");
+
+    const result = await pool.query(
       cabin.createCabin, 
       [nombre, precio_noche, descripcion]
     );
 
-    res.json(newCabin.rows[0]);
+    await pool.query(notification.createNotification, [
+      userName,
+      "Cabaña",
+      `La cabaña ${nombre} ha sido creada`
+    ]);
+
+    await pool.query("COMMIT");
+
+    res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 }
 
 export const updateCabin = async (req, res) => {
   try {
-    const { nombre, precio_noche, descripcion } = req.body;
+    const { id } = req.params;
+    const { nombre, precio_noche, descripcion, userName } = req.body;
 
-    const updatedCabin = await pool.query(
+    await pool.query("BEGIN");
+
+    const result = await pool.query(
       cabin.updateCabin,
-      [nombre, precio_noche, descripcion, req.params.id]
+      [nombre, precio_noche, descripcion, id]
     );
 
-    res.json(updatedCabin.rows[0]);
+    await pool.query(notification.createNotification, [
+      userName,
+      "Cabaña",
+      `La cabaña #${id} - ${nombre} ha sido actualizada`
+    ]);
+
+    await pool.query("COMMIT");
+
+    res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 }
@@ -58,14 +82,26 @@ export const updateCabin = async (req, res) => {
 export const deleteCabin = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
 
-    const deletedCabin = await pool.query(
+    await pool.query("BEGIN");
+
+    const result = await pool.query(
       cabin.deleteCabin,
       [id]
     );
 
-    res.json(deletedCabin.rows[0]);
+    await pool.query(notification.createNotification, [
+      userName,
+      "Cabaña",
+      `La cabaña #${id} ha sido eliminada`
+    ]);
+
+    await pool.query("COMMIT");
+
+    res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 }
@@ -73,14 +109,26 @@ export const deleteCabin = async (req, res) => {
 export const activateCabin = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       cabin.activateCabin,
       [id]
     );
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Cabaña",
+      `La cabaña #${id} ha sido activada`
+    ])
+
+    await pool.query("COMMIT");
+  
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.stats(500).json({error: error.message})
   }
 };

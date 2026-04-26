@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { notification } from "../models/notification.model.js";
 import { service, serviceFilters, serviceStats } from "../models/service.model.js";
 
 export const getservices = async (req, res) => {
@@ -36,13 +37,28 @@ export const createService = async (req, res) => {
       encargado, 
       duracion_minutos, 
       precio, 
-      descripcion 
+      descripcion,
+
+      userName
     } = req.body;
+
+    await pool.query("BEGIN");
     
-    const result = await pool.query(
-      service.createService, 
-      [nombre, encargado, duracion_minutos, precio, descripcion]
-    );
+    const result = await pool.query(service.createService, [
+        nombre,
+        encargado,
+        duracion_minutos,
+        precio,
+        descripcion
+      ]);
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Servicios",
+      `El servicio ${nombre} ha sido creado`
+    ]);
+
+    await pool.query("COMMIT");
     
     res.status(200).json({
       message: "Servicio creado",
@@ -50,6 +66,7 @@ export const createService = async (req, res) => {
     });
 
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: "Error al crear servicio",
       error: error.message
@@ -60,12 +77,30 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, encargado, duracion_minutos, precio, descripcion } = req.body;
+    const {
+      nombre,
+      encargado,
+      duracion_minutos,
+      precio,
+      descripcion,
+
+      userName
+    } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       service.updateService, 
       [nombre, encargado, duracion_minutos, precio, descripcion, id]
     );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Servicios",
+      `El servicio #${id} - ${nombre} ha sido actualizado`
+    ]);
+
+    await pool.query("COMMIT");
 
     res.status(200).json({
       message: "Servicio actualizado",
@@ -73,6 +108,7 @@ export const updateService = async (req, res) => {
       data: result.rows[0]
     })
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({
       message: "Error al actualizar servicio",
       error: error.message
@@ -83,18 +119,30 @@ export const updateService = async (req, res) => {
 export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(
       service.deleteService, 
       [id]
     );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Servicios",
+      `El servicio ${id} ha sido eliminado`
+    ]);
     
+    await pool.query("COMMIT");
+
     res.status(200).json({
       message: "Servicio eliminado",
       servicioId: id,
       data: result.rows[0]
     });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500),json({
       message: "Error al eliminar servicio",
       error: error.message
@@ -105,18 +153,30 @@ export const deleteService = async (req, res) => {
 export const activateService = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
     
+    await pool.query("BEGIN");
+
     const result = await pool.query(
       service.activateService, 
       [id]
     );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Servicios",
+      `El servicio ${id} ha sido activado`
+    ]);
     
+    await pool.query("COMMIT");
+
     res.status(200).json({
       message: "Servicio activado",
       servicioId: id,
       data: result.rows[0]
     });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500),json({
       message: "Error al activar servicio",
       error: error.message

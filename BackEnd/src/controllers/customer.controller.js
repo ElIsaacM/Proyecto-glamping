@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { customer } from '../models/customer.model.js';
+import { notification } from '../models/notification.model.js';
 
 export const getCustomerData = async (req, res) => {
   try {
@@ -38,8 +39,12 @@ export const createCustomer = async (req, res) => {
       contacto,
       tipo_identificacion,
       numero_identificacion,
-      paisresidencia
+      paisresidencia,
+
+      userName
     } = req.body;
+
+    await pool.query("BEGIN");
 
     const result = await pool.query(customer.createCustomer, [
       nombre,
@@ -50,8 +55,17 @@ export const createCustomer = async (req, res) => {
       paisresidencia
     ]);
 
+    await pool.query(notification.createNotification, [
+      userName,
+      "Cliente",
+      `El cliente ${nombre} ha sido creado`
+    ]);
+
+    await pool.query("COMMIT");
+
     res.json(result.rows[0]);
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };

@@ -18,7 +18,7 @@ const config = {
   }
 };
 
-console.log('Config DB:', { ...local_config, password: '****' }); // Tip: ocultar password en logs
+console.log('Config DB:', { ...config, password: '****' }); // Tip: ocultar password en logs
 
 // Creamos una instancia del Pool (maneja múltiples conexiones de forma eficiente)
 const pool = new Pool(config);

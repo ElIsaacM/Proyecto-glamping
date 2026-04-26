@@ -30,6 +30,7 @@ export const deleteNotification = async (req, res) => {
 
     res.json({ message: 'Notificación eliminada correctamente' });
   } catch (error) {
+    await pool.query("ROLLBACK");
     console.log(error);
     res.status(500).json({ error: 'Error al eliminar la notificación' });
   }
@@ -42,8 +43,13 @@ export const deleteAllNotifications = async (req, res) => {
     await pool.query("BEGIN");
 
     await pool.query(notification.deleteAllNotifications);
-    await pool.query(notification.createNotification, [userName, "Notificaciones eliminadas", `Todas las notificaciones han sido eliminadas por ${userName}`]);
-    
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Notificaciones eliminadas",
+      `Todas las notificaciones han sido eliminadas por ${userName}`
+    ]);
+
     await pool.query("COMMIT");
 
     res.json({ message: 'Notificaciones eliminadas correctamente' });
@@ -53,4 +59,3 @@ export const deleteAllNotifications = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar las notificaciones' });
   }
 };
-

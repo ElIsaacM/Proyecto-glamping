@@ -109,6 +109,9 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     await pool.query("BEGIN");
 
@@ -141,6 +144,9 @@ export const deleteUser = async (req, res) => {
 export const activateUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const userName = req.body.userName;
+
+    await pool.query("BEGIN");
 
     await pool.query("BEGIN");
 
