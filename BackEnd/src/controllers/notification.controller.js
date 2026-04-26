@@ -24,20 +24,9 @@ export const getLastNotifications = async (req, res) => {
 // Opciones reservadas para el administrador, se define en el front-end la lógica de quien elimina
 export const deleteNotification = async (req, res) => {
   try {
-    const { id } = req.params;
-    const userName = req.body.userName;
+    const { notificacion_id } = req.params;
 
-    await pool.query("BEGIN");
-
-    await pool.query(notification.deleteNotification, [id]);
-    
-    await pool.query(notification.createNotification, [
-      userName,
-      "Notificación"
-      `La notificación #${id} ha sido eliminada`
-    ]);
-
-    await pool.query("COMMIT");
+    await pool.query(notification.deleteNotification, [notificacion_id]);
 
     res.json({ message: 'Notificación eliminada correctamente' });
   } catch (error) {

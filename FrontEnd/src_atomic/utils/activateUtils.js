@@ -8,7 +8,8 @@ export const activateUtils = {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/activate/${id}`, {
         method: 'PUT',
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem('token')}`
+          "Authorization": `Bearer ${localStorage.getItem('token')}`,
+          "ngrok-skip-browser-warning": "true"
         }
       });
 

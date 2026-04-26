@@ -15,9 +15,17 @@ const Header = styled.header`
     align-items: center;
     gap: 10px;
   }
+  
+  button{
+    background-color: transparent;
+    border: none;
+    color: #343434;
+    font-size: 20px;
+    cursor: pointer;
+  }
 `;
 
-function HeaderGeneral({ user }) {
+function HeaderGeneral({ user, onClick }) {
   return(
     <Header>
       <div>
@@ -25,7 +33,10 @@ function HeaderGeneral({ user }) {
         <h3>Hola, {user}</h3>
       </div>
       <div>
-        <i class="bi bi-bell-fill"></i>
+        <button onClick={ onClick }>
+          <i class="bi bi-bell-fill" />
+        </button>
+        
         <img width={'30px'} src="/images/Logo.svg" alt="" />
       </div>
     </Header>

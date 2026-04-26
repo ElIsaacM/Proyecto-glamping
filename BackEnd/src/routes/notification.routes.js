@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", getNotifications);
 router.get("/last", getLastNotifications);
-router.delete("/:id", deleteNotification);
 router.delete("/all", deleteAllNotifications);
+router.delete("/:notificacion_id", deleteNotification);
 
 export default router;

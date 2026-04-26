@@ -207,9 +207,10 @@ export const getPackageStats = async (req, res) => {
 
 export const packageFilters = async (req, res) => {
   try {
-    const [idle_packages, type_packages_ASC, longer_stay_packages, shorter_stay_packages] = await Promise.all([
+    const [idle_packages, type_packages_ASC, type_packages_DESC, longer_stay_packages, shorter_stay_packages] = await Promise.all([
       pool.query(packageFiltersModel.idle_packages),
       pool.query(packageFiltersModel.type_packages_ASC),
+      pool.query(packageFiltersModel.type_packages_DESC),
       pool.query(packageFiltersModel.longer_stay_packages),
       pool.query(packageFiltersModel.shorter_stay_packages),
     ]);
@@ -217,6 +218,7 @@ export const packageFilters = async (req, res) => {
     res.json({
       idle_packages: idle_packages.rows,
       type_packages_ASC: type_packages_ASC.rows,
+      type_packages_DESC: type_packages_DESC.rows,
       longer_stay_packages: longer_stay_packages.rows,
       shorter_stay_packages: shorter_stay_packages.rows,
     })

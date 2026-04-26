@@ -2,7 +2,8 @@ export const notification = {
   getNotifications: `
     SELECT
       * 
-    FROM notificaciones 
+    FROM notificaciones
+    ORDER BY fecha DESC
   `,
   getLastNotifications: `
     SELECT
@@ -19,9 +20,17 @@ export const notification = {
   `,
   deleteNotification: `
     DELETE FROM notificaciones 
-    WHERE id = $1
+    WHERE notificacion_id = $1
   `,
   deleteAllNotifications: `
     DELETE FROM notificaciones
   `,
 }
+
+export const getEmails = `
+  SELECT
+    l.email
+  FROM login l
+  JOIN usuarios u ON l.usuario_id = u.usuario_id 
+  WHERE u.estado = 'Activo'
+`

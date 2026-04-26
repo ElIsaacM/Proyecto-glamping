@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload }) => {
         <p style={{ margin: "5px 0 0 0" }}>Reservas: {data.value}</p>
         {data.income !== undefined && (
           <p style={{ margin: "5px 0 0 0", color: "#333" }}>
-            Ingresos: ${data.income}
+            Ingresos: {data.income}
           </p>
         )}
       </div>

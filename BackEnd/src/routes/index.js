@@ -15,6 +15,7 @@ import typesRouter from './types.routes.js';
 import refoundRouter from './refound.routes.js';
 import invoiceRouter from './invoice.routes.js';
 import notificationRouter from './notification.routes.js';
+import dashboardRouter from './dashboard.routes.js';
 
 const router = Router();
 
@@ -33,6 +34,7 @@ router.use('/users', userRouter);
 router.use('/refounds', refoundRouter);
 router.use('/invoices', invoiceRouter);
 router.use('/notifications', notificationRouter);
+router.use('/dashboard', dashboardRouter);
 
 router.use('/types', typesRouter);
 

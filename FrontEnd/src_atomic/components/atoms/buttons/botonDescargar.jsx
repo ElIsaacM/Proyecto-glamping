@@ -1,6 +1,6 @@
 import BotonGeneral from "./button";
 
-function BotonDescargar() {
+function BotonDescargar({ onClick }) {
   const data = {
     color: 1,
     icon: 'bi bi-download',
@@ -8,7 +8,7 @@ function BotonDescargar() {
   }
 
   return(
-    <BotonGeneral data={ data }></BotonGeneral>
+    <BotonGeneral data={ data } onClick={ onClick }></BotonGeneral>
   );
 }
 

@@ -75,22 +75,23 @@ export const reservationFilters = {
 
 export const updateReservationByPayment = {
   updateTotal: `
-    UPDATE reservas
-    SET por_pagar = total - (
-      SELECT COALESCE(SUM(total_pagado), 0)
+    UPDATE reservas r
+    SET por_pagar = f.total - sub.pagado
+    FROM facturas f,
+     (SELECT COALESCE(SUM(total_pagado), 0) AS pagado
       FROM pagos
-      WHERE factura_id = $1 
-        AND estado != 'Cancelado'
-    )
-    WHERE reserva_id = $2;
+      WHERE factura_id = $1
+        AND estado != 'Cancelado') AS sub
+    WHERE r.reserva_id = f.reserva_id
+      AND r.reserva_id = $2;
   `,
   updateStatus: `
-  UPDATE reservas
-  SET estado = 'Pagado'
-  WHERE por_pagar <= 0
-    AND llegada > CURRENT_DATE
-    AND estado <> 'Pagado'
-    AND estado <> 'Cancelado'
+    UPDATE reservas
+    SET estado = 'Pagado'
+    WHERE por_pagar <= 0
+      AND llegada > CURRENT_DATE
+      AND estado <> 'Pagado'
+      AND estado <> 'Cancelado'
 `,
 }
 
@@ -107,5 +108,42 @@ export const reservationStats = {
       AND pg.fecha_pago >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
     GROUP BY TO_CHAR(pg.fecha_pago, 'YYYY-MM')
     ORDER BY fecha ASC;
+  `
+}
+
+export const reservationDashboardStats = {
+  totalReservations: `
+    SELECT 
+      COUNT(*) AS total_reservations
+    FROM reservas
+    WHERE estado IN ('Completado', 'Pagado')
+      AND fecha_registro >= DATE_TRUNC('month', CURRENT_DATE)
+  `,
+  mostPopularPackage: `
+    SELECT 
+      p.nombre,
+      COUNT(*) AS total
+    FROM reservas r
+    JOIN paquetes p ON r.paquete_id = p.paquete_id
+    WHERE r.fecha_registro >= DATE_TRUNC('month', CURRENT_DATE)
+    GROUP BY p.nombre
+    ORDER BY total DESC
+    LIMIT 1
+  `,
+  mostPopularDay: `
+    SELECT 
+      (ARRAY['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'])[EXTRACT(DOW FROM r.llegada) + 1] AS dia_semana,
+      COUNT(*) AS total
+    FROM reservas r
+    WHERE r.estado IN ('Completado', 'Pagado')
+      AND r.llegada >= DATE_TRUNC('month', CURRENT_DATE)
+    GROUP BY 1
+    ORDER BY total DESC
+    LIMIT 1;
+  `,
+  getRevenueByMonth: `
+    SELECT 
+      saldo_neto_mes AS "Ingresos"
+    FROM vista_pagos_stats
   `
 }

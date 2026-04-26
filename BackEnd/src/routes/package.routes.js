@@ -22,14 +22,14 @@ import {
 const router = Router();
 
 router.get('/', getPackages);
-router.get('/:id', getPackageById);
 router.post('/search', getPackageByName);
-router.post('/', rulesCreatePackage, validateRules, createPackage);
-router.put('/:id', rulesUpdatePackage, validateRules, updatePackage);
-router.delete('/delete/:id', deletePackage);
-router.put('/activate/:id', activatePackage);
+router.post('/', createPackage);
 router.get('/stats', getPackageStats);
 router.get('/filters', packageFilters);
+router.get('/:id', getPackageById);
+router.put('/:id', updatePackage);
+router.delete('/delete/:id', deletePackage);
+router.put('/activate/:id', activatePackage);
 router.get('/:id/products', getPackageProducts);
 router.get('/:id/services', getPackageServices);
 
