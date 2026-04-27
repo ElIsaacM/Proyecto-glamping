@@ -39,13 +39,16 @@ export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar 
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.cabana_id}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/cabins/${cabanaAEditar.id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: cabanaAEditar.nombre || cabanaAEditar.Nombre || '',
-      precio_noche: cabanaAEditar.precio_noche || cabanaAEditar.precio_noche || '',
-      descripcion: cabanaAEditar.descripcion || cabanaAEditar.descripcion || ''
+      nombre: cabanaAEditar.nombre || cabanaAEditar.nombre || '',
+      capacidad_personas: cabanaAEditar.capacidad || cabanaAEditar.capacidad || '',
+      precio_noche: cabanaAEditar["Precio noche"] || cabanaAEditar["precio noche"] || '',
+      descripcion: cabanaAEditar.descripcion || cabanaAEditar.descripcion || '',
+
+      userName: localStorage.getItem('userName') || '',
     },
     urlParams,
     () => {
@@ -64,6 +67,14 @@ export default function ModalEditar({ setModalAbierto, fetchData, cabanaAEditar 
           name="nombre" 
           placeholder="Nombre de la cabaña" 
           value={formData.nombre} 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          type="number" 
+          name="capacidad_personas" 
+          placeholder="Capacidad de personas" 
+          value={formData.capacidad_personas} 
           onChange={handleChange} 
           required 
         />

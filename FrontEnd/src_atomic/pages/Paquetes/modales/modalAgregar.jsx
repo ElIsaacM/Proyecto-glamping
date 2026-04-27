@@ -39,7 +39,15 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   // Agregar capacidad personas
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { tipo_id: '', registrado_por_id: '', nombre: '', dias_estadia: '', descripcion: ''},
+    { 
+      tipo_id: '', 
+      registrado_por_id: '', 
+      nombre: '', 
+      dias_estadia: '', 
+      descripcion: '',
+
+      userName: localStorage.getItem('userName') || '',
+    },
     `${import.meta.env.VITE_API_BASE_URL}/api/packages`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);

@@ -39,7 +39,14 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   // Agregar capacidad personas
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { nombre: '', precio_noche: '', descripcion: ''},
+    { 
+      nombre: '', 
+      capacidad_personas: '',
+      precio_noche: '', 
+      descripcion: '',
+
+      userName: localStorage.getItem('userName') || '',
+    },
     `${import.meta.env.VITE_API_BASE_URL}/api/cabins`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
@@ -51,6 +58,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
     <ModalPlantilla modulo="cabañas" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
+        <input type="number" name="capacidad_personas" placeholder="Capacidad de personas" value={formData.capacidad_personas} onChange={handleChange} required />
         <input type="number" step="0.01" name="precio_noche" placeholder="Precio por noche" value={formData.precio} onChange={handleChange} required />
         <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
         <button type="submit" disabled={submitting}>

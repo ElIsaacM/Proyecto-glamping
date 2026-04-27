@@ -5,12 +5,16 @@ export const deleteUtils = {
     )) return;
 
     try {
+      const userName = localStorage.getItem('userName');
+
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/${modulo}/delete/${id}`, {
         method: 'DELETE',
         headers: {
+          "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem('token')}`,
           "ngrok-skip-browser-warning": "true"
-        }
+        },
+        body: JSON.stringify({ userName })
       });
 
       if (!res.ok) {

@@ -29,6 +29,12 @@ export const useForm = (initialState, url, onSuccess, method = 'POST') => {
 
     try {
       const cleanedData = { ...formData };
+      
+      const userName = localStorage.getItem('userName');
+      if (userName) {
+        cleanedData.userName = userName;
+      }
+
       Object.keys(cleanedData).forEach(key => {
         if (key.includes('_id') && cleanedData[key] === '') {
           cleanedData[key] = null;

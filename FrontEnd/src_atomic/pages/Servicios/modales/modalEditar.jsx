@@ -39,15 +39,17 @@ export default function ModalEditar({ setModalAbierto, fetchData, servicioAEdita
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "servicioAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/services/${servicioAEditar.servicio_id}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/services/${servicioAEditar.id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: servicioAEditar.nombre || servicioAEditar.Nombre || '',
-      encargado: servicioAEditar.encargado || servicioAEditar.Encargado || '',
-      duracion_minutos: servicioAEditar.duracion_minutos || servicioAEditar.DuracionMinutos || '',
+      nombre: servicioAEditar.servicio || servicioAEditar.servicio || '',
+      encargado: servicioAEditar.encargado || servicioAEditar.encargado || '',
+      duracion_minutos: servicioAEditar["Duracion en minutos"] || servicioAEditar["Duracion en minutos"] || '',
       precio: servicioAEditar.precio || servicioAEditar.Precio || '',
-      descripcion: servicioAEditar.descripcion || servicioAEditar.Descripción || ''
+      descripcion: servicioAEditar.descripcion || servicioAEditar.Descripción || '',
+
+      userName: localStorage.getItem('userName') || '',
     },
     urlParams,
     () => {

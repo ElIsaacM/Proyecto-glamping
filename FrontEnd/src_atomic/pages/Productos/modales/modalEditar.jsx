@@ -39,14 +39,16 @@ export default function ModalEditar({ setModalAbierto, fetchData, productoAEdita
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
-  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.producto_id}`;
+  const urlParams = `${import.meta.env.VITE_API_BASE_URL}/api/products/${productoAEditar.id}`;
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
-      nombre: productoAEditar.nombre || productoAEditar.Nombre || '',
+      nombre: productoAEditar.producto || productoAEditar.Producto || '',
       tipo: productoAEditar.tipo || productoAEditar.Tipo || '',
       precio: productoAEditar.precio || productoAEditar['Precio Venta'] || '',
-      descripcion: productoAEditar.descripcion || productoAEditar.Descripción || ''
+      descripcion: productoAEditar.descripcion || productoAEditar.Descripción || '',
+
+      userName: localStorage.getItem('userName') || '',
     },
     urlParams,
     () => {

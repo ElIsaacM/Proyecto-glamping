@@ -28,13 +28,13 @@ export const getCabinByName = async (req, res) => {
 
 export const createCabin = async (req, res) => {
   try {
-    const { nombre, precio_noche, descripcion, userName } = req.body;
+    const { nombre, precio_noche, capacidad_personas, descripcion, userName } = req.body;
 
     await pool.query("BEGIN");
 
     const result = await pool.query(
       cabin.createCabin, 
-      [nombre, precio_noche, descripcion]
+      [nombre, precio_noche, capacidad_personas, descripcion]
     );
 
     await pool.query(notification.createNotification, [
@@ -55,13 +55,13 @@ export const createCabin = async (req, res) => {
 export const updateCabin = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, precio_noche, descripcion, userName } = req.body;
+    const { nombre, precio_noche, capacidad_personas, descripcion, userName } = req.body;
 
     await pool.query("BEGIN");
 
     const result = await pool.query(
       cabin.updateCabin,
-      [nombre, precio_noche, descripcion, id]
+      [nombre, precio_noche, capacidad_personas, descripcion, id]
     );
 
     await pool.query(notification.createNotification, [

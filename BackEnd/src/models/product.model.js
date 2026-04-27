@@ -14,8 +14,8 @@ export const product = {
     `,
   // Nota: en la nueva DB ya no existe stock y ya el precioventa es precio
   createProduct: `
-    INSERT INTO Productos (nombre, tipo, precio, descripcion, fecha_actualizacion) 
-    VALUES ($1, $2, $3, $4, CURRENT_DATE) 
+    INSERT INTO Productos (nombre, tipo, precio, descripcion, fecha_actualizacion, img_url) 
+    VALUES ($1, $2, $3, $4, CURRENT_DATE, 'default.png') 
     RETURNING nombre
     `,
   updateProduct: `

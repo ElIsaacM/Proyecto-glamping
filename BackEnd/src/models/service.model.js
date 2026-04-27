@@ -13,8 +13,8 @@ export const service = {
     WHERE servicio ILIKE '%' || $1 || '%'
   `,
   createService: `
-    INSERT INTO Servicios (nombre, encargado, duracion_minutos, precio, descripcion, fecha_actualizacion)
-    VALUES ($1, $2, $3, $4, $5, CURRENT_DATE)
+    INSERT INTO Servicios (nombre, encargado, duracion_minutos, precio, descripcion, fecha_actualizacion, img_url)
+    VALUES ($1, $2, $3, $4, $5, CURRENT_DATE, 'default.png')
     RETURNING nombre, precio
   `,
   updateService: `

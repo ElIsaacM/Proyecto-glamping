@@ -38,7 +38,14 @@ const Form = styled.form`
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
   // 2. Tu useForm funciona perfecto aquí
   const { formData, handleChange, handleSubmit, submitting } = useForm(
-    { nombre: '', tipo: '', precio: '', descripcion: '' },
+    { 
+      nombre: '', 
+      tipo: '', 
+      precio: '', 
+      descripcion: '',
+
+      userName: localStorage.getItem('userName') || '',
+    },
     `${import.meta.env.VITE_API_BASE_URL}/api/products`,
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/products`);
