@@ -3,7 +3,7 @@ export const cabin = {
     SELECT 
       *
     FROM vista_cabanas
-    WHERE estado <> 'inactivo'
+    WHERE estado <> 'Inactivo'
     ORDER BY actualizacion DESC
   `,
   getCabinByName: `
@@ -35,6 +35,22 @@ export const cabin = {
     WHERE cabana_id = $1
     RETURNING nombre
   `,
+  activateCabin: `
+    UPDATE Cabanas SET
+      estado = 'Activo'
+    WHERE cabana_id = $1
+    RETURNING nombre
+  `,
+}
+
+export const cabinFilters = {
+  inactiveCabins: `
+    SELECT 
+      *
+    FROM vista_cabanas
+    WHERE estado = 'Inactivo'
+    ORDER BY actualizacion DESC
+  `
 }
 
 export const cabinStats = {

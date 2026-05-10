@@ -8,6 +8,7 @@ import {
   createCabin,
   getCabinStats,
   activateCabin,
+  getCabinFilters,
 } from '../controllers/cabin.controller.js';
 
 import { validateRules } from "../middleware/validate.middleware.js";
@@ -19,6 +20,7 @@ import {
 const router = Router();
 
 router.get('/', getCabins);
+router.get('/filters', getCabinFilters);
 router.post('/search', getCabinByName);
 router.post('/', rulesCreateCabin, validateRules, createCabin);
 router.put('/:id', rulesUpdateCabin, validateRules, updateCabin);

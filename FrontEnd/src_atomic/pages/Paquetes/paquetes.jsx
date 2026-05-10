@@ -7,6 +7,7 @@ import { deleteUtils } from "../../utils/deleteUtils";
 import { activateUtils } from "../../utils/activateUtils";
 
 import BotonAgregar from "../../components/atoms/buttons/botonAgregar";
+import BotonTab from "../../components/atoms/buttons/button";
 import TablaGeneral from "../../components/organisms/tabla";
 
 import ModalAgregar from "./modales/modalAgregar";
@@ -26,6 +27,29 @@ const CardsCont = styled.div`
 
   @media (max-width: 1300px) {
     grid-template-columns: repeat(1, 1fr);
+  }
+`;
+
+const ModulosExtra = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  button {
+    padding: 10px;
+    background-color: #eeeeeeff;
+    color: #363636;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    &:hover {
+      background-color: #d9d9d9ff;
+    }
+    &.active {
+      background-color: #43523A;
+      color: white;
+    }
   }
 `;
 
@@ -65,24 +89,6 @@ function Paquetes() {
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
   }, [fetchData]);
 
-  const eliminarPaquete = (paquete) => {
-    deleteUtils.eliminarRegistro(
-      'packages',
-      paquete.id,
-      paquete.nombre,
-      handleFetchData,
-    );
-  };
-
-  const activarPaquete = (paquete) => {
-    activateUtils.activarRegistro(
-      "packages",
-      paquete.id,
-      paquete.nombre,
-      handleFetchData,
-    );
-  };
-
   const editarPaquete = (paquete) => {
     setPaqueteAEditar(paquete);
     setModalEditarAbierto(true);
@@ -93,6 +99,15 @@ function Paquetes() {
       <CardsCont>
         <PaquetesCards refreshTrigger={refreshStatsTrigger} />
       </CardsCont>
+
+      <ModulosExtra>
+        <button
+          onClick={() => { fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`); }}
+        >paquetes</button>
+        <button
+          onClick={() => { fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages/types`); }}
+        >tipos de paquetes</button>
+      </ModulosExtra>
 
       <Botones>
         <PaquetesSearch onResult={setPaquetes} onFilterChange={setFilterMode} />
@@ -111,8 +126,6 @@ function Paquetes() {
         <TablaGeneral
           data={displayData}
           onEdit={editarPaquete}
-          onDelete={eliminarPaquete}
-          onActive={activarPaquete}
         />
       )}
 

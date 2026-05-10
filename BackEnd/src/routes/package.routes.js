@@ -3,14 +3,15 @@ import {
     getPackages,
     getPackageById,
     getPackageByName,
-    createPackage,
+    createPackageType,
     updatePackage,
     deletePackage,
     activatePackage,
     getPackageStats,
     packageFilters,
     getPackageProducts,
-    getPackageServices
+    getPackageServices,
+    getPackageTypes
 } from '../controllers/package.controller.js';
 
 import { validateRules } from "../middleware/validate.middleware.js";
@@ -22,8 +23,9 @@ import {
 const router = Router();
 
 router.get('/', getPackages);
+router.get('/types', getPackageTypes);
 router.post('/search', getPackageByName);
-router.post('/', createPackage);
+router.post('/createType', createPackageType);
 router.get('/stats', getPackageStats);
 router.get('/filters', packageFilters);
 router.get('/:id', getPackageById);

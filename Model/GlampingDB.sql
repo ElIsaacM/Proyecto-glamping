@@ -45,7 +45,7 @@ CREATE TABLE Danos_Mantenimientos (
 
 CREATE TABLE Tipo_Paquete (
     Tipo_ID SERIAL PRIMARY KEY,
-    Nombre VARCHAR(50) NOT NULL
+    Nombre VARCHAR(50) NOT NULL,
 );
 
 -- 2. TABLAS DE USUARIOS Y ACCESO
@@ -90,11 +90,7 @@ CREATE TABLE Paquetes (
     Paquete_ID SERIAL PRIMARY KEY,
 	Cabana_ID INT NOT NULL,
     Tipo_ID INT NOT NULL,
-    Registrado_Por_ID INT,
-    Nombre VARCHAR(50) NOT NULL DEFAULT 'Personalizado',
-    Dias_Estadia INT DEFAULT 1,
     Fecha_Registro DATE DEFAULT CURRENT_DATE,
-    Descripcion TEXT DEFAULT 'Sin descripcion',
     Estado VARCHAR(50) DEFAULT 'Activo'
 );
 
@@ -196,7 +192,6 @@ ALTER TABLE Logs_Acciones ADD CONSTRAINT fk_Logs_Cuenta FOREIGN KEY (Login_ID) R
 
 ALTER TABLE Paquetes 
     ADD CONSTRAINT fk_Paquete_Tipo FOREIGN KEY (Tipo_ID) REFERENCES Tipo_Paquete(Tipo_ID),
-    ADD CONSTRAINT fk_Paquete_Usuario FOREIGN KEY (Registrado_Por_ID) REFERENCES Usuarios(Usuario_ID),
 	ADD CONSTRAINT fk_Paquete_Cabana FOREIGN KEY (Cabana_ID) REFERENCES Cabanas(Cabana_ID);
 
 ALTER TABLE Clientes ADD CONSTRAINT fk_Clientes_Identificacion FOREIGN KEY (Identificacion_ID) REFERENCES Identificaciones(Identificacion_ID);

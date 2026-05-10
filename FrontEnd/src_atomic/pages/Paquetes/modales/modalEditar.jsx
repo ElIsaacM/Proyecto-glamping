@@ -1,6 +1,9 @@
 import ModalPlantilla from "../../../components/organisms/Modales/modalPlantilla";
 import { useForm } from "../../../hooks/useForm";
+import SelectBase from "../../../components/atoms/select/selectBase";
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import { useFetch } from "../../../hooks/fetchConnect";
 
 const Form = styled.form`
   display: flex;
@@ -36,6 +39,33 @@ const Form = styled.form`
 `;
 
 export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar }) {
+  const [cabanas, setCabanas] = useState([]);
+  const [tipos, setTipos] = useState([]);
+  const { data: cabanasData, fetchData: fetchCabanas } = useFetch();
+  const { data: tiposData, fetchData: fetchTipos } = useFetch();
+
+  useEffect(() => {
+    fetchCabanas(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
+    fetchTipos(`${import.meta.env.VITE_API_BASE_URL}/api/packages/types`);
+  }, []);
+
+  useEffect(() => {
+    if (cabanasData) {
+      setCabanas([
+        { id: '', nombre: 'Selecciona una cabaña...', selected: 'selected' },
+        ...cabanasData.map(c => ({ id: c.id, nombre: c.nombre }))
+      ]);
+    }
+  }, [cabanasData]);
+
+  useEffect(() => {
+    if (tiposData) {
+      setTipos([
+        { id: '', nombre: 'Selecciona un tipo de paquete...', selected: 'selected' },
+        ...tiposData.map(t => ({ id: t.id, nombre: t.nombre }))
+      ]);
+    }
+  }, [tiposData]);
   // Utilizamos casi el mismo código que en agregar, pero pasando el objeto actual "productoAEditar"
   // como estado inicial. 
   // IMPORTANTE: Le pasamos 'PUT' como 4to argumento
@@ -43,8 +73,9 @@ export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar
 
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     {
+      cabana_id: paqueteAEditar.cabana_id || paqueteAEditar.cabana_id || '',
       tipo_id: paqueteAEditar.tipo_id || paqueteAEditar.tipo_id || '',
-      nombre: paqueteAEditar.nombre || paqueteAEditar.Nombre || '',
+      nombre: paqueteAEditar.tipo || paqueteAEditar.Tipo || '',
       dias_estadia: paqueteAEditar.dias || paqueteAEditar.dias || '',
       descripcion: paqueteAEditar.descripcion || paqueteAEditar.descripcion || '',
 
@@ -62,20 +93,22 @@ export default function ModalEditar({ setModalAbierto, fetchData, paqueteAEditar
   return (
     <ModalPlantilla modulo="editar paquete" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input 
-          type="number" 
-          name="tipo_id" 
-          placeholder="Tipo de paquete" 
-          value={formData.tipo_id} 
+        <SelectBase 
+          name="cabana_id" 
+          options={cabanas} 
+          value={formData.cabana_id} 
           onChange={handleChange} 
+          valueKey="id" 
+          nameKey="nombre" 
           required 
         />
-        <input 
-          type="text" 
-          name="nombre" 
-          placeholder="Nombre del paquete" 
-          value={formData.nombre} 
+        <SelectBase 
+          name="tipo_id" 
+          options={tipos} 
+          value={formData.tipo_id} 
           onChange={handleChange} 
+          valueKey="id" 
+          nameKey="nombre" 
           required 
         />
         <input 

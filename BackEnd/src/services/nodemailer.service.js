@@ -41,3 +41,23 @@ export const sendSystemOnlineEmail = async (urlPublica) => {
     console.error('❌ Error en EmailService:', error);
   }
 };
+
+export const sendVerificationCodeEmail = async (email, code) => {
+  try {
+    const response = await transporter.sendMail({
+      from: '"Sistema Glamping" <glampinglosbosques9@gmail.com>',
+      to: email,
+      subject: 'Código de verificación de registro',
+      html: `
+        <h1>Código de Verificación</h1>
+        <p>Tu código de verificación para completar el registro es:</p>
+        <h2 style="background: #f4f4f4; padding: 10px; display: inline-block; letter-spacing: 2px;">${code}</h2>
+        <p>Este código expira en 15 minutos.</p>
+      `
+    });
+
+    return response;
+  } catch (error) {
+    console.error('❌ Error en sendVerificationCodeEmail:', error);
+  }
+}

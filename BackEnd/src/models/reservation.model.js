@@ -121,12 +121,13 @@ export const reservationDashboardStats = {
   `,
   mostPopularPackage: `
     SELECT 
-      p.nombre,
+      tp.nombre,
       COUNT(*) AS total
     FROM reservas r
     JOIN paquetes p ON r.paquete_id = p.paquete_id
+    JOIN tipo_paquete tp ON p.tipo_id = tp.tipo_id
     WHERE r.fecha_registro >= DATE_TRUNC('month', CURRENT_DATE)
-    GROUP BY p.nombre
+    GROUP BY tp.nombre
     ORDER BY total DESC
     LIMIT 1
   `,

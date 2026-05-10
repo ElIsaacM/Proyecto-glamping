@@ -13,6 +13,7 @@ function Login() {
     `${import.meta.env.VITE_API_BASE_URL}/api/login`,
     (data) => {
       localStorage.setItem('token', data.token);
+      localStorage.setItem('id', data.user.id);
       localStorage.setItem('userName', data.user.nombre);
       localStorage.setItem('userRole', data.user.rol);
       navigate('/inicio');

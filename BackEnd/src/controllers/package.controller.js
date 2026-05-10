@@ -2,11 +2,21 @@ import pool from '../config/db.js'
 import { notification } from '../models/notification.model.js';
 import { 
   packages, 
+  packageType, 
   packageStats, 
   packageFilters as packageFiltersModel, 
   packageProducts, 
   packageServices 
 } from '../models/package.model.js'
+
+export const getPackageTypes = async (req, res) => {
+  try {
+    const result = await pool.query(packageType.getPackageTypes);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getPackages = async (req, res) => {
   try {
@@ -31,11 +41,11 @@ export const getPackageById = async (req, res) => {
 
 export const getPackageByName = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { tipo } = req.body;
     
     const result = await pool.query(
       packages.getPackageByName, 
-      [name.trim()]
+      [tipo.trim()]
     );
 
     res.json(result.rows);
@@ -45,22 +55,19 @@ export const getPackageByName = async (req, res) => {
   }
 };
 
-export const createPackage = async (req, res) => {
+export const createPackageType = async (req, res) => {
   try {
     const {
-      tipo_id,
-      registrado_por_id,
       nombre,
-      dias_estadia,
-      descripcion,
 
       userName
     } = req.body;
     
     await pool.query("BEGIN");
 
-    const result = await pool.query(packages.createPackage,
-      [tipo_id, registrado_por_id, nombre, dias_estadia, descripcion]
+    const result = await pool.query(
+      packageType.createPackageType,
+      [nombre]
     );
     
     await pool.query(notification.createNotification, [
@@ -89,8 +96,8 @@ export const updatePackage = async (req, res) => {
     const { id } = req.params;
 
     const { 
+      cabana_id, 
       tipo_id, 
-      nombre, 
       dias_estadia, 
       descripcion,
 
@@ -101,13 +108,13 @@ export const updatePackage = async (req, res) => {
 
     const result = await pool.query(
       packages.updatePackage,
-      [tipo_id, nombre, dias_estadia, descripcion, id]
+      [cabana_id, tipo_id, dias_estadia, descripcion, id]
     );
 
     await pool.query(notification.createNotification, [
       userName,
       "Paquete",
-      `El paquete #${id} - ${nombre} ha sido actualizado`
+      `El paquete #${id} ha sido actualizado`
     ]);
 
     await pool.query("COMMIT");
@@ -207,18 +214,14 @@ export const getPackageStats = async (req, res) => {
 
 export const packageFilters = async (req, res) => {
   try {
-    const [idle_packages, type_packages_ASC, type_packages_DESC, longer_stay_packages, shorter_stay_packages] = await Promise.all([
+    const [idle_packages, longer_stay_packages, shorter_stay_packages] = await Promise.all([
       pool.query(packageFiltersModel.idle_packages),
-      pool.query(packageFiltersModel.type_packages_ASC),
-      pool.query(packageFiltersModel.type_packages_DESC),
       pool.query(packageFiltersModel.longer_stay_packages),
       pool.query(packageFiltersModel.shorter_stay_packages),
     ]);
 
     res.json({
       idle_packages: idle_packages.rows,
-      type_packages_ASC: type_packages_ASC.rows,
-      type_packages_DESC: type_packages_DESC.rows,
       longer_stay_packages: longer_stay_packages.rows,
       shorter_stay_packages: shorter_stay_packages.rows,
     })

@@ -17,35 +17,45 @@ export const packages = {
     SELECT
       * 
     FROM vista_paquetes
-    WHERE nombre ILIKE '%' || $1 || '%'
+    WHERE tipo ILIKE '%' || $1 || '%'
   `,
   // Un paquete debe incluir (servicios, productos, cabañas)
-  createPackage: `
-    INSERT INTO paquetes (tipo_id, registrado_por_id, nombre, dias_estadia, fecha_registro, descripcion, estado)
-    VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, 'Activo')
-    RETURNING nombre, fecha_registro
-  `,
   updatePackage: `
     UPDATE paquetes SET
-      tipo_id = COALESCE(NULLIF($1::text, '')::integer, tipo_id),
-      nombre = COALESCE(NULLIF($2, ''), nombre),
+      cabana_id = COALESCE(NULLIF($1::text, '')::integer, cabana_id),
+      tipo_id = COALESCE(NULLIF($2::text, '')::integer, tipo_id),
       dias_estadia = COALESCE(NULLIF($3::text, '')::integer, dias_estadia),
       descripcion = COALESCE(NULLIF($4, ''), descripcion),
       fecha_registro = CURRENT_DATE
     WHERE paquete_id = $5
-    RETURNING nombre, fecha_registro
+    RETURNING paquete_id, fecha_registro
   `,
   deletePackage: `
     UPDATE paquetes SET
       estado = 'Inactivo'
     WHERE paquete_id = $1
-    RETURNING nombre
+    RETURNING paquete_id
   `,
   activatePackage: `
     UPDATE paquetes SET
       estado = 'Activo'
     WHERE paquete_id = $1
+    RETURNING paquete_id
+  `,
+};
+
+export const packageType = {
+  createPackageType: `
+    INSERT INTO tipo_paquete (nombre)
+    VALUES ($1)
     RETURNING nombre
+  `,
+  getPackageTypes: `
+    SELECT 
+      tipo_id,
+      nombre
+    FROM tipo_paquete
+
   `,
 };
 
@@ -55,20 +65,6 @@ export const packageFilters = {
       * 
     FROM vista_paquetes
     WHERE estado = 'Inactivo'
-  `,
-  type_packages_ASC: `
-    SELECT 
-      * 
-    FROM vista_paquetes
-    WHERE estado = 'Activo'
-    ORDER BY tipo ASC
-  `,
-  type_packages_DESC: `
-    SELECT 
-      * 
-    FROM vista_paquetes
-    WHERE estado = 'Activo'
-    ORDER BY tipo DESC
   `,
   longer_stay_packages: `
     SELECT 
@@ -105,6 +101,7 @@ export const packageStats = {
     SELECT 
       * 
     FROM vista_paquetes_stats 
+    WHERE veces_reservado > 0
     ORDER BY veces_reservado DESC
     LIMIT 3
   `,

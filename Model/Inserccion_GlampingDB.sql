@@ -8,8 +8,6 @@ INSERT INTO Metodos_Pago (Tipo, Nombre) VALUES
 ('Transferencia', 'Bancolombia o Nequi'),
 ('Tarjeta', 'Datafono Visa/Mastercard');
 
-INSERT INTO Tipo_Paquete (Nombre) VALUES ('Estándar'), ('Romántico'), ('Aventura'), ('Personalizado');
-
 -- Infraestructura y Catálogo
 INSERT INTO Cabanas (Nombre, Precio_Noche, Capacidad_Personas, Descripcion, IMG_URL) VALUES 
 ('Nido del Águila', 350000, 2, 'Vista panorámica al valle', 'https://url.com/c1.jpg'),
@@ -37,10 +35,10 @@ INSERT INTO Clientes (Identificacion_ID, Nombre, Email, Contacto, Identificacion
 (1, 'Luis Perez', 'luis@mail.com', '3204445566', '789012', 'Colombia');
 
 --Paquetes (Crucial para Reservas)
-INSERT INTO Paquetes (Cabana_ID, Tipo_ID, Registrado_Por_ID, Nombre, Dias_Estadia, Descripcion) VALUES 
-(1, 2, 1, 'Escapada Romántica', 2, 'Ideal para parejas en aniversario'),
-(2, 1, 1, 'Plan Familiar', 3, 'Diversión en el bosque'),
-(3, 3, 2, 'Aventura Estelar', 1, 'Noche de telescopio');
+INSERT INTO Paquetes (Cabana_ID, Registrado_Por_ID, Nombre, Dias_Estadia, Descripcion) VALUES 
+(1, 1, 'Escapada Romántica', 2, 'Ideal para parejas en aniversario'),
+(2, 1, 'Plan Familiar', 3, 'Diversión en el bosque'),
+(3, 2, 'Aventura Estelar', 1, 'Noche de telescopio');
 
 -- Reservas y Facturas (10 Registros)
 -- Reservas

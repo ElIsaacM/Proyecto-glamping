@@ -69,7 +69,7 @@ function NotificacionV1({ data, handleDelete }) {
             <h5>{item.mensaje}</h5>
           </div>
           <Opciones>
-            <Boton color={1} onClick={() => handleEliminar(item.id)}>Eliminar</Boton>
+            <Boton color={1} onClick={() => handleEliminar(item.notificacion_id)}>Eliminar</Boton>
           </Opciones>
         </Notificacion>
       ))}

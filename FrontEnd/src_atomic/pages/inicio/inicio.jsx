@@ -56,7 +56,6 @@ function Inicio() {
         <BotonDescargar onClick={handleDownloadPDF} />
       </FechaInforme>
       <InicioCard refreshTrigger={refreshStatsTrigger} />
-      {console.log(data?.revenue_graph)}
       <GraphNovedades>
         <LinearGraph data={data?.revenue_graph} title="Ingresos acumulados por pagos" />
         <Novedades>

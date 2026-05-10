@@ -29,14 +29,14 @@ function InicioCard({ refreshTrigger }) {
       bgColor: '',
       icono: 'bi bi-box-fill',
       titulo: 'Paquete mas vendido',
-      info: data?.mostPopularPackage?.[0]?.['nombre'] || 'N/A',
+      info: data?.mostPopularPackage?.[0]?.['nombre'] || 'No hay datos',
       texto: `El paquete ${data?.mostPopularPackage?.[0]?.['nombre']} ha sido reservado un total de ${data?.mostPopularPackage?.[0]?.['total']} veces este mes`,
     },
     {
       bgColor: '',
       icono: 'bi bi-stars',
       titulo: 'Dia mas reservado',
-      info: data?.mostPopularDay?.[0]?.['dia_semana'] || 'N/A',
+      info: data?.mostPopularDay?.[0]?.['dia_semana'] || 'No hay datos',
       texto: `El dia ${data?.mostPopularDay?.[0]?.['dia_semana']} es el favorito para reservar de los clientes`,
     },
   ];

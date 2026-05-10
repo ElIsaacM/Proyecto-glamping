@@ -1,5 +1,20 @@
 import SearchTemplate from "../../../components/templates/searchTemplate";
 
+export const cabinFilterConfig = {
+  endpoint: "/api/cabins/filters",
+  filters: {
+    "Inactivas": {
+      cacheKey: "inactiveCabins",
+      localFilter: (arr) => arr.filter(c => c.estado === 'Inactivo')
+    }
+  }
+};
+
+const cabinOptions = [
+  { nombre: "Todos", selected: "selected" },
+  { nombre: "Inactivas", selected: "" },
+];
+
 function Buscador({ activeTab = 'cabin', onResult, onFilterChange }) {
   const getPlaceholder = () => {
     if (activeTab === 'cabinDamage') return 'Buscar por cabaña';
@@ -13,7 +28,7 @@ function Buscador({ activeTab = 'cabin', onResult, onFilterChange }) {
       placeholder={getPlaceholder()}
       onResult={onResult}
       onFilterChange={onFilterChange}
-      options={''}
+      options={activeTab === 'cabins' ? cabinOptions : ''}
     />
   );
 }

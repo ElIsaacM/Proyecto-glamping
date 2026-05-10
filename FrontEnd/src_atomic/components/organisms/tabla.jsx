@@ -64,6 +64,16 @@ const Table = styled.table`
       transform: scale(1.1);
     }
   }
+
+  button.columnClick {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
 `;
 
 function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions, onColumnClick }) {
@@ -121,17 +131,9 @@ function TablaGeneral({ data, acciones, onEdit, onDelete, onActive, hideActions,
 
                       if (onColumnClick && onColumnClick[col]) {
                         return (
-                          <button
+                          <button 
+                            className="columnClick"
                             onClick={() => onColumnClick[col](fila)}
-                            style={{ 
-                              background: '#28a745', 
-                              color: 'white', 
-                              border: 'none', 
-                              padding: '5px 10px', 
-                              borderRadius: '5px', 
-                              cursor: 'pointer',
-                              fontWeight: 'bold'
-                            }}
                           >
                             {formattedValue}
                           </button>

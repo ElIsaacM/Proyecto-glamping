@@ -1,6 +1,17 @@
-import { cabin, cabinStats } from "../models/cabin.model.js";
+import { cabin, cabinStats, cabinFilters } from "../models/cabin.model.js";
 import pool from "../config/db.js";
 import { notification } from "../models/notification.model.js";
+
+export const getCabinFilters = async (req, res) => {
+  try {
+    const inactiveCabins = await pool.query(cabinFilters.inactiveCabins);
+    res.json({
+      inactiveCabins: inactiveCabins.rows
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getCabins = async (req, res) => {
   try {
@@ -129,7 +140,7 @@ export const activateCabin = async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     await pool.query("ROLLBACK");
-    res.stats(500).json({error: error.message})
+    res.status(500).json({error: error.message})
   }
 };
 

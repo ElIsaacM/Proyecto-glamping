@@ -157,30 +157,29 @@ FROM logs_login ll
 JOIN login l ON ll.login_id = l.login_id;
 
 -------------------------- Views paquetes -----------------------------
-CREATE VIEW vista_paquetes AS
+CREATE OR REPLACE VIEW vista_paquetes AS
 SELECT 
 	p.paquete_id AS ID,
 	tp.nombre AS Tipo,
-	u.nombre AS Registrador,
-	p.nombre,
+	c.nombre AS "Cabaña",
 	p.dias_estadia AS Dias,
 	p.fecha_registro AS fecha,
 	p.descripcion,
-	p.estado
+	p.estado,
+    p.tipo_id,
+    p.cabana_id
 FROM paquetes p
 JOIN tipo_paquete tp ON tp.tipo_id = p.tipo_id
-JOIN usuarios u ON u.usuario_id = p.registrado_por_id;
+JOIN cabanas c ON c.cabana_id = p.cabana_id
 
-CREATE VIEW vista_paquetes_stats AS
+CREATE OR REPLACE VIEW vista_paquetes_stats AS
 SELECT
-    p.nombre AS paquete,
-    COUNT(p.paquete_id) AS veces_reservado
-FROM paquetes p
-JOIN reservas r ON r.paquete_id = p.paquete_id
-WHERE p.estado = 'Activo' 
-  AND p.tipo_id <> 1 -- Personalizado
-  AND r.estado = 'Confirmada'
-GROUP BY p.nombre;
+    tp.nombre AS Tipo,
+    COUNT(r.reserva_id) AS veces_reservado
+FROM tipo_paquete tp
+LEFT JOIN paquetes p ON p.tipo_id = tp.tipo_id AND p.estado = 'Activo'
+LEFT JOIN reservas r ON r.paquete_id = p.paquete_id AND r.estado IN ('Pagado', 'Completado')
+GROUP BY tp.nombre;
 
 -------------------------- Views de servicios por paquete -----------------------------
 CREATE OR REPLACE VIEW vista_servicios_por_paquete AS

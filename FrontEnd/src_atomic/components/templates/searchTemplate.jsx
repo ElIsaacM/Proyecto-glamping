@@ -35,7 +35,21 @@ const Buscar = styled.div`
 `;
 
 function SearchTemplate({ modulo, placeholder, onResult, options, onFilterChange }) {
-  const [filter, setFilter] = useState(options[0]?.nombre || "");
+  // Convertir a array si no lo es
+  const validOptions = Array.isArray(options) ? options : [];
+
+  // Eliminar la propiedad 'selected' para evitar que SelectBase oculte las opciones
+  const cleanedOptions = validOptions.map(opt => {
+    const { selected, ...rest } = opt;
+    return rest;
+  });
+
+  // Siempre agregar "Todos" para asegurar que todos los componentes lo tengan
+  const finalOptions = cleanedOptions.some(o => o.nombre === "Todos")
+    ? cleanedOptions
+    : [{ nombre: "Todos" }, ...cleanedOptions];
+
+  const [filter, setFilter] = useState(finalOptions[0]?.nombre || "Todos");
   const { searchTerm, setSearchTerm } = useSearch(modulo, onResult);
 
   // Manejar el cambio de filtro
@@ -57,9 +71,9 @@ function SearchTemplate({ modulo, placeholder, onResult, options, onFilterChange
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Buscar>
-      {options && options.length > 0 && (
+      {finalOptions && finalOptions.length > 0 && (
         <SelectBase 
-          options={options} 
+          options={finalOptions} 
           value={filter} 
           onChange={handleFilterChange} 
         />

@@ -12,7 +12,7 @@ import ModalAgregar from "./modales/modalAgregar";
 import ModalEditar from "./modales/modalEditar";
 
 import CabanasCard from "./componentsData/cabanaCard";
-import Buscador from "./componentsData/cabinSearch";
+import Buscador, { cabinFilterConfig } from "./componentsData/cabinSearch";
 
 const Botones = styled.div`
   display: flex;
@@ -56,9 +56,10 @@ function Cabanas() {
   const [activeTab, setActiveTab] = useState('cabins');
 
   const { data, loading, error, fetchData } = useFetch();
-  const { displayData } = useFilters(
+  const { displayData, setFilterMode, fetchFilters } = useFilters(
     data,
     cabanas,
+    cabinFilterConfig
   );
 
   const [refreshStatsTrigger, setRefreshStatsTrigger] = useState(0);
@@ -66,11 +67,13 @@ function Cabanas() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setCabanas(null);
+    setFilterMode("Todos");
     fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/${tab}`);
   };
 
   const handleFetchData = () => {
     handleTabChange(activeTab);
+    fetchFilters();
     setRefreshStatsTrigger(prev => prev + 1);
   };
 
@@ -123,6 +126,7 @@ function Cabanas() {
           <Buscador
             activeTab={activeTab}
             onResult={setCabanas}
+            onFilterChange={setFilterMode}
           />
           <BotonAgregar
             modulo={activeTab === 'cabins' ? 'Agregar cabana' : 'Agregar dano'}
@@ -137,8 +141,8 @@ function Cabanas() {
           <TablaGeneral
             data={displayData}
             onEdit={editarRegistro} 
-            onDelete={eliminarRegistro}
-            onActive={activarRegistro}
+            onDelete={activeTab === 'cabins' ? eliminarRegistro : undefined}
+            onActive={activeTab === 'cabins' ? activarRegistro : undefined}
           />
         )}
 

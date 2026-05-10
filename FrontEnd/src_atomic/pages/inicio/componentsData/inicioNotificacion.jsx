@@ -22,6 +22,7 @@ function NotificacionInicio() {
           "ngrok-skip-browser-warning": "true"
         }
       });
+
       if (res.ok) handleFetchData();
     } catch (err) {
       console.error(err);

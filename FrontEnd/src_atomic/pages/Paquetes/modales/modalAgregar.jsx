@@ -36,66 +36,28 @@ const Form = styled.form`
 `;
 
 export default function ModalAgregar({ setModalAbierto, fetchData }) {
-  // 2. Tu useForm funciona perfecto aquí
-  // Agregar capacidad personas
   const { formData, handleChange, handleSubmit, submitting } = useForm(
     { 
-      tipo_id: '', 
-      registrado_por_id: '', 
-      nombre: '', 
-      dias_estadia: '', 
-      descripcion: '',
-
+      nombre: '',
       userName: localStorage.getItem('userName') || '',
     },
-    `${import.meta.env.VITE_API_BASE_URL}/api/packages`,
+    `${import.meta.env.VITE_API_BASE_URL}/api/packages/createType`,
     () => {
-      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages`);
-      setModalAbierto(false); // Cerramos el modal al tener éxito
+      fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/packages/types`);
+      setModalAbierto(false);
     }
   );
 
   return (
-    <ModalPlantilla modulo="paquetes" onClose={() => setModalAbierto(false)}>
+    <ModalPlantilla modulo="tipo de paquete" onClose={() => setModalAbierto(false)}>
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
-        <input 
-          type="number" 
-          name="tipo_id" 
-          placeholder="Tipo de paquete" 
-          value={formData.tipo_id} 
-          onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="number" 
-          name="registrado_por_id" 
-          placeholder="Registrado por" 
-          value={formData.registrado_por_id} 
-          onChange={handleChange} 
-          required 
-        />
         <input 
           type="text" 
           name="nombre" 
-          placeholder="Nombre del paquete" 
+          placeholder="Nombre del tipo" 
           value={formData.nombre} 
           onChange={handleChange} 
-          required 
-        />
-        <input 
-          type="number" 
-          name="dias_estadia" 
-          placeholder="Días de estadía" 
-          value={formData.dias_estadia} 
-          onChange={handleChange} 
-          required 
-        />
-        <textarea 
-          name="descripcion" 
-          placeholder="Descripción del paquete" 
-          value={formData.descripcion} 
-          onChange={handleChange} 
-          required 
+          required
         />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Paquete'}
