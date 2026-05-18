@@ -136,3 +136,70 @@ export const createLogin = async (req, res) => {
     res.status(500).json({ message: 'Error al crear el login' });
   }
 }
+
+export const sendResetCode = async (req, res) => {
+  try {
+    const { email, contrasena } = req.body;
+
+    const userResult = await pool.query(
+      `SELECT email FROM login WHERE email = $1`,
+      [email]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Correo no registrado' });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    sendVerificationCodeEmail(email, verificationCode);
+
+    const resetToken = jwt.sign(
+      { email, contrasena, verificationCode },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    res.json({ message: 'Código de recuperación enviado al correo', resetToken });
+
+  } catch (error) {
+    console.error('Error al enviar el código de recuperación:', error);
+    res.status(500).json({ message: 'Error al enviar el código de recuperación' });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { resetToken, code } = req.body;
+
+    if (!resetToken || !code) {
+      return res.status(400).json({ message: 'Falta el token de recuperación o el código' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Token inválido o expirado' });
+    }
+
+    if (decoded.verificationCode !== code) {
+      return res.status(400).json({ message: 'Código de verificación incorrecto' });
+    }
+
+    const { email, contrasena } = decoded;
+
+    const encriptedPassword = await bcrypt.hash(contrasena, 10);
+
+    const response = await pool.query(
+      loginModel.restoreLogin, 
+      [encriptedPassword, email]
+    );
+
+    res.json({ message: "Contraseña actualizada exitosamente", email: response.rows[0].email });
+
+  } catch (error) {
+    console.error('Error al restablecer la contraseña:', error);
+    res.status(500).json({ message: 'Error al restablecer la contraseña' });
+  }
+};

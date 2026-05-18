@@ -1,6 +1,7 @@
 import { reservation, reservationFilters as reservationFiltersModel, reservationStats } from "../models/reservation.model.js";
 import { invoice } from "../models/invoice.model.js";
 import { refounds } from "../models/refound.model.js";
+import { notification } from "../models/notification.model.js";
 
 import pool from "../config/db.js";
 
@@ -18,19 +19,83 @@ export const getreservations = async (req, res) => {
 
 export const getReservationByInvoice = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { name } = req.body;
+
+    const id = parseInt(name);
+    if (isNaN(id)) {
+      return res.json([]);
+    }
 
     const result = await pool.query(
       reservation.getReservationByInvoice,
       [id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Not found' });
-    }
-
     res.json(result.rows);
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const lockDates = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { llegada, salida } = req.body;
+
+    const check = await pool.query(reservation.checkAvailability, [id, llegada, salida]);
+    if (check.rows.length > 0) {
+      return res.status(400).json({ message: "Las fechas seleccionadas no están disponibles." });
+    }
+
+    const lock = await pool.query(reservation.lockReservation, [id, llegada, salida]);
+    if (lock.rows.length === 0) {
+      return res.status(404).json({ message: "Reserva no encontrada para bloquear." });
+    }
+    const lockId = lock.rows[0].reserva_id;
+
+    res.json({ lockId, message: "Fechas bloqueadas temporalmente." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const unlockDates = async (req, res) => {
+  try {
+    const { lockId } = req.params;
+    await pool.query(reservation.deleteLock, [lockId]);
+    res.json({ message: "Bloqueo liberado." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { llegada, salida, userName, lockId } = req.body;
+
+    await pool.query("BEGIN");
+
+    if (lockId) {
+      await pool.query(reservation.deleteLock, [lockId]);
+    }
+
+    const result = await pool.query(
+      reservation.updateReservation,
+      [llegada, salida, id]
+    );
+
+    await pool.query(notification.createNotification, [
+      userName,
+      "Reserva",
+      `La reserva #${id} ha sido actualizada`
+    ]);
+
+    await pool.query("COMMIT");
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ message: error.message });
   }
 };
@@ -44,7 +109,7 @@ export const activateReservation = async (req, res) => {
     // 1. Activar la reserva y obtener datos necesarios (como factura_id)
     // Asegúrate que tu consulta SQL devuelva la fila activada: RETURNING *
     const result = await pool.query(
-      reservationModels.activateReservation,
+      reservation.activateReservation,
       [id]
     );
 
@@ -79,8 +144,8 @@ export const cancelReservation = async (req, res) => {
 
     // Usamos nombres de variables distintos a los modelos (resRow, invRow)
     const [resData, invData] = await Promise.all([
-      pool.query(reservationModels.getReservationByInvoice, [id]),
-      pool.query(invoiceModels.getInvoiceByReservation, [id])
+      pool.query(reservation.getReservationById, [id]),
+      pool.query(invoice.getInvoiceByReservation, [id])
     ]);
 
     // Validamos existencia correctamente
@@ -93,7 +158,7 @@ export const cancelReservation = async (req, res) => {
     const invRow = invData.rows[0];
 
     // Cancelar la reserva usando el modelo original
-    const result = await pool.query(reservationModels.cancelReservation, [id]);
+    const result = await pool.query(reservation.cancelReservation, [id]);
 
     // Lógica de Reembolso: (Total - Deuda actual) = Lo que el cliente ya pagó
     const montoAPagar = invRow.total - resRow["pago restante"];

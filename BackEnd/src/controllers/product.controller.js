@@ -89,6 +89,11 @@ export const updateProduct = async (req, res) => {
       [nombre, tipo, precio, descripcion, id]
     )
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El producto no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Productos",
@@ -124,6 +129,11 @@ export const deleteProduct = async (req, res) => {
       [id]
     )
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El producto no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Productos",
@@ -157,6 +167,11 @@ export const activateProduct = async (req, res) => {
       product.activateProduct,
       [id]
     );
+
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El producto no existe." });
+    }
 
     await pool.query(notification.createNotification, [
       userName,

@@ -26,7 +26,9 @@ export const deleteNotification = async (req, res) => {
   try {
     const { notificacion_id } = req.params;
 
+    await pool.query("BEGIN");
     await pool.query(notification.deleteNotification, [notificacion_id]);
+    await pool.query("COMMIT");
 
     res.json({ message: 'Notificación eliminada correctamente' });
   } catch (error) {

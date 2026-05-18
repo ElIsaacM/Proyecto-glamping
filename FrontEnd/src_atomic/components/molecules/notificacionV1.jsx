@@ -49,6 +49,7 @@ const Boton = styled.button`
 
   background: ${(props) => props.color === 1 ? '#43523A' : '#ffffff'};
   color: ${(props) => props.color === 1 ? '#ffffff' : '#43523A'};
+  cursor: pointer;
 `;
 
 function NotificacionV1({ data, handleDelete }) {

@@ -12,6 +12,12 @@ export const reservation = {
     WHERE factura_id = $1
     ORDER BY fecha DESC
   `,
+  getReservationById: `
+    SELECT
+      *
+    FROM vista_reservas
+    WHERE id = $1
+  `,
   createReservation: `
     -- Por resolver
     -- Insertar una factura por cada reserva
@@ -19,7 +25,12 @@ export const reservation = {
     -- ingresa correctamente la cc y el correo, de este modo no tendría que ingresar de nuevo sus datos
   `,
   updateReservation: `
-    -- Por resolver, se debe evitar duplicados en fecha 
+    UPDATE reservas 
+    SET 
+      llegada = COALESCE($1::date, llegada),
+      salida = COALESCE($2::date, salida)
+    WHERE reserva_id = $3
+    RETURNING *;
   `,
   deleteReservation: `
     UPDATE reservas
@@ -38,6 +49,28 @@ export const reservation = {
     SET estado = 'Cancelado'
     WHERE reserva_id = $1
     RETURNING reserva_id
+  `,
+  checkAvailability: `
+    SELECT 1 FROM reservas r
+    JOIN paquetes p ON r.paquete_id = p.paquete_id
+    WHERE p.cabana_id = (
+      SELECT cabana_id FROM paquetes p2 
+      JOIN reservas r2 ON r2.paquete_id = p2.paquete_id 
+      WHERE r2.reserva_id = $1
+    )
+    AND r.estado NOT IN ('Cancelado')
+    AND r.reserva_id != $1
+    AND r.llegada < $3::date AND r.salida > $2::date
+    LIMIT 1
+  `,
+  lockReservation: `
+    INSERT INTO reservas (paquete_id, cliente_id, llegada, salida, estado, por_pagar)
+    SELECT paquete_id, cliente_id, $2::date, $3::date, 'Temporal', 0
+    FROM reservas WHERE reserva_id = $1
+    RETURNING reserva_id;
+  `,
+  deleteLock: `
+    DELETE FROM reservas WHERE reserva_id = $1 AND estado = 'Temporal'
   `
 }
 

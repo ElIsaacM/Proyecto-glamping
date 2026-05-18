@@ -22,6 +22,13 @@ CREATE TABLE Productos (
 	Estado VARCHAR(50) DEFAULT 'Activo',
 );
 
+CREATE TABLE Imagenes_Cabanas (
+    img_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    Cabana_ID INT NOT NULL,
+    img_url TEXT NOT NULL
+);
+
+
 CREATE TABLE Cabanas (
     Cabana_ID SERIAL PRIMARY KEY,
     Nombre VARCHAR(50) NOT NULL,
@@ -189,6 +196,8 @@ ALTER TABLE Usuarios ADD CONSTRAINT fk_Usuarios_Roles FOREIGN KEY (Rol_ID) REFER
 ALTER TABLE Usuarios ADD CONSTRAINT fk_Usuarios_Identificacion FOREIGN KEY (Identificacion_ID) REFERENCES Identificaciones(Identificacion_ID);
 ALTER TABLE Login ADD CONSTRAINT fk_Cuenta_Usuarios FOREIGN KEY (Usuario_ID) REFERENCES Usuarios(Usuario_ID) ON DELETE CASCADE;
 ALTER TABLE Logs_Acciones ADD CONSTRAINT fk_Logs_Cuenta FOREIGN KEY (Login_ID) REFERENCES Login(Login_ID);
+
+ALTER TABLE Imagenes_Cabanas ADD CONSTRAINT fk_imagenes_cabana FOREIGN KEY (Cabana_ID) REFERENCES Cabanas(Cabana_ID);
 
 ALTER TABLE Paquetes 
     ADD CONSTRAINT fk_Paquete_Tipo FOREIGN KEY (Tipo_ID) REFERENCES Tipo_Paquete(Tipo_ID),

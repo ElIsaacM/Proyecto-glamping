@@ -9,7 +9,7 @@ export const invoice = {
     SELECT
       * 
     FROM vista_facturas
-    WHERE reserva_id = $1
+    WHERE reserva = $1
   `,
   getInvoicesByClient: `
     SELECT

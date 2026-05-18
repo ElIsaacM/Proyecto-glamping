@@ -91,6 +91,11 @@ export const updateUser = async (req, res) => {
       id,
     ]);
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Usuario actualizado",
@@ -113,11 +118,10 @@ export const deleteUser = async (req, res) => {
 
     await pool.query("BEGIN");
 
-    await pool.query("BEGIN");
-
     const userCheck = await pool.query(user.getUserById, [id]);
 
     if (userCheck.rows.length === 0) {
+      await pool.query("ROLLBACK");
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
@@ -148,11 +152,10 @@ export const activateUser = async (req, res) => {
 
     await pool.query("BEGIN");
 
-    await pool.query("BEGIN");
-
     const userCheck = await pool.query(user.getUserById, [id]);
 
     if (userCheck.rows.length === 0) {
+      await pool.query("ROLLBACK");
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 

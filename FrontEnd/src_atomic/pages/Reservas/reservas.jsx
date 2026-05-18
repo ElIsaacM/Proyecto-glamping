@@ -19,6 +19,7 @@ from "./componentsData/reservasSearch";
 
 import ModalClientes from "./modales/modalClientes";
 import ModalPaquete from "./modales/modalPaquete";
+import ModalEditar from "./modales/modalEditar";
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -45,6 +46,7 @@ function Reservas({ modulo }) {
   const { data, loading, error, fetchData } = useFetch();
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedReserva, setSelectedReserva] = useState(null);
 
   const [reservas, setReservas] = useState(null);
   const { displayData, setFilterMode, fetchFilters } = useFilters(
@@ -74,10 +76,16 @@ function Reservas({ modulo }) {
   const handlePackageClick = (fila) => {
     setSelectedPackage(fila);
   };
+  
+  const editarReserva = (reserva) => {
+    setSelectedReserva(reserva);
+    setModalEditarAbierto(true);
+  };
 
   const closeMenu = () => {
     setSelectedClient(null);
     setSelectedPackage(null);
+    setSelectedReserva(null);
   };
 
   const eliminarReserva = (reserva) => {
@@ -111,10 +119,6 @@ function Reservas({ modulo }) {
       </CardsCont>
       <Botones>
         <ReservasSearch onResult={setReservas} onFilterChange={setFilterMode} />
-        <BotonAgregar
-          modulo={"Agregar reserva"}
-          color={1}
-        />
       </Botones>
 
       {loading && <p style={{ marginTop: '20px' }}>Cargando reservas...</p>}
@@ -124,6 +128,7 @@ function Reservas({ modulo }) {
           data={displayData}
           onColumnClick={onColumnClickHandlers}
           onActive={activarReserva}
+          onEdit={editarReserva}
           onDelete={eliminarReserva}
         />
       )}
@@ -139,6 +144,14 @@ function Reservas({ modulo }) {
         <ModalPaquete
           id={selectedPackage.paquete_id}
           onClose={closeMenu}
+        />
+      )}
+
+      {selectedReserva && (
+        <ModalEditar
+          reservaAEditar={selectedReserva}
+          setModalAbierto={closeMenu}
+          fetchData={handleFetchData}
         />
       )}
     </>

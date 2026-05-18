@@ -2,10 +2,13 @@ import { Router } from "express";
 import {
     getreservations,
     getReservationByInvoice,
+    updateReservation,
     activateReservation,
     cancelReservation,
     reservationFilters,
-    getReservationStats
+    getReservationStats,
+    lockDates,
+    unlockDates
 } from '../controllers/reservation.controller.js';
 
 import { validateRules } from "../middleware/validate.middleware.js";
@@ -18,6 +21,9 @@ const router = Router();
 
 router.get('/', getreservations);
 router.post('/search', getReservationByInvoice);
+router.post('/lock/:id', lockDates);
+router.delete('/unlock/:lockId', unlockDates);
+router.put('/update/:id', updateReservation);
 router.put('/activate/:id', activateReservation);
 router.put('/delete/:id', cancelReservation);
 router.get('/filters', reservationFilters);

@@ -44,6 +44,7 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       capacidad_personas: '',
       precio_noche: '', 
       descripcion: '',
+      imagenes: [],
 
       userName: localStorage.getItem('userName') || '',
     },
@@ -51,7 +52,9 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
     () => {
       fetchData(`${import.meta.env.VITE_API_BASE_URL}/api/cabins`);
       setModalAbierto(false); // Cerramos el modal al tener éxito
-    }
+    },
+    'POST',
+    true // isFormData
   );
 
   return (
@@ -59,8 +62,10 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
       <Form onSubmit={(e) => handleSubmit(e, () => setModalAbierto(false))}>
         <input type="text" name="nombre" placeholder="Nombre de la cabaña" value={formData.nombre} onChange={handleChange} required />
         <input type="number" name="capacidad_personas" placeholder="Capacidad de personas" value={formData.capacidad_personas} onChange={handleChange} required />
-        <input type="number" step="0.01" name="precio_noche" placeholder="Precio por noche" value={formData.precio} onChange={handleChange} required />
+        <input type="number" step="0.01" name="precio_noche" placeholder="Precio por noche" value={formData.precio_noche} onChange={handleChange} required />
         <textarea name="descripcion" placeholder="Descripción de la cabaña" value={formData.descripcion} onChange={handleChange} required />
+        <label style={{ fontSize: '14px', color: '#555', marginBottom: '-10px' }}>Imágenes (opcional):</label>
+        <input type="file" name="imagenes" multiple accept="image/*" onChange={handleChange} />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Guardando...' : 'Guardar Cabaña'}
         </button>

@@ -8,19 +8,19 @@ import { useFetch } from "./fetchConnect";
  * @param {Object} initialState - El estado con valores iniciales del formulario (ej. { nombre: '', edad: 0 })
  * @param {string} url - El endpoint a donde enviar (POST) los datos
  * @param {Function} onSuccess - Un callback que se ejecuta tras una respuesta HTTP 200/201 éxitosa (ideal para recargar tablas)
+ * @param {string} method - El método HTTP a utilizar
+ * @param {boolean} isFormData - Indica si se debe enviar como FormData
  */
-export const useForm = (initialState, url, onSuccess, method = 'POST') => {
+export const useForm = (initialState, url, onSuccess, method = 'POST', isFormData = false) => {
   const [formData, setFormData] = useState(initialState);
   const { loading: submitting, error: submitError, fetchData: postData } = useFetch();
 
   const handleChange = (e) => {
-    // Extraemos los valores del evento para evitar problemas si el evento se "limpia"
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
 
-    // Usamos la función de callback (prevData)
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: type === 'file' ? files : value
     }));
   };
 
@@ -41,10 +41,30 @@ export const useForm = (initialState, url, onSuccess, method = 'POST') => {
         }
       });
 
+      let bodyData;
+      let reqHeaders = undefined;
+
+      if (isFormData) {
+        bodyData = new FormData();
+        Object.keys(cleanedData).forEach(key => {
+          if (Array.isArray(cleanedData[key]) || cleanedData[key] instanceof FileList) {
+            for (let i = 0; i < cleanedData[key].length; i++) {
+              bodyData.append(key, cleanedData[key][i]);
+            }
+          } else {
+            bodyData.append(key, cleanedData[key]);
+          }
+        });
+      } else {
+        bodyData = JSON.stringify(cleanedData);
+        reqHeaders = { 'Content-Type': 'application/json' };
+      }
+
       // IMPORTANTE: postData debe lanzar un error si la respuesta no es 2xx
       const response = await postData(url, {
         method: method,
-        body: JSON.stringify(cleanedData)
+        body: bodyData,
+        headers: reqHeaders
       });
 
       // SI LLEGAMOS AQUÍ, ES QUE FUE EXITOSO (Status 200-299)

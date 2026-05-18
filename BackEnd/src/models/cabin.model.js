@@ -17,7 +17,7 @@ export const cabin = {
   createCabin: `
     INSERT INTO Cabanas (nombre, precio_noche, capacidad_personas, fecha_registro, descripcion, fecha_mantenimiento, estado)
     VALUES ($1, $2, $3, CURRENT_DATE, $4, NULL, 'Activo')
-    RETURNING nombre, precio_noche
+    RETURNING cabana_id, nombre, precio_noche
   `,
   updateCabin: `
     UPDATE Cabanas SET
@@ -41,6 +41,21 @@ export const cabin = {
     WHERE cabana_id = $1
     RETURNING nombre
   `,
+  addCabinImage: `
+    INSERT INTO imagenes_cabana (cabana_id, img_url)
+    VALUES ($1, $2)
+    RETURNING img_url
+  `,
+  deleteCabinImage: `
+    DELETE FROM imagenes_cabana
+    WHERE img_id = $1
+    RETURNING img_url
+  `,
+  getCabinImages: `
+    SELECT img_id, img_url
+    FROM imagenes_cabana
+    WHERE cabana_id = $1
+  `
 }
 
 export const cabinFilters = {

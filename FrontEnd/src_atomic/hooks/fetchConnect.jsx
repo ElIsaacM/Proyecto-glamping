@@ -22,10 +22,13 @@ export const useFetch = () => {
 
     // Configuración por defecto para JSON combinando con custom headers
     const mergedHeaders = {
-      "Content-Type": "application/json",
       ...(token ? { "Authorization": `Bearer ${token}` } : {}),
       ...(options.headers || {})
     };
+
+    if (!(options.body instanceof FormData) && !mergedHeaders["Content-Type"]) {
+      mergedHeaders["Content-Type"] = "application/json";
+    }
 
     const finalOptions = {
       method: "GET",

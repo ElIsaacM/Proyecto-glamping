@@ -6,10 +6,6 @@ export const getCustomerData = async (req, res) => {
   try {
     const result = await pool.query(customer.getCustomerData);
 
-    if (result.rows.length === 0) {
-      throw new Error("No customers found");
-    }
-
     res.json(result.rows)
   } catch (error) {
     res.status(500).json({ message: error.message });

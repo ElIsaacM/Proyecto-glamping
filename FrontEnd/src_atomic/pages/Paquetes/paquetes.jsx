@@ -112,7 +112,7 @@ function Paquetes() {
       <Botones>
         <PaquetesSearch onResult={setPaquetes} onFilterChange={setFilterMode} />
         <BotonAgregar
-          modulo="Agregar paquete"
+          modulo="Agregar tipo"
           color={1}
           onClick={() => setModalAbierto(true)}
         />

@@ -2,6 +2,9 @@ import ModalPlantilla from "../../../components/organisms/Modales/modalPlantilla
 import { useForm } from "../../../hooks/useForm";
 import styled from "styled-components";
 
+import SelectBase from "../../../components/atoms/select/selectBase.jsx";
+import { tipoProductos } from "../../../config/tipos.jsx";
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -64,13 +67,14 @@ export default function ModalAgregar({ setModalAbierto, fetchData }) {
           onChange={handleChange} 
           required 
         />
-        <input 
-          type="text" 
-          name="tipo" 
-          placeholder="Tipo (ej: Limpieza, Bebidas...)" 
-          value={formData.tipo} 
-          onChange={handleChange} 
-          required 
+        <SelectBase
+          name="tipo"
+          placeholder="Tipo de producto"
+          value={formData.tipo}
+          onChange={handleChange}
+          options={tipoProductos}
+          valueKey="tipo_id"
+          nameKey="tipo"
         />
 
         <input 

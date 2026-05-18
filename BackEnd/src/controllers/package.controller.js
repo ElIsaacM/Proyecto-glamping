@@ -111,6 +111,11 @@ export const updatePackage = async (req, res) => {
       [cabana_id, tipo_id, dias_estadia, descripcion, id]
     );
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El paquete no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Paquete",
@@ -145,6 +150,11 @@ export const deletePackage = async (req, res) => {
       [id]
     );
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El paquete no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Paquete",
@@ -178,6 +188,11 @@ export const activatePackage = async (req, res) => {
       packages.activatePackage,
       [id]
     );
+
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El paquete no existe." });
+    }
 
     await pool.query(notification.createNotification, [
       userName,

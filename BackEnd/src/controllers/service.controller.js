@@ -94,6 +94,11 @@ export const updateService = async (req, res) => {
       [nombre, encargado, duracion_minutos, precio, descripcion, id]
     );
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El servicio no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Servicios",
@@ -128,6 +133,11 @@ export const deleteService = async (req, res) => {
       [id]
     );
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El servicio no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Servicios",
@@ -143,7 +153,7 @@ export const deleteService = async (req, res) => {
     });
   } catch (error) {
     await pool.query("ROLLBACK");
-    res.status(500),json({
+    res.status(500).json({
       message: "Error al eliminar servicio",
       error: error.message
     });
@@ -162,6 +172,11 @@ export const activateService = async (req, res) => {
       [id]
     );
 
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({ message: "El servicio no existe." });
+    }
+
     await pool.query(notification.createNotification, [
       userName,
       "Servicios",
@@ -177,7 +192,7 @@ export const activateService = async (req, res) => {
     });
   } catch (error) {
     await pool.query("ROLLBACK");
-    res.status(500),json({
+    res.status(500).json({
       message: "Error al activar servicio",
       error: error.message
     });
