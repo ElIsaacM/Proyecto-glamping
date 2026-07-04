@@ -9,9 +9,11 @@ import BotonAgregar from "../../components/buttons/botonAgregar";
 import ServicioTable from "./info/servicioTable";
 import ModalPlantilla from "../../Modales/modalPlantilla";
 
+import ServicioForm from "./info/servicioForm";
+import PlantillaFormulario from "../../components/plantillaform";
+
 const CardsCont = styled.div`
   margin: 50px 0;
-
   display: grid;
   grid-template-columns: 65% 30%;
   align-items: center;
@@ -49,7 +51,12 @@ function Servicios() {
                 modulo={'Agregar servicio'} 
                 color={1} 
                 onClick={() => abrirModal(
-                  <ModalPlantilla modulo={modulo.toLowerCase()} onClose={cerrarModal}>
+                  <ModalPlantilla modulo="servicio" onClose={cerrarModal}>
+                    
+                    {/* ESTA ES LA PARTE CORREGIDA */}
+                    <PlantillaFormulario>
+                      <ServicioForm />
+                    </PlantillaFormulario>
 
                   </ModalPlantilla>
                 )} 

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import ModalPlantilla from "./modalPlantilla";
+import ModalPlantilla from "../modalPlantilla";
 
 const Contenido = styled.div`
   width: 100%;

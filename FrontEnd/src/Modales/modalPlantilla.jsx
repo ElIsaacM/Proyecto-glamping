@@ -52,6 +52,9 @@ const Contenido = styled.div`
   height: calc(100% - 38.4px);
   padding: 20px 0px;
   overflow-y: auto;
+  overflow-x: hidden
+  ;
+
 `;
 
 // const Botones = styled.div`

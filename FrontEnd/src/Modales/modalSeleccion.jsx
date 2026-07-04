@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import ModalPlantilla from "../modalPlantilla";
+import ModalPlantilla from "./modalPlantilla";
 
 const BusquedaCont = styled.div`
   display: grid;

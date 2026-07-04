@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
 * {
   font-family: "Nunito", sans-serif;
@@ -8,3 +9,18 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+html {
+  font-size: 17px;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+h1 { font-size: 2rem; font-weight: 800; }
+h2 { font-size: 1.6rem; font-weight: 700; }
+h3 { font-size: 1.25rem; font-weight: 700; }
+h4 { font-size: 1.05rem; font-weight: 600; }
+p, span, td, th, input, select, textarea, button { font-size: 0.95rem; }

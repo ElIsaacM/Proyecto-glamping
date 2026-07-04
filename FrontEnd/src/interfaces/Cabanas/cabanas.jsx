@@ -7,8 +7,9 @@ import Buscador from "../../components/buscador";
 import BotonAgregar from "../../components/buttons/botonAgregar";
 import TablaCabanas from "./info/tablaCabanas";
 import ModalPlantilla from "../../Modales/modalPlantilla";
-
 import PlantillaFormulario from "../../components/plantillaform";
+import GestorImagenes from "./info/gestorImagenes";
+
 
 const CardsCont = styled.div`
   margin: 50px 0;
@@ -43,28 +44,43 @@ function Cabanas() {
           <Botones>
             <Buscador placeholder={'Buscar cabana'}></Buscador>
 
-            <BotonAgregar
-              modulo={'Agregar cabana'}
-              color={1}
-              onClick={() => abrirModal(
-                <ModalPlantilla modulo={modulo.slice(0, -1).toLowerCase()} onClose={cerrarModal}>
-                  <PlantillaFormulario>
-                    <input type="text" placeholder="Nombre" required />
-                    <textarea type="text" placeholder="Descripcion" />
-                    <div className="doble">
-                      <input type="text" placeholder="Precio" required />
-                      <select name="" id="">
-                        <option value="" hidden selected>Estado</option>
-                        <option value="">Opcion</option>
-                        <option value="">Opcion</option>
-                      </select>
-                    </div>
-                  </PlantillaFormulario>
-                </ModalPlantilla>
-              )}
-            />
+        <BotonAgregar
+  modulo={'Agregar cabana'}
+  color={1}
+  onClick={() =>
+    abrirModal(
+      <ModalPlantilla
+        modulo={modulo.slice(0, -1).toLowerCase()}
+        onClose={cerrarModal}
+      >
+        <PlantillaFormulario>
+          <input type="text" placeholder="Nombre" required />
+
+          <textarea placeholder="Descripcion" />
+
+          <div className="doble">
+            <input type="number" placeholder="Precio" required />
+
+            <select defaultValue="">
+              <option value="" disabled hidden>
+                Estado
+              </option>
+              <option value="disponible">Disponible</option>
+              <option value="ocupada">Ocupada</option>
+            </select>
+          </div>
+
+          <button type="submit" className="btn-agregar">
+            
+          </button>
+        </PlantillaFormulario>
+      </ModalPlantilla>
+    )
+  }
+/>
           </Botones>
           <TablaCabanas />
+          <GestorImagenes />
         </>
       )}
     </Plantilla>

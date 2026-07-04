@@ -9,9 +9,11 @@ import BotonAgregar from "../../components/buttons/botonAgregar";
 import PaqueteTable from "./info/paqueteTable";
 import ModalPlantilla from "../../Modales/modalPlantilla";
 
+import PaqueteForm from "./info/paqueteForm";
+import PlantillaFormulario from "../../components/plantillaform";
+
 const CardsCont = styled.div`
   margin: 50px 0;
-
   display: grid;
   grid-template-columns: 65% 30%;
   align-items: center;
@@ -51,8 +53,13 @@ function Paquetes() {
                 modulo="Agregar paquete"
                 color={1}
                 onClick={() => abrirModal(
-                  <ModalPlantilla modulo={modulo.toLowerCase()} onClose={cerrarModal}>
-                    <input type="text" placeholder="Nombre" />
+                  <ModalPlantilla modulo="paquete" onClose={cerrarModal}>
+                    <PlantillaFormulario>
+                      
+                      {/* Aquí cargamos únicamente los inputs limpios */}
+                      <PaqueteForm />
+
+                    </PlantillaFormulario>
                   </ModalPlantilla>
                 )}
               />

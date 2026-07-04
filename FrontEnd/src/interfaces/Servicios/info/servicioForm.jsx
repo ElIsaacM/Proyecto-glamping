@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// --- Estilos ---
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -16,13 +17,13 @@ const DobleRow = styled.div`
 `;
 
 const InputGroup = styled.div`
-  flex: 1; /* Para que los elementos se dividan el espacio al 50% */
+  flex: 1; /* Para que ocupen mitad y mitad */
 `;
 
 const FormInput = styled.input`
   width: 100%;
   padding: 10px;
-  border: 1px solid #e0e0e0; /* Gris muy clarito como en tu imagen */
+  border: 1px solid #e0e0e0;
   border-radius: 6px;
   box-sizing: border-box;
   font-size: 14px;
@@ -44,7 +45,6 @@ const FormSelect = styled.select`
   background-color: white;
   outline: none;
   appearance: none;
-  /* Flecha hacia abajo personalizada para que se vea como en tu diseño */
   background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20fill%3D%22%23555%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2011L3%206h10z%22%2F%3E%3C%2Fsvg%3E');
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -71,47 +71,12 @@ const FormTextarea = styled.textarea`
   }
 `;
 
-const FooterRow = styled.div`
-  display: flex;
-  justify-content: flex-end; /* Esto empuja el botón a la derecha */
-  width: 100%;
-  margin-top: 10px;
-`;
-
-const FormButton = styled.button`
-  background-color: #455a3f; /* Verde oscuro estilo glamping de tu imagen */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  &:hover {
-    background-color: #364731;
-  }
-`;
-
-const IconWrapper = styled.span`
-  background-color: white;
-  color: #455a3f;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 1;
-`;
-
-const ProductosForm = () => {
+// --- Componente Principal ---
+const ServicioForm = () => {
   return (
     <FormContainer>
+      
+      
       <DobleRow>
         <InputGroup>
           <FormInput type="text" placeholder="Nombre" required />
@@ -125,35 +90,33 @@ const ProductosForm = () => {
         </InputGroup>
       </DobleRow>
 
+      {/* Fila 2: Encargado y Tipo */}
       <DobleRow>
         <InputGroup>
-          <FormInput type="text" placeholder="$Precio de compra" />
+          <FormInput type="text" placeholder="Encargado" />
         </InputGroup>
-        <InputGroup>
-          <FormInput type="text" placeholder="$Precio de venta" />
-        </InputGroup>
-      </DobleRow>
-
-      <FormTextarea placeholder="Descripcion" />
-
-      <DobleRow>
         <InputGroup>
           <FormSelect defaultValue="">
             <option value="" disabled hidden>Tipo</option>
-            <option value="insumo">Insumo</option>
-            <option value="servicio">Servicio</option>
+            <option value="interno">Interno</option>
+            <option value="externo">Externo</option>
           </FormSelect>
         </InputGroup>
-        <InputGroup /> {/* Este div vacío es importante para que el Select de Tipo mida la mitad */}
       </DobleRow>
 
-      <FooterRow>
-        <FormButton type="submit">
-          <IconWrapper>+</IconWrapper> Agregar
-        </FormButton>
-      </FooterRow>
+  
+      <FormTextarea placeholder="Descripcion" />
+
+     
+      <DobleRow>
+        <InputGroup>
+          <FormInput type="text" placeholder="$Precio total" />
+        </InputGroup>
+        <InputGroup /> 
+      </DobleRow>
+
     </FormContainer>
   );
 };
 
-export default ProductosForm;
+export default ServicioForm;
